@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>MacronutrientsBean.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.beans</a> &gt; <span class="el_source">MacronutrientsBean.java</span></div><h1>MacronutrientsBean.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.beans;
+
+import java.util.Date;
+
+
+/**
+ * MacronutrientsBean.java
+ * Version 1
+ * 03/31/2015
+ * Copyright notice: none
+ * Contains all of the information for an entry into the Food Diary.
+ */
+<span class="fc" id="L13">public class MacronutrientsBean {</span>
+	
+	public static final double HEIGHT = 6.25;
+	public static final double WEIGHT = 10;
+	public static final int YEARS = 5;
+	public static final int ADD = 5;
+	public static final long MS_PER_DAY = 1000 * 60 * 60 * 24;
+	public static final double DAYS_PER_YEAR = 365.242;
+	
+	/**
+	 * height
+	 */
+	private float height;
+	
+	/**
+	 * weight
+	 */
+	private float weight;
+	
+	/**
+	 * age
+	 */
+	private int years;
+	
+	/**
+	 * Mifflin-st Jeor
+	 */
+	private double msj;
+	
+	/**
+	 * The MID of the user this Food Entry belongs to
+	 */
+	private long patientID;
+
+	public float getWeight() {
+<span class="fc" id="L48">		return weight;</span>
+	}
+
+	public void setWeight(float weight) {
+<span class="fc" id="L52">		this.weight = weight;</span>
+<span class="fc" id="L53">	}</span>
+
+	public int getYears() {
+<span class="fc" id="L56">		return years;</span>
+	}
+	
+	public void setYears(Date date) {		
+<span class="fc" id="L60">		double years = (new Date().getTime() - date.getTime()) / MS_PER_DAY / DAYS_PER_YEAR;</span>
+<span class="fc" id="L61">		this.years = (int) years;</span>
+<span class="fc" id="L62">	}</span>
+
+	/**
+	 * Get height of the patient
+	 * @return height of the patient
+	 */
+	public float getHeight() {
+<span class="fc" id="L69">		return height;</span>
+	}
+
+	/**
+	 * Set patient height
+	 * @param height height of patient
+	 */
+	public void setHeight(float height) {
+<span class="fc" id="L77">		this.height = height;</span>
+<span class="fc" id="L78">	}</span>
+
+	/**
+	 * Mifflin-St Jeor Value
+	 * @return Mifflin-St Jeor Value 
+	 */
+	public double getMsj() {
+<span class="fc" id="L85">		return msj;</span>
+	}
+
+	/**
+	 * Calculate Mifflin-St. Jeor
+	 * 
+	 */
+	public void setMsj(float height, float weight, int years) {
+<span class="fc" id="L93">		this.msj = (WEIGHT * weight + HEIGHT * height + ADD - YEARS * years);</span>
+<span class="fc" id="L94">	}</span>
+
+	public long getPatientID() {
+<span class="fc" id="L97">		return patientID;</span>
+	}
+
+	public void setPatientID(long patientID) {
+<span class="fc" id="L101">		this.patientID = patientID;</span>
+<span class="fc" id="L102">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>MonitorAdverseEventAction.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.action</a> &gt; <span class="el_source">MonitorAdverseEventAction.java</span></div><h1>MonitorAdverseEventAction.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.action;
+
+/**
+ * Used by PHAs to view the reported adverse events
+ */
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+import edu.ncsu.csc.itrust.EmailUtil;
+import edu.ncsu.csc.itrust.beans.AdverseEventBean;
+import edu.ncsu.csc.itrust.beans.Email;
+import edu.ncsu.csc.itrust.beans.MessageBean;
+import edu.ncsu.csc.itrust.beans.PatientBean;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.dao.mysql.AdverseEventDAO;
+import edu.ncsu.csc.itrust.dao.mysql.PatientDAO;
+import edu.ncsu.csc.itrust.exception.DBException;
+import edu.ncsu.csc.itrust.exception.FormValidationException;
+import edu.ncsu.csc.itrust.exception.ITrustException;
+
+public class MonitorAdverseEventAction {
+	 
+	private long loggedInMID;
+	private EmailUtil emailer;
+	private PatientDAO patientDAO;
+	private AdverseEventDAO adverseEventDAO;
+	private SendMessageAction messenger;
+	
+	/**
+	 * Constructor 
+	 * @param factory
+	 * @param loggedInMID
+	 */
+<span class="fc" id="L35">	public MonitorAdverseEventAction(DAOFactory factory, long loggedInMID){</span>
+<span class="fc" id="L36">		this.loggedInMID = loggedInMID;</span>
+<span class="fc" id="L37">		this.patientDAO = factory.getPatientDAO();</span>
+<span class="fc" id="L38">		this.emailer = new EmailUtil(factory);</span>
+<span class="fc" id="L39">		this.adverseEventDAO = factory.getAdverseEventDAO();</span>
+<span class="fc" id="L40">		this.messenger = new SendMessageAction(factory, loggedInMID);</span>
+		
+<span class="fc" id="L42">	}</span>
+	/**
+	 * Returns a list of reports between specified dates
+	 * @param isPrescription Boolean to return prescriptions or immunizations
+	 * @param start The starting date
+	 * @param end The ending date
+	 * @return the list of events
+	 * @throws ITrustException
+	 * @throws FormValidationException
+	 * @throws SQLException
+	 * @throws ParseException
+	 */
+	public List&lt;AdverseEventBean&gt; getReports(boolean isPrescription, String start, String end)throws ITrustException, FormValidationException, SQLException, ParseException {
+<span class="fc bfc" id="L55" title="All 2 branches covered.">		if(isPrescription) {</span>
+<span class="fc" id="L56">			return adverseEventDAO.getPerscriptions(start, end);</span>
+		} else { //is Immunization
+<span class="fc" id="L58">			return adverseEventDAO.getImmunizations(start, end);</span>
+		}
+		
+	}
+	
+	/**
+	 * Returns the patient's name
+	 * @param MID the MID of the patient to return the name for.
+	 * @return
+	 */
+	public String getName(long MID) {
+		try {
+<span class="fc" id="L70">			return patientDAO.getName(MID);</span>
+<span class="nc" id="L71">		} catch(DBException e) {</span>
+<span class="nc" id="L72">			return &quot;&quot;;</span>
+<span class="fc" id="L73">		} catch(ITrustException e) {</span>
+<span class="fc" id="L74">			return &quot;Patient no longer exists&quot;;</span>
+		}
+	}
+	
+	/**
+	 * Sends an e-mail to a patient requesting more information
+	 * @param patientMID The patient to receive the message
+	 * @param message The message
+	 * @return string for testing purposes
+	 * @throws DBException
+	 */
+	public String sendEmail(long patientMID, String message) throws DBException{
+		String rValue;
+<span class="fc" id="L87">		List&lt;String&gt; toList = new ArrayList&lt;String&gt;();</span>
+<span class="fc" id="L88">		PatientBean receiver = patientDAO.getPatient(patientMID);</span>
+<span class="fc" id="L89">		toList.add(receiver.getEmail());</span>
+<span class="fc" id="L90">		Email mail = new Email();</span>
+<span class="fc" id="L91">		mail.setBody(message);</span>
+<span class="fc" id="L92">		mail.setFrom(loggedInMID + &quot;&quot;);</span>
+<span class="fc" id="L93">		mail.setToList(toList);</span>
+<span class="fc" id="L94">		emailer.sendEmail(mail);</span>
+<span class="fc" id="L95">		rValue = &quot;&quot; + mail.getFrom() + &quot; &quot; + mail.getBody();</span>
+<span class="fc" id="L96">		return rValue;</span>
+	}
+	
+	/**
+	 * Method used to remove an adverse event report
+	 * 
+	 * @param id the id of the report to be removed
+	 * @throws DBException
+	 * @throws ITrustException
+	 */
+	public void remove(int id) throws DBException, ITrustException, FormValidationException{
+		long HCPMID;
+		try{
+<span class="fc" id="L109">		AdverseEventBean aeBean = adverseEventDAO.getReport(id);</span>
+<span class="fc" id="L110">		adverseEventDAO.removeReport(id);</span>
+<span class="fc" id="L111">		HCPMID = adverseEventDAO.getHCPMID(id);</span>
+<span class="fc" id="L112">		MessageBean mBeanTwo = new MessageBean();</span>
+<span class="fc" id="L113">		MessageBean mBeanOne = new MessageBean();</span>
+<span class="fc" id="L114">		String body = &quot;An adverse event for &quot; + aeBean.getDrug() + &quot; perscribed to &quot; + patientDAO.getName(Long.parseLong(aeBean.getMID())) +&quot; with description: (&quot; + aeBean.getDescription()+ &quot;) was removed.&quot;;</span>
+<span class="fc" id="L115">		mBeanOne.setTo(Long.parseLong(aeBean.getMID()));</span>
+<span class="fc" id="L116">		mBeanTwo.setTo(HCPMID);</span>
+<span class="fc" id="L117">		mBeanOne.setSubject(&quot;Subject&quot;);</span>
+<span class="fc" id="L118">		mBeanTwo.setSubject(&quot;Subject&quot;);</span>
+<span class="fc" id="L119">		mBeanOne.setBody(body);</span>
+<span class="fc" id="L120">		mBeanTwo.setBody(body);</span>
+<span class="fc" id="L121">		mBeanOne.setFrom(loggedInMID);</span>
+<span class="fc" id="L122">		mBeanTwo.setFrom(loggedInMID);</span>
+<span class="fc" id="L123">		messenger.sendMessage(mBeanOne);</span>
+<span class="fc" id="L124">		messenger.sendMessage(mBeanTwo);</span>
+<span class="nc" id="L125">		}catch(SQLException e){</span>
+<span class="nc" id="L126">			throw new DBException(e);</span>
+<span class="fc" id="L127">		} </span>
+<span class="fc" id="L128">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

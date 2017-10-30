@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ViewReportAction.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.action</a> &gt; <span class="el_source">ViewReportAction.java</span></div><h1>ViewReportAction.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.action;
+
+import java.util.List;
+import edu.ncsu.csc.itrust.beans.DiagnosisBean;
+import edu.ncsu.csc.itrust.beans.PatientBean;
+import edu.ncsu.csc.itrust.beans.PersonnelBean;
+import edu.ncsu.csc.itrust.beans.PrescriptionBean;
+import edu.ncsu.csc.itrust.beans.ProcedureBean;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.dao.mysql.PatientDAO;
+import edu.ncsu.csc.itrust.dao.mysql.PersonnelDAO;
+import edu.ncsu.csc.itrust.exception.ITrustException;
+
+/**
+ * 
+ * Action class for ViewReport.jsp
+ *
+ */
+public class ViewReportAction {
+	private PatientDAO patientDAO;
+	private PersonnelDAO personnelDAO;
+
+	/**
+	 * Set up defaults
+	 * @param factory The DAOFactory used to create the DAOs used in this action.
+	 * @param loggedInMID The MID of the person viewing the report.
+	 */
+<span class="fc" id="L28">	public ViewReportAction(DAOFactory factory, long loggedInMID) {</span>
+<span class="fc" id="L29">		patientDAO = factory.getPatientDAO();</span>
+<span class="fc" id="L30">		personnelDAO = factory.getPersonnelDAO();</span>
+<span class="fc" id="L31">	}</span>
+
+	/**
+	 *  Get diagnosis list for the given patient
+	 * @param pid the patient of interest
+	 * @return list of diagnoses
+	 * @throws ITrustException
+	 */
+	public List&lt;DiagnosisBean&gt; getDiagnoses(long pid) throws ITrustException {
+<span class="fc" id="L40">		return patientDAO.getDiagnoses(pid);</span>
+	}
+
+	/**
+	 *  Get procedure list for the given patient
+	 * @param pid the patient of interest
+	 * @return list of procedures
+	 * @throws ITrustException
+	 */
+	public List&lt;ProcedureBean&gt; getProcedures(long pid) throws ITrustException {
+<span class="fc" id="L50">		return patientDAO.getProcedures(pid);</span>
+	}
+
+	/**
+	 *  Get prescription list for the given patient
+	 * @param pid the patient of interest
+	 * @return list of prescriptions
+	 * @throws ITrustException
+	 */
+	public List&lt;PrescriptionBean&gt; getPrescriptions(long pid) throws ITrustException {
+<span class="fc" id="L60">		return patientDAO.getCurrentPrescriptions(pid);</span>
+	}
+
+	/**
+	 *  Get declared HCPs list for the given patient
+	 * @param pid the patient of interest
+	 * @return list of declared HCPs
+	 * @throws ITrustException
+	 */
+	public List&lt;PersonnelBean&gt; getDeclaredHCPs(long pid) throws ITrustException {
+<span class="fc" id="L70">		return patientDAO.getDeclaredHCPs(pid);</span>
+	}
+	
+	/**
+	 * Returns a PersonnelBean when given an MID
+	 * @param mid HCP of interest
+	 * @return PersonnelBean of the given HCP
+	 * @throws ITrustException
+	 */
+	public PersonnelBean getPersonnel(long mid) throws ITrustException {
+<span class="fc" id="L80">		return personnelDAO.getPersonnel(mid);</span>
+	}
+	
+	/**
+	 * Returns a PaitentBean when given an MID
+	 * @param mid patient of interest
+	 * @return PatientBean of the given HCP
+	 * @throws ITrustException
+	 */
+	public PatientBean getPatient(long mid) throws ITrustException {
+<span class="fc" id="L90">		return patientDAO.getPatient(mid);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

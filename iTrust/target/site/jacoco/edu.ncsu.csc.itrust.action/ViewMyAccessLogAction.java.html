@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ViewMyAccessLogAction.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.action</a> &gt; <span class="el_source">ViewMyAccessLogAction.java</span></div><h1>ViewMyAccessLogAction.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.action;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import edu.ncsu.csc.itrust.beans.PatientBean;
+import edu.ncsu.csc.itrust.beans.PersonnelBean;
+import edu.ncsu.csc.itrust.beans.TransactionBean;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.dao.mysql.PatientDAO;
+import edu.ncsu.csc.itrust.dao.mysql.TransactionDAO;
+import edu.ncsu.csc.itrust.exception.DBException;
+import edu.ncsu.csc.itrust.exception.FormValidationException;
+import edu.ncsu.csc.itrust.exception.ITrustException;
+
+/**
+ * Handles retrieving the log of record accesses for a given user Used by viewAccessLog.jsp
+ * 
+ * 
+ */
+public class ViewMyAccessLogAction {
+	private TransactionDAO transDAO;
+	private PatientDAO patientDAO;
+	private long loggedInMID;
+
+	/**
+	 * Set up
+	 * 
+	 * @param factory The DAOFactory used to create the DAOs used in this action.
+	 * @param loggedInMID The MID of the person retrieving the logs.
+	 */
+<span class="fc" id="L36">	public ViewMyAccessLogAction(DAOFactory factory, long loggedInMID) {</span>
+<span class="fc" id="L37">		this.loggedInMID = loggedInMID;</span>
+<span class="fc" id="L38">		this.transDAO = factory.getTransactionDAO();</span>
+<span class="fc" id="L39">		this.patientDAO = factory.getPatientDAO();</span>
+<span class="fc" id="L40">	}</span>
+
+	/**
+	 * Returns a list of TransactionBeans between the two dates passed as params
+	 * 
+	 * @param lowerDate
+	 *            the first date
+	 * @param upperDate
+	 *            the second date
+	 * @return list of TransactionBeans
+	 * @throws DBException
+	 * @throws FormValidationException
+	 */
+	public List&lt;TransactionBean&gt; getAccesses(String lowerDate, String upperDate, String logMID, boolean getByRole) throws ITrustException, DBException,
+			FormValidationException {
+		List&lt;TransactionBean&gt; accesses; //stores the log entries
+		List&lt;PersonnelBean&gt; dlhcps; 
+		
+		//get the medical dependents for a signed in user. If the selected user is not the
+		//signed in user or one of the dependents, then the user doesn't have access to the log
+<span class="fc" id="L60">		List&lt;PatientBean&gt; patientRelatives = getRepresented(loggedInMID); </span>
+		
+<span class="fc" id="L62">		long mid = loggedInMID;</span>
+		try {
+<span class="fc" id="L64">			mid = Long.parseLong(logMID);</span>
+<span class="fc" id="L65">		} catch (Exception e) {		</span>
+			//TODO
+<span class="fc" id="L67">		}</span>
+		
+<span class="fc" id="L69">		dlhcps = patientDAO.getDeclaredHCPs(mid);</span>
+		
+<span class="fc" id="L71">		boolean midInScope = false;</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">		for (PatientBean pb : patientRelatives) {</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">			if (pb.getMID() == mid) </span>
+<span class="fc" id="L74">				midInScope = true;</span>
+<span class="fc" id="L75">		}</span>
+<span class="fc bfc" id="L76" title="All 4 branches covered.">		if (mid != loggedInMID &amp;&amp; !midInScope) { //the selected user in the form is out of scope and can't be shown to the user</span>
+<span class="fc" id="L77">			throw new FormValidationException(&quot;Log to View.&quot;);</span>
+		}
+		
+		//user has either 0 or 1 DLHCP's. Get one if exists so it can be filtered from results
+<span class="fc" id="L81">		long dlhcpID = -1;</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">		if(!dlhcps.isEmpty())</span>
+<span class="fc" id="L83">			dlhcpID = dlhcps.get(0).getMID();</span>
+		
+<span class="pc bpc" id="L85" title="1 of 4 branches missed.">		if (lowerDate == null || upperDate == null)</span>
+<span class="fc" id="L86">			return transDAO.getAllRecordAccesses(mid, dlhcpID, getByRole);</span>
+		
+		try {
+			/*the way the Date class works, is if you enter more months, or days than
+			 is allowed, it will simply mod it, and add it all together. To make sure it
+			 matches MM/dd/yyyy, I am going to use a Regular Expression
+			 */
+			//month can have 1 or 2 digits, same with day, and year must have 4
+<span class="fc" id="L94">			Pattern p = Pattern.compile(&quot;[0-9]{1,2}?/[0-9]{1,2}?/[0-9]{4}?&quot;);</span>
+<span class="fc" id="L95">			Matcher m = p.matcher(upperDate);</span>
+<span class="fc" id="L96">			Matcher n = p.matcher(lowerDate);</span>
+			//if it fails to match either of them, throw the form validation exception
+<span class="pc bpc" id="L98" title="1 of 4 branches missed.">			if (!m.matches() || !n.matches()) {</span>
+<span class="fc" id="L99">				throw new FormValidationException(&quot;Enter dates in MM/dd/yyyy&quot;);</span>
+			}
+			
+<span class="fc" id="L102">			Date lower = new SimpleDateFormat(&quot;MM/dd/yyyy&quot;).parse(lowerDate);</span>
+<span class="fc" id="L103">			Date upper = new SimpleDateFormat(&quot;MM/dd/yyyy&quot;).parse(upperDate);</span>
+
+<span class="pc bpc" id="L105" title="1 of 2 branches missed.">			if (lower.after(upper))</span>
+<span class="nc" id="L106">				throw new FormValidationException(&quot;Start date must be before end date!&quot;);</span>
+<span class="fc" id="L107">			accesses = transDAO.getRecordAccesses(mid, dlhcpID, lower, upper, getByRole);</span>
+<span class="nc" id="L108">		} catch (ParseException e) {</span>
+<span class="nc" id="L109">			throw new FormValidationException(&quot;Enter dates in MM/dd/yyyy&quot;);</span>
+<span class="fc" id="L110">		} </span>
+<span class="fc" id="L111">		return accesses;</span>
+	}
+
+	/**
+	 * Returns the date of the first Transaction in the list passed as a param if the list is not empty
+	 * otherwise, returns today's date
+	 * 
+	 * @param accesses A java.util.List of TransactionBeans for the accesses.
+	 * @return A String representing the date of the first transaction.
+	 */
+	public String getDefaultStart(List&lt;TransactionBean&gt; accesses) {
+<span class="fc" id="L122">		String startDate = &quot;&quot;;</span>
+<span class="fc bfc" id="L123" title="All 2 branches covered.">		if (accesses.size() &gt; 0) {</span>
+<span class="fc" id="L124">			startDate = new SimpleDateFormat(&quot;MM/dd/yyyy&quot;).format(new Date(accesses.get(accesses.size() - 1)</span>
+<span class="fc" id="L125">					.getTimeLogged().getTime()));</span>
+		} else {
+<span class="fc" id="L127">			startDate = new SimpleDateFormat(&quot;MM/dd/yyyy&quot;).format(new Date());</span>
+		}
+<span class="fc" id="L129">		return startDate;</span>
+	}
+
+	/**
+	 * Returns the date of the last Transaction in the list passed as a param if the list is not empty
+	 * otherwise, returns today's date
+	 * 
+	 * @param accesses A java.util.List of TransactionBeans storing the access. 
+	 * @return A String representation of the date of the last transaction.
+	 */
+	public String getDefaultEnd(List&lt;TransactionBean&gt; accesses) {
+<span class="fc" id="L140">		String endDate = &quot;&quot;;</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">		if (accesses.size() &gt; 0) {</span>
+<span class="fc" id="L142">			endDate = new SimpleDateFormat(&quot;MM/dd/yyyy&quot;).format(new Date(accesses.get(0).getTimeLogged()</span>
+<span class="fc" id="L143">					.getTime()));</span>
+		} else {
+<span class="fc" id="L145">			endDate = new SimpleDateFormat(&quot;MM/dd/yyyy&quot;).format(new Date());</span>
+		}
+<span class="fc" id="L147">		return endDate;</span>
+	}
+	
+	/**
+	 * Return a list of patients that pid represents
+	 * 
+	 * @param pid The id of the personnel we are looking up representees for.
+	 * @return a list of PatientBeans
+	 * @throws ITrustException
+	 */
+	public List&lt;PatientBean&gt; getRepresented(long pid) throws ITrustException {
+<span class="fc" id="L158">		return patientDAO.getRepresented(pid);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

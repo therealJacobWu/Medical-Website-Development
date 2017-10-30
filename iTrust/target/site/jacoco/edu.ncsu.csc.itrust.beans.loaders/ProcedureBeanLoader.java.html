@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ProcedureBeanLoader.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.beans.loaders</a> &gt; <span class="el_source">ProcedureBeanLoader.java</span></div><h1>ProcedureBeanLoader.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.beans.loaders;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import edu.ncsu.csc.itrust.beans.ProcedureBean;
+
+/**
+ * A loader for ProcedureBeans.
+ * 
+ * Loads in information to/from beans using ResultSets and PreparedStatements. Use the superclass to enforce consistency. 
+ * For details on the paradigm for a loader (and what its methods do), see {@link BeanLoader}
+ */
+public class ProcedureBeanLoader implements BeanLoader&lt;ProcedureBean&gt; {
+	private boolean loadOVProcedureID;
+
+<span class="fc" id="L19">	public ProcedureBeanLoader() {</span>
+<span class="fc" id="L20">		this.loadOVProcedureID = false;</span>
+<span class="fc" id="L21">	}</span>
+
+<span class="fc" id="L23">	public ProcedureBeanLoader(boolean loadOVProcedureID) {</span>
+<span class="fc" id="L24">		this.loadOVProcedureID = loadOVProcedureID;</span>
+<span class="fc" id="L25">	}</span>
+
+	public List&lt;ProcedureBean&gt; loadList(ResultSet rs) throws SQLException {
+<span class="fc" id="L28">		ArrayList&lt;ProcedureBean&gt; list = new ArrayList&lt;ProcedureBean&gt;();</span>
+<span class="fc bfc" id="L29" title="All 2 branches covered.">		while (rs.next()) {</span>
+<span class="fc" id="L30">			list.add(loadSingle(rs));</span>
+		}
+<span class="fc" id="L32">		return list;</span>
+	}
+
+	public ProcedureBean loadSingle(ResultSet rs) throws SQLException {
+<span class="fc" id="L36">		ProcedureBean procedure = new ProcedureBean(rs.getString(&quot;Code&quot;));</span>
+<span class="fc" id="L37">		procedure.setDescription(rs.getString(&quot;Description&quot;));</span>
+<span class="fc" id="L38">		procedure.setAttribute(rs.getString(&quot;Attribute&quot;));</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">		if (loadOVProcedureID) {</span>
+<span class="fc" id="L40">			procedure.setOvProcedureID(rs.getLong(&quot;ID&quot;));</span>
+<span class="fc" id="L41">			procedure.setDate(rs.getDate(&quot;visitDate&quot;));</span>
+		}
+		
+<span class="fc" id="L44">		return procedure;</span>
+
+	}
+
+	public PreparedStatement loadParameters(PreparedStatement ps, ProcedureBean bean) throws SQLException {
+<span class="nc" id="L49">		ps.setString(1, bean.getDescription());</span>
+<span class="nc" id="L50">		return ps;</span>
+	}
+	
+	public List&lt;ProcedureBean&gt; loadAll(ResultSet rs) throws SQLException {
+<span class="fc" id="L54">		ArrayList&lt;ProcedureBean&gt; list = new ArrayList&lt;ProcedureBean&gt;();</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">		while (rs.next()) {</span>
+<span class="fc" id="L56">			ProcedureBean single = new ProcedureBean(rs.getString(&quot;Code&quot;));</span>
+<span class="fc" id="L57">			single.setDescription(rs.getString(&quot;Description&quot;));</span>
+<span class="fc" id="L58">			single.setAttribute(rs.getString(&quot;Attribute&quot;));</span>
+<span class="fc" id="L59">			single.setOvProcedureID(rs.getLong(&quot;ID&quot;));</span>
+<span class="fc" id="L60">			single.setDate(rs.getDate(&quot;visitDate&quot;));</span>
+<span class="fc" id="L61">			single.setHcpid(rs.getString(&quot;HCPID&quot;));</span>
+<span class="fc" id="L62">			list.add(single);</span>
+<span class="fc" id="L63">		}</span>
+<span class="fc" id="L64">		return list;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

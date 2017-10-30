@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>RemoteMonitoringDAO.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.dao.mysql</a> &gt; <span class="el_source">RemoteMonitoringDAO.java</span></div><h1>RemoteMonitoringDAO.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.dao.mysql;
+
+import java.sql.Connection;
+import java.util.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import edu.ncsu.csc.itrust.DBUtil;
+import edu.ncsu.csc.itrust.beans.PersonnelBean;
+import edu.ncsu.csc.itrust.beans.RemoteMonitoringDataBean;
+import edu.ncsu.csc.itrust.beans.TelemedicineBean;
+import edu.ncsu.csc.itrust.beans.loaders.RemoteMonitoringDataBeanLoader;
+import edu.ncsu.csc.itrust.beans.loaders.PersonnelLoader;
+import edu.ncsu.csc.itrust.beans.loaders.RemoteMonitoringListsBeanLoader;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.exception.DBException;
+import edu.ncsu.csc.itrust.exception.ITrustException;
+
+/**
+ * Used for the keeping track of remote monitoring data.
+ * 
+ * DAO stands for Database Access Object. 
+ * All DAOs are intended to be reflections of the database, that is,
+ * one DAO per table in the database (most of the time). 
+ * For more complex sets of queries, extra DAOs are added. 
+ * DAOs can assume that all data has been validated and is correct.
+ * 
+ * DAOs should never have setters or any other parameter 
+ * to the constructor than a factory. All DAOs should be
+ * accessed by DAOFactory (@see {@link DAOFactory}) 
+ * and every DAO should have a factory - for obtaining JDBC
+ * connections and/or accessing other DAOs.
+ */
+@SuppressWarnings({})
+public class RemoteMonitoringDAO {
+	private transient final DAOFactory factory;
+<span class="fc" id="L40">	private transient final RemoteMonitoringDataBeanLoader loader = new RemoteMonitoringDataBeanLoader();</span>
+<span class="fc" id="L41">	private transient final RemoteMonitoringListsBeanLoader rmListLoader = new RemoteMonitoringListsBeanLoader();</span>
+<span class="fc" id="L42">	private transient final PersonnelLoader personnelLoader = new PersonnelLoader();</span>
+
+	/**
+	 * The typical constructor.
+	 * @param factory The {@link DAOFactory} associated with this DAO, 
+	 * 		which is used for obtaining SQL connections, etc.
+	 */
+<span class="fc" id="L49">	public RemoteMonitoringDAO(final DAOFactory factory) {</span>
+<span class="fc" id="L50">		this.factory = factory;</span>
+<span class="fc" id="L51">	}</span>
+	
+	/**
+	 * Return remote monitoring list data for a given patient.
+	 * 
+	 * @param patientMID Patient to retrieve data for.
+	 * @return List of TelemedicineBeans
+	 * @throws DBException
+	 */
+	public List&lt;TelemedicineBean&gt; getTelemedicineBean(final long patientMID) throws DBException {
+<span class="fc" id="L61">		Connection conn = null;</span>
+<span class="fc" id="L62">		PreparedStatement pstmt = null;</span>
+		try {
+<span class="fc" id="L64">			conn = factory.getConnection();</span>
+<span class="fc" id="L65">			pstmt = conn.prepareStatement(&quot;SELECT * FROM remotemonitoringlists WHERE PatientMID=?&quot;);</span>
+<span class="fc" id="L66">			pstmt.setLong(1, patientMID);</span>
+<span class="fc" id="L67">			final ResultSet results = pstmt.executeQuery();</span>
+			
+<span class="fc" id="L69">			final List&lt;TelemedicineBean&gt; listload = rmListLoader.loadList(results);</span>
+<span class="fc" id="L70">			results.close();</span>
+<span class="fc" id="L71">			pstmt.close();</span>
+			
+<span class="fc" id="L73">			return listload;</span>
+<span class="nc" id="L74">		} catch (SQLException e) {</span>
+			
+<span class="nc" id="L76">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L78">			DBUtil.closeConnection(conn, pstmt);</span>
+		}
+	}
+
+	/**
+	 * Returns patient data for a given HCP
+	 * @param loggedInMID loggedInMID
+	 * @return dataList
+	 * @throws DBException
+	 */
+	public List&lt;RemoteMonitoringDataBean&gt; getPatientsData(final long loggedInMID) throws DBException {
+<span class="fc" id="L89">		Connection conn = null;</span>
+<span class="fc" id="L90">		PreparedStatement pstmt = null;</span>
+		try {
+<span class="fc" id="L92">			conn = factory.getConnection();</span>
+<span class="fc" id="L93">			pstmt = conn.prepareStatement(&quot;SELECT * FROM remotemonitoringlists WHERE HCPMID=? ORDER BY PatientMID&quot;);</span>
+<span class="fc" id="L94">			pstmt.setLong(1, loggedInMID);</span>
+<span class="fc" id="L95">			final ResultSet patientRS = pstmt.executeQuery();</span>
+			
+<span class="fc" id="L97">			PreparedStatement pstmt1 = conn.prepareStatement(&quot;SELECT * FROM remotemonitoringdata WHERE timelogged &gt;= CURRENT_DATE ORDER BY PatientID, timeLogged DESC&quot;);</span>
+<span class="fc" id="L98">			final ResultSet dataRS = pstmt1.executeQuery();</span>
+
+<span class="fc" id="L100">			final List&lt;String&gt; patientList = new ArrayList&lt;String&gt;();</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">			while(patientRS.next()) {</span>
+<span class="fc" id="L102">				patientList.add(Long.valueOf(patientRS.getLong(&quot;PatientMID&quot;)).toString());</span>
+			}
+<span class="fc" id="L104">			final List&lt;RemoteMonitoringDataBean&gt; dataList = loader.loadList(dataRS);	</span>
+<span class="fc" id="L105">			pstmt.close();</span>
+<span class="fc" id="L106">			dataRS.close();</span>
+<span class="fc" id="L107">			pstmt1.close();</span>
+			
+			int idx1;
+			int idx2;
+			//Go through all patients and remove any that aren't monitored by this HCP
+<span class="fc bfc" id="L112" title="All 2 branches covered.">			for(idx1 = 0; idx1 &lt; dataList.size(); idx1++) {</span>
+<span class="pc bpc" id="L113" title="1 of 2 branches missed.">				if(!patientList.contains(Long.valueOf(dataList.get(idx1).getPatientMID()).toString())) {</span>
+<span class="nc" id="L114">					dataList.remove(idx1);</span>
+<span class="nc" id="L115">					idx1--;</span>
+				}
+			}
+			
+			//Add values in patient list with no data for today to list.
+			boolean itsThere;
+<span class="fc bfc" id="L121" title="All 2 branches covered.">			for(idx1 = 0; idx1 &lt; patientList.size(); idx1++) {</span>
+<span class="fc" id="L122">				itsThere = false;</span>
+<span class="fc bfc" id="L123" title="All 2 branches covered.">				for(idx2 = 0; idx2 &lt; dataList.size(); idx2++) {</span>
+<span class="fc bfc" id="L124" title="All 2 branches covered.">					if(dataList.get(idx2).getPatientMID() == Long.parseLong(patientList.get(idx1))) {</span>
+<span class="fc" id="L125">						itsThere = true;</span>
+<span class="fc" id="L126">						break;</span>
+					}
+				}
+<span class="fc bfc" id="L129" title="All 2 branches covered.">				if(!itsThere) {</span>
+<span class="fc" id="L130">					dataList.add(new RemoteMonitoringDataBean(Long.parseLong(patientList.get(idx1))));</span>
+				}
+			}
+			
+<span class="fc" id="L134">			return dataList;</span>
+<span class="nc" id="L135">		} catch (SQLException e) {</span>
+			
+<span class="nc" id="L137">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L139">			DBUtil.closeConnection(conn, pstmt);</span>
+		}
+	}
+	
+	/**
+	 * getPatientDataByDate
+	 * @param patientMID patientMID
+	 * @param lower lower
+	 * @param upper upeer
+	 * @return dataList
+	 * @throws DBException
+	 */
+	public List&lt;RemoteMonitoringDataBean&gt; getPatientDataByDate(final long patientMID, final Date lower, final Date upper) throws DBException{
+<span class="fc" id="L152">		Connection conn = null;</span>
+<span class="fc" id="L153">		PreparedStatement pstmt = null;</span>
+		try{
+<span class="fc" id="L155">			conn = factory.getConnection();</span>
+<span class="fc" id="L156">			pstmt = conn.prepareStatement(&quot;SELECT * FROM remotemonitoringdata WHERE PatientID=? AND timeLogged &gt;= ? AND timeLogged &lt;= ? ORDER BY timeLogged DESC&quot;);</span>
+<span class="fc" id="L157">			pstmt.setLong(1, patientMID);</span>
+<span class="fc" id="L158">			pstmt.setTimestamp(2, new Timestamp(lower.getTime()));</span>
+			// add 1 day's worth to include the upper
+<span class="fc" id="L160">			pstmt.setTimestamp(3, new Timestamp(upper.getTime() + 1000L * 60L * 60 * 24L));</span>
+<span class="fc" id="L161">			final ResultSet results = pstmt.executeQuery();</span>
+<span class="fc" id="L162">			final List&lt;RemoteMonitoringDataBean&gt; dataList = loader.loadList(results);</span>
+<span class="fc" id="L163">			results.close();</span>
+<span class="fc" id="L164">			pstmt.close();</span>
+<span class="fc" id="L165">			return dataList;</span>
+<span class="nc" id="L166">		}catch (SQLException e) {</span>
+			
+<span class="nc" id="L168">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L170">			DBUtil.closeConnection(conn, pstmt);</span>
+		}
+	}
+	
+	/**
+	 * Get the requested type of data for the specified patient.
+	 * 
+	 * @param patientMID The MID of the patient
+	 * @param dataType The type of telemedicine data to return
+	 * @return A list of beans which all contain information of the requested type
+	 * @throws DBException
+	 */
+	public List&lt;RemoteMonitoringDataBean&gt; getPatientDataByType(final long patientMID, final String dataType) throws DBException{
+<span class="fc" id="L183">		Connection conn = null;</span>
+<span class="fc" id="L184">		PreparedStatement pstmt = null;</span>
+		try{
+<span class="fc" id="L186">			conn = factory.getConnection();</span>
+<span class="fc" id="L187">			pstmt = conn.prepareStatement(&quot;SELECT * FROM remotemonitoringdata WHERE PatientID=? AND &quot;+dataType+&quot; != -1 ORDER BY timeLogged ASC&quot;);</span>
+<span class="fc" id="L188">			pstmt.setLong(1, patientMID);</span>
+
+<span class="fc" id="L190">			final ResultSet results = pstmt.executeQuery();</span>
+<span class="fc" id="L191">			final List&lt;RemoteMonitoringDataBean&gt; dataList = loader.loadList(results);</span>
+<span class="fc" id="L192">			results.close();</span>
+<span class="fc" id="L193">			pstmt.close();</span>
+<span class="fc" id="L194">			return dataList;</span>
+<span class="nc" id="L195">		}catch (SQLException e) {</span>
+			
+<span class="nc" id="L197">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L199">			DBUtil.closeConnection(conn, pstmt);</span>
+		}
+	}
+
+	/**
+	 * Store pedometer reading and height/weight data for a given patient 
+	 * in the RemoteMonitoringData table
+	 * 
+	 * @param patientMID The MID of the patient
+	 * @param bean bean
+	 * @param height The height of the patient
+	 * @param weight The weight of the patient
+	 * @param reporterRole  The role of the person 
+	 * 		that reported these monitoring stats
+	 * @param reporterMID  The MID of the person that reported these monitoring stats
+	 * @throws ITrustException
+	 */
+	public void storePatientData(final long patientMID, final RemoteMonitoringDataBean bean, final String reporterRole, final long reporterMID)
+	throws ITrustException {
+<span class="fc" id="L218">		float height = bean.getHeight();</span>
+<span class="fc" id="L219">		float weight = bean.getWeight();</span>
+<span class="fc" id="L220">		int pedometer = bean.getPedometerReading();</span>
+<span class="fc" id="L221">		int sbp = bean.getSystolicBloodPressure();</span>
+<span class="fc" id="L222">		int dbp = bean.getDiastolicBloodPressure();</span>
+<span class="fc" id="L223">		int glucose = bean.getGlucoseLevel();</span>
+		
+<span class="fc bfc" id="L225" title="All 2 branches covered.">		if (height == 0){	height		= -1; }</span>
+<span class="fc bfc" id="L226" title="All 2 branches covered.">		if (weight == 0){	weight		= -1; }</span>
+<span class="fc bfc" id="L227" title="All 2 branches covered.">		if (pedometer == 0){pedometer	= -1; }</span>
+<span class="fc bfc" id="L228" title="All 2 branches covered.">		if (sbp == 0){		sbp			= -1; }</span>
+<span class="fc bfc" id="L229" title="All 2 branches covered.">		if (dbp == 0){		dbp			= -1; }</span>
+<span class="fc bfc" id="L230" title="All 2 branches covered.">		if (glucose == 0){	glucose		= -1; }</span>
+		
+<span class="pc bpc" id="L232" title="3 of 4 branches missed.">		if (getNumberOfDailyEntries(patientMID, &quot;height&quot;) &gt;= 1 &amp;&amp; height != -1) {</span>
+<span class="nc" id="L233">			throw new ITrustException(&quot;Patient height entries for today cannot exceed 1.&quot;);</span>
+<span class="pc bpc" id="L234" title="1 of 4 branches missed.">		} if (getNumberOfDailyEntries(patientMID, &quot;weight&quot;) &gt;= 1 &amp;&amp; weight != -1) {</span>
+<span class="fc" id="L235">			throw new ITrustException(&quot;Patient weight entries for today cannot exceed 1.&quot;);</span>
+<span class="pc bpc" id="L236" title="1 of 4 branches missed.">		} if (getNumberOfDailyEntries(patientMID, &quot;pedometerReading&quot;) &gt;= 1 &amp;&amp; pedometer != -1) {</span>
+<span class="fc" id="L237">			throw new ITrustException(&quot;Patient pedometer reading entries for today cannot exceed 1.&quot;);</span>
+<span class="fc bfc" id="L238" title="All 4 branches covered.">		} if (getNumberOfDailyEntries(patientMID, &quot;glucoseLevel&quot;) &gt;= 10 &amp;&amp; glucose != -1) {</span>
+<span class="fc" id="L239">			throw new ITrustException(&quot;Patient glucose level entries for today cannot exceed 10.&quot;);</span>
+<span class="pc bpc" id="L240" title="1 of 4 branches missed.">		} if (getNumberOfDailyEntries(patientMID, &quot;systolicBloodPressure&quot;) &gt;= 10 &amp;&amp; sbp != -1) {</span>
+<span class="nc" id="L241">			throw new ITrustException(&quot;Patient systolic blood pressure entries for today cannot exceed 10.&quot;);</span>
+<span class="pc bpc" id="L242" title="1 of 4 branches missed.">		} if (getNumberOfDailyEntries(patientMID, &quot;diastolicBloodPressure&quot;) &gt;= 10 &amp;&amp; dbp != -1) {</span>
+<span class="nc" id="L243">			throw new ITrustException(&quot;Patient diastolic blood pressure entries for today cannot exceed 10.&quot;);</span>
+		
+<span class="fc bfc" id="L245" title="All 2 branches covered.">		} if(&quot;patient representative&quot;.equals(reporterRole)) {</span>
+<span class="fc" id="L246">			validatePR(reporterMID, patientMID);</span>
+		}
+<span class="fc" id="L248">		Connection conn = null;</span>
+<span class="fc" id="L249">		PreparedStatement pstmt = null;</span>
+		try {
+<span class="fc" id="L251">			conn = factory.getConnection();</span>
+<span class="fc" id="L252">			pstmt = conn.prepareStatement(&quot;INSERT INTO remotemonitoringdata(PatientID, height, weight, &quot;</span>
+					+ &quot;pedometerReading, systolicBloodPressure, diastolicBloodPressure, glucoseLevel, ReporterRole, ReporterID) VALUES(?,?,?,?,?,?,?,?,?)&quot;);
+<span class="fc" id="L254">			pstmt.setLong(1, patientMID);</span>
+<span class="fc" id="L255">			pstmt.setFloat(2, height);</span>
+<span class="fc" id="L256">			pstmt.setFloat(3, weight);</span>
+<span class="fc" id="L257">			pstmt.setInt(4, pedometer);</span>
+<span class="fc" id="L258">			pstmt.setInt(5, sbp);</span>
+<span class="fc" id="L259">			pstmt.setInt(6, dbp);</span>
+<span class="fc" id="L260">			pstmt.setInt(7, glucose);</span>
+<span class="fc" id="L261">			pstmt.setString(8, reporterRole);</span>
+<span class="fc" id="L262">			pstmt.setLong(9, reporterMID);</span>
+<span class="fc" id="L263">			pstmt.executeUpdate();</span>
+<span class="fc" id="L264">			pstmt.close();</span>
+<span class="nc" id="L265">		} catch (SQLException e) {</span>
+			
+<span class="nc" id="L267">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L269">			DBUtil.closeConnection(conn, pstmt);</span>
+<span class="fc" id="L270">		}</span>
+<span class="fc" id="L271">	}</span>
+	
+	/**
+	 * Private method to get the number of entries for a 
+	 * certain patientID and a certain data type for today.
+	 * @param patientMID
+	 * @param dataType
+	 * @return the number of entries
+	 * @throws DBException
+	 */
+	private int getNumberOfDailyEntries(final long patientMID, final String dataType) throws DBException{
+<span class="fc" id="L282">		Connection conn = null;</span>
+<span class="fc" id="L283">		PreparedStatement pstmt = null;</span>
+		try {
+<span class="fc" id="L285">			conn = factory.getConnection();</span>
+<span class="fc" id="L286">			pstmt = conn.prepareStatement(&quot;SELECT * FROM remotemonitoringdata WHERE PatientID=? AND &quot;</span>
+										+ dataType + &quot;!=? AND DATE(timeLogged)=CURRENT_DATE&quot;);
+<span class="fc" id="L288">			pstmt.setLong(1, patientMID);</span>
+<span class="fc" id="L289">			pstmt.setInt(2, -1);</span>
+<span class="fc" id="L290">			final ResultSet results = pstmt.executeQuery();</span>
+<span class="fc" id="L291">			final List&lt;RemoteMonitoringDataBean&gt; patients = loader.loadList(results);</span>
+<span class="fc" id="L292">			results.close();</span>
+<span class="fc" id="L293">			pstmt.close();</span>
+<span class="fc" id="L294">			return patients.size();</span>
+<span class="fc" id="L295">		} catch (SQLException e) {</span>
+			
+<span class="fc" id="L297">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L299">			DBUtil.closeConnection(conn, pstmt);</span>
+		}
+	}
+	
+	/**
+	 * validatePR
+	 * @param representativeMID representativeMID
+	 * @param patientMID patientMID
+	 * @throws ITrustException
+	 */
+	public void validatePR(final long representativeMID, final long patientMID)
+			throws ITrustException {
+<span class="fc" id="L311">		Connection conn = null;</span>
+<span class="fc" id="L312">		PreparedStatement pstmt = null;</span>
+		try {
+<span class="fc" id="L314">			conn = factory.getConnection();</span>
+<span class="fc" id="L315">			pstmt = conn.prepareStatement(&quot;SELECT * FROM representatives WHERE RepresenterMID=? AND RepresenteeMID=?&quot;);</span>
+<span class="fc" id="L316">			pstmt.setLong(1, representativeMID);</span>
+<span class="fc" id="L317">			pstmt.setLong(2, patientMID);</span>
+<span class="fc" id="L318">			final ResultSet results = pstmt.executeQuery();</span>
+<span class="fc bfc" id="L319" title="All 2 branches covered.">			if(!results.next()){ //no rows</span>
+<span class="fc" id="L320">				results.close();</span>
+<span class="fc" id="L321">				pstmt.close();</span>
+<span class="fc" id="L322">				throw new ITrustException(&quot;Representer is not valid for patient &quot; + patientMID);</span>
+			}
+			
+<span class="fc" id="L325">			results.close();</span>
+<span class="fc" id="L326">			pstmt.close();</span>
+			
+<span class="nc" id="L328">		} catch (SQLException e) {</span>
+			
+<span class="nc" id="L330">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L332">			DBUtil.closeConnection(conn, pstmt);</span>
+<span class="fc" id="L333">		}</span>
+<span class="fc" id="L334">	}</span>
+	
+	/**
+	 * Show the list of HCPs monitoring this patient
+	 * 
+	 * @param patientMID The MID of the patient
+	 * @return list of HCPs monitoring the provided patient
+	 */
+	public List&lt;PersonnelBean&gt; getMonitoringHCPs(final long patientMID) throws DBException {
+<span class="fc" id="L343">		Connection conn = null;</span>
+<span class="fc" id="L344">		PreparedStatement pstmt = null;</span>
+		try {
+<span class="fc" id="L346">			conn = factory.getConnection();</span>
+<span class="fc" id="L347">			pstmt = conn.prepareStatement(&quot;SELECT * FROM personnel, remotemonitoringlists &quot;</span>
+					+ &quot;WHERE remotemonitoringlists.PatientMID=? AND remotemonitoringlists.HCPMID=personnel.MID&quot;);
+<span class="fc" id="L349">			pstmt.setLong(1, patientMID);</span>
+<span class="fc" id="L350">			final ResultSet results = pstmt.executeQuery();</span>
+<span class="fc" id="L351">			final List&lt;PersonnelBean&gt; listload = personnelLoader.loadList(results);</span>
+<span class="fc" id="L352">			results.close();</span>
+<span class="fc" id="L353">			pstmt.close();</span>
+			
+<span class="fc" id="L355">			return listload;</span>
+<span class="nc" id="L356">		} catch (SQLException e) {</span>
+			
+<span class="nc" id="L358">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L360">			DBUtil.closeConnection(conn, pstmt);</span>
+		}
+	}
+
+	
+	/**
+	 * Add a patient to the list of HCPs' monitoring lists of Patients
+	 * 
+	 * @param patientMID The MID of the patient
+	 * @param HCPMID The MID of the HCP
+	 * @param tBean The TelemedicineBean indicating 
+	 * what telemedicine data the patient is allowed to enter.
+	 * @return true if added successfully, false if already in list
+	 */
+	public boolean addPatientToList(final long patientMID,
+									final long HCPMID,
+									final TelemedicineBean tBean) throws DBException {
+<span class="fc" id="L377">		Connection conn = null;</span>
+<span class="fc" id="L378">		PreparedStatement pstmt = null;</span>
+<span class="fc" id="L379">		boolean added = true;</span>
+		try {
+<span class="fc" id="L381">			conn = factory.getConnection();</span>
+<span class="fc" id="L382">			pstmt = conn.prepareStatement(&quot;SELECT * FROM remotemonitoringlists WHERE PatientMID = ? AND HCPMID = ?&quot;);</span>
+<span class="fc" id="L383">			pstmt.setLong(1, patientMID);</span>
+<span class="fc" id="L384">			pstmt.setLong(2, HCPMID);</span>
+<span class="fc" id="L385">			final ResultSet results = pstmt.executeQuery();</span>
+<span class="fc bfc" id="L386" title="All 2 branches covered.">			if(results.next()){</span>
+<span class="fc" id="L387">				results.close();</span>
+<span class="fc" id="L388">				pstmt.close();</span>
+<span class="fc" id="L389">				added = false;</span>
+			} else {
+<span class="fc" id="L391">				String permissionPS = &quot;SystolicBloodPressure, DiastolicBloodPressure, GlucoseLevel, Height, Weight, PedometerReading&quot;;</span>
+<span class="fc" id="L392">				results.close();</span>
+<span class="fc" id="L393">				pstmt.close();</span>
+<span class="fc" id="L394">				pstmt = conn.prepareStatement(&quot;INSERT INTO remotemonitoringlists(PatientMID, HCPMID, &quot; + permissionPS + &quot;) VALUES(?,?,?,?,?,?,?,?)&quot;);</span>
+<span class="fc" id="L395">				pstmt.setLong(1, patientMID);</span>
+<span class="fc" id="L396">				pstmt.setLong(2, HCPMID);</span>
+<span class="fc" id="L397">				pstmt.setBoolean(3, tBean.isSystolicBloodPressureAllowed());</span>
+<span class="fc" id="L398">				pstmt.setBoolean(4, tBean.isDiastolicBloodPressureAllowed());</span>
+<span class="fc" id="L399">				pstmt.setBoolean(5, tBean.isGlucoseLevelAllowed());</span>
+<span class="fc" id="L400">				pstmt.setBoolean(6, tBean.isHeightAllowed());</span>
+<span class="fc" id="L401">				pstmt.setBoolean(7, tBean.isWeightAllowed());</span>
+<span class="fc" id="L402">				pstmt.setBoolean(8, tBean.isPedometerReadingAllowed());</span>
+<span class="fc" id="L403">				pstmt.executeUpdate();</span>
+				
+<span class="fc" id="L405">				pstmt.close();</span>
+			}
+<span class="fc" id="L407">			return added;</span>
+<span class="nc" id="L408">		} catch (SQLException e) {</span>
+			
+<span class="nc" id="L410">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L412">			DBUtil.closeConnection(conn, pstmt);</span>
+		}
+	}
+	
+	/**
+	 * Remove a patient from the list of HCPs' monitoring lists of Patients
+	 * 
+	 * @param patientMID The MID of the patient
+	 * @param HCPMID The MID of the HCP
+	 * @return true if removed successfully, false if not in list
+	 */
+	public boolean removePatientFromList(final long patientMID, final long HCPMID) throws DBException {
+<span class="fc" id="L424">		Connection conn = null;</span>
+<span class="fc" id="L425">		PreparedStatement pstmt = null;</span>
+<span class="fc" id="L426">		boolean removed = true;</span>
+		try {
+<span class="fc" id="L428">			conn = factory.getConnection();</span>
+<span class="fc" id="L429">			pstmt = conn.prepareStatement(&quot;DELETE FROM remotemonitoringlists WHERE PatientMID = ? AND HCPMID = ?&quot;);</span>
+<span class="fc" id="L430">			pstmt.setLong(1, patientMID);</span>
+<span class="fc" id="L431">			pstmt.setLong(2, HCPMID);</span>
+<span class="fc bfc" id="L432" title="All 2 branches covered.">			if(pstmt.executeUpdate() == 0){</span>
+<span class="fc" id="L433">				pstmt.close();</span>
+<span class="fc" id="L434">				removed = false;</span>
+			}
+<span class="fc" id="L436">			pstmt.close();</span>
+<span class="fc" id="L437">			return removed;</span>
+<span class="fc" id="L438">		} catch (SQLException e) {</span>
+			
+<span class="fc" id="L440">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L442">			DBUtil.closeConnection(conn, pstmt);</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DiagnosesDAO.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.dao.mysql</a> &gt; <span class="el_source">DiagnosesDAO.java</span></div><h1>DiagnosesDAO.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.dao.mysql;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import edu.ncsu.csc.itrust.DBUtil;
+import edu.ncsu.csc.itrust.beans.DiagnosisBean;
+import edu.ncsu.csc.itrust.beans.DiagnosisStatisticsBean;
+import edu.ncsu.csc.itrust.beans.loaders.DiagnosisBeanLoader;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.exception.DBException;
+
+/**
+ * Used for managing diagnoses given during a particular office visit.
+ * 
+ * DAO stands for Database Access Object. All DAOs are intended to be reflections of the database, that is,
+ * one DAO per table in the database (most of the time). For more complex sets of queries, extra DAOs are
+ * added. DAOs can assume that all data has been validated and is correct.
+ * 
+ * DAOs should never have setters or any other parameter to the constructor than a factory. All DAOs should be
+ * accessed by DAOFactory (@see {@link DAOFactory}) and every DAO should have a factory - for obtaining JDBC
+ * connections and/or accessing other DAOs.
+ * 
+ *   
+ *  
+ *  
+ */
+
+public class DiagnosesDAO {
+	private DAOFactory factory;
+<span class="fc" id="L37">	private DiagnosisBeanLoader loader = new DiagnosisBeanLoader(true);</span>
+	
+	/**
+	 * @param factory
+	 */
+<span class="fc" id="L42">	public DiagnosesDAO(DAOFactory factory) {</span>
+<span class="fc" id="L43">		this.factory = factory;</span>
+<span class="fc" id="L44">	}</span>
+	
+	
+	/**
+	 * @param visitID
+	 * @return
+	 * @throws DBException
+	 */
+	public List&lt;DiagnosisBean&gt; getList(long visitID) throws DBException {
+<span class="fc" id="L53">		Connection conn = null;</span>
+<span class="fc" id="L54">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L56">			conn = factory.getConnection();</span>
+<span class="fc" id="L57">			ps = conn.prepareStatement(&quot;Select * From ovdiagnosis,icdcodes Where ovdiagnosis.VisitID = ? &quot;</span>
+					+ &quot;AND icdcodes.Code=ovdiagnosis.ICDCode&quot;);
+<span class="fc" id="L59">			ps.setLong(1, visitID);</span>
+<span class="fc" id="L60">			ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L61">			List&lt;DiagnosisBean&gt; loadlist = loader.loadList(rs);</span>
+<span class="fc" id="L62">			rs.close();</span>
+<span class="fc" id="L63">			ps.close();</span>
+<span class="fc" id="L64">			return loadlist;</span>
+<span class="nc" id="L65">		} catch (SQLException e) {</span>
+			
+<span class="nc" id="L67">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L69">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+	/**
+	 * Gets a local zip code count and regional count of a specified diagnosis code
+	 * 
+	 * @param icdCode The diagnosis code
+	 * @param zipCode The zip code to evaluate
+	 * @param lower The starting date
+	 * @param upper The ending date
+	 * @return A bean containing the local and regional counts
+	 * @throws DBException
+	 */
+	public DiagnosisStatisticsBean getDiagnosisCounts(String icdCode, String zipCode, java.util.Date lower, java.util.Date upper) throws DBException {
+<span class="fc" id="L84">		Connection conn = null;</span>
+<span class="fc" id="L85">		PreparedStatement ps = null;</span>
+<span class="fc" id="L86">		DiagnosisStatisticsBean dsBean = null;</span>
+		try {
+<span class="fc" id="L88">			conn = factory.getConnection();</span>
+<span class="fc" id="L89">			ps = conn.prepareStatement(&quot;SELECT * FROM ovdiagnosis INNER JOIN officevisits ON ovdiagnosis.VisitID=officevisits.ID INNER JOIN patients ON officevisits.PatientID=patients.MID WHERE ICDCode=? AND zip=? AND visitDate &gt;= ? AND visitDate &lt;= ? &quot;);</span>
+<span class="fc" id="L90">			ps.setString(1, icdCode);</span>
+<span class="fc" id="L91">			ps.setString(2, zipCode);</span>
+<span class="fc" id="L92">			ps.setTimestamp(3, new Timestamp(lower.getTime()));</span>
+			// add 1 day's worth to include the upper
+<span class="fc" id="L94">			ps.setTimestamp(4, new Timestamp(upper.getTime() + 1000L * 60L * 60 * 24L));</span>
+			
+<span class="fc" id="L96">			ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L97">			rs.last();</span>
+<span class="fc" id="L98">			int local = rs.getRow();</span>
+<span class="fc" id="L99">			ps.close();</span>
+<span class="fc" id="L100">			ps = conn.prepareStatement(&quot;SELECT * FROM ovdiagnosis INNER JOIN officevisits ON ovdiagnosis.VisitID=officevisits.ID INNER JOIN patients ON officevisits.PatientID=patients.MID WHERE ICDCode=? AND zip LIKE ? AND visitDate &gt;= ? AND visitDate &lt;= ? &quot;);</span>
+<span class="fc" id="L101">			ps.setString(1, icdCode);</span>
+<span class="fc" id="L102">			ps.setString(2, zipCode.substring(0, 3) + &quot;%&quot;);</span>
+<span class="fc" id="L103">			ps.setTimestamp(3, new Timestamp(lower.getTime()));</span>
+			// add 1 day's worth to include the upper
+<span class="fc" id="L105">			ps.setTimestamp(4, new Timestamp(upper.getTime() + 1000L * 60L * 60 * 24L));</span>
+			
+<span class="fc" id="L107">			rs = ps.executeQuery();</span>
+<span class="fc" id="L108">			rs.last();</span>
+<span class="fc" id="L109">			int region = rs.getRow();</span>
+			
+<span class="fc" id="L111">			dsBean = new DiagnosisStatisticsBean(zipCode, local, region, lower, upper);</span>
+<span class="fc" id="L112">			rs.close();</span>
+<span class="fc" id="L113">			ps.close();</span>
+<span class="fc" id="L114">			return dsBean;</span>
+<span class="nc" id="L115">		} catch (SQLException e) {</span>
+			
+<span class="nc" id="L117">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L119">			DBUtil.closeConnection(conn, ps);</span>
+		}
+		
+	}
+	
+	/**
+	 * Gets a weekly local zip code count and regional count of a specified diagnosis code over a time period
+	 * 
+	 * @param icdCode The diagnosis code
+	 * @param zipCode The zip code to evaluate
+	 * @param lower The starting date
+	 * @param upper The ending date
+	 * @return A list of beans containing the local and regional count for each week in the time period
+	 * @throws DBException
+	 */
+	public ArrayList&lt;DiagnosisStatisticsBean&gt; getWeeklyCounts(String icdCode, String zipCode, java.util.Date lower, java.util.Date upper) throws DBException {
+<span class="fc" id="L135">		Calendar cal = Calendar.getInstance();</span>
+<span class="fc" id="L136">		cal.setTime(lower);</span>
+<span class="fc" id="L137">		cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);</span>
+<span class="fc" id="L138">		Date lowerDate = cal.getTime();</span>
+<span class="fc" id="L139">		cal.add(Calendar.HOUR, 24*6);</span>
+<span class="fc" id="L140">		Date upperDate = cal.getTime();</span>
+		
+<span class="fc" id="L142">		ArrayList&lt;DiagnosisStatisticsBean&gt; weekStats = new ArrayList&lt;DiagnosisStatisticsBean&gt;();</span>
+		
+		do {
+<span class="fc" id="L145">			DiagnosisStatisticsBean db = getDiagnosisCounts(icdCode, zipCode, lowerDate, upperDate);</span>
+<span class="fc" id="L146">			weekStats.add(db);</span>
+			
+<span class="fc" id="L148">			cal.setTime(upperDate);</span>
+<span class="fc" id="L149">			cal.add(Calendar.HOUR, 24);</span>
+<span class="fc" id="L150">			lowerDate = cal.getTime();</span>
+<span class="fc" id="L151">			cal.add(Calendar.HOUR, 24*6);</span>
+<span class="fc" id="L152">			upperDate = cal.getTime();</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">		} while (lowerDate.before(upper));</span>
+		
+<span class="fc" id="L155">		return weekStats;</span>
+	}
+	
+	public DiagnosisStatisticsBean getCountForWeekOf(String icdCode, String zipCode, java.util.Date lower) throws DBException {
+<span class="fc" id="L159">		Calendar cal = Calendar.getInstance();</span>
+<span class="fc" id="L160">		cal.setTime(lower);</span>
+<span class="fc" id="L161">		cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);</span>
+<span class="fc" id="L162">		Date lowerDate = cal.getTime();</span>
+<span class="fc" id="L163">		cal.add(Calendar.HOUR, 24*6);</span>
+<span class="fc" id="L164">		Date upperDate = cal.getTime();</span>
+
+<span class="fc" id="L166">		return  getDiagnosisCounts(icdCode, zipCode, lowerDate, upperDate);</span>
+	}
+	
+	public Date findEarliestIncident(String icdCode) throws DBException{
+<span class="fc" id="L170">		Connection conn = null;</span>
+<span class="fc" id="L171">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L173">			conn = factory.getConnection();</span>
+<span class="fc" id="L174">			ps = conn.prepareStatement(&quot;SELECT MIN(visitDate) AS visitDate FROM ovdiagnosis d INNER JOIN officevisits o &quot; +</span>
+										&quot; ON d.VisitID=o.ID &quot; + 
+										&quot; WHERE ICDCode LIKE ?&quot;);
+<span class="fc" id="L177">			ps.setString(1, icdCode + &quot;%&quot;);</span>
+			
+<span class="fc" id="L179">			ResultSet rs = ps.executeQuery();</span>
+<span class="pc bpc" id="L180" title="1 of 2 branches missed.">			if (rs.next()) {</span>
+<span class="fc" id="L181">				Date date = rs.getDate(&quot;visitDate&quot;);</span>
+<span class="fc" id="L182">				rs.close();</span>
+<span class="fc" id="L183">				ps.close();</span>
+<span class="fc" id="L184">				return date;</span>
+			} else{
+<span class="nc" id="L186">				rs.close();</span>
+<span class="nc" id="L187">				ps.close();</span>
+<span class="nc" id="L188">				return null;</span>
+			}
+<span class="nc" id="L190">		} catch (SQLException e) {</span>
+			
+<span class="nc" id="L192">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L194">			DBUtil.closeConnection(conn, ps);</span>
+		}
+		
+	}
+	
+	/**
+	 * Adds a diagnosis bean to the database.
+	 * @param pres The prescription bean to be added.
+	 * @return The unique ID of the newly added bean.
+	 * @throws DBException
+	 */
+	public long add(DiagnosisBean bean) throws DBException {
+<span class="fc" id="L206">		Connection conn = null;</span>
+<span class="fc" id="L207">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L209">			conn = factory.getConnection();</span>
+<span class="fc" id="L210">			String statement = &quot;INSERT INTO ovdiagnosis &quot; +</span>
+				&quot;(VisitID,ICDCode) VALUES (?,?)&quot;;
+<span class="fc" id="L212">			ps = conn.prepareStatement(statement);</span>
+<span class="fc" id="L213">			ps.setLong(1, bean.getVisitID());</span>
+<span class="fc" id="L214">			ps.setString(2, bean.getICDCode());</span>
+<span class="fc" id="L215">			ps.executeUpdate();</span>
+<span class="fc" id="L216">			ps.close();</span>
+<span class="fc" id="L217">			return DBUtil.getLastInsert(conn);</span>
+<span class="fc" id="L218">		} catch (SQLException e) {</span>
+			
+<span class="fc" id="L220">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L222">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+	
+	/**
+	 * Edits an existing prescription bean.
+	 * 
+	 * @param pres The newly updated prescription bean.
+	 * @return A long indicating the ID of the newly updated prescription bean.
+	 * @throws DBException
+	 */
+	public long edit(DiagnosisBean bean) throws DBException {
+<span class="fc" id="L235">		Connection conn = null;</span>
+<span class="fc" id="L236">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L238">			conn = factory.getConnection();</span>
+<span class="fc" id="L239">			String statement = &quot;UPDATE ovdiagnosis &quot; +</span>
+					&quot;SET VisitID=?, ICDCode=? &quot; +
+					&quot;WHERE ID = ?&quot;;
+<span class="fc" id="L242">			ps = conn.prepareStatement(statement);</span>
+<span class="fc" id="L243">			ps.setLong(1, bean.getVisitID());</span>
+<span class="fc" id="L244">			ps.setString(2, bean.getICDCode());</span>
+<span class="fc" id="L245">			ps.setLong(3, bean.getOvDiagnosisID());</span>
+<span class="fc" id="L246">			ps.executeUpdate();</span>
+<span class="fc" id="L247">			ps.close();</span>
+<span class="fc" id="L248">			return DBUtil.getLastInsert(conn);</span>
+<span class="nc" id="L249">		} catch (SQLException e) {</span>
+			
+<span class="nc" id="L251">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L253">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+
+	/**
+	 * Removes the given diagnosis from its office visit
+	 * 
+	 * @param ovMedicationID The unique ID of the medication to be removed.
+	 * @throws DBException
+	 */
+	public void remove(long ovDiagnosisID) throws DBException {
+<span class="fc" id="L264">		Connection conn = null;</span>
+<span class="fc" id="L265">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L267">			conn = factory.getConnection();</span>
+<span class="fc" id="L268">			ps = conn.prepareStatement(&quot;DELETE FROM ovdiagnosis WHERE ID=? &quot;);</span>
+<span class="fc" id="L269">			ps.setLong(1, ovDiagnosisID);</span>
+<span class="fc" id="L270">			ps.executeUpdate();</span>
+<span class="fc" id="L271">			ps.close();</span>
+<span class="nc" id="L272">		} catch (SQLException e) {</span>
+			
+<span class="nc" id="L274">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L276">			DBUtil.closeConnection(conn, ps);</span>
+<span class="fc" id="L277">		}</span>
+<span class="fc" id="L278">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>OphthalmologyScheduleOVRecordLoader.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.beans.loaders</a> &gt; <span class="el_source">OphthalmologyScheduleOVRecordLoader.java</span></div><h1>OphthalmologyScheduleOVRecordLoader.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.beans.loaders;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import edu.ncsu.csc.itrust.beans.OphthalmologyScheduleOVRecordBean;
+
+/**
+ * A loader for OphthalmologyScheduleOVRecordBean.
+ * 
+ * Loads in information to/from beans using ResultSets and PreparedStatements. Use the superclass to enforce consistency. 
+ * For details on the paradigm for a loader (and what its methods do), see {@link BeanLoader}
+ */
+<span class="fc" id="L17">public class OphthalmologyScheduleOVRecordLoader implements BeanLoader&lt;OphthalmologyScheduleOVRecordBean&gt;{</span>
+
+	/**
+	 * Returns a list of beans with data from a ResultSet.
+	 * @param rs ResultSet containing data from the database
+	 * @return A list of OphthalmologyScheduleOVRecordBean created from the ResultSet parameter.
+	 * @throws SQLException thrown when there is a error resulting from accessing a field of the ResultSet.
+	 */
+	public List&lt;OphthalmologyScheduleOVRecordBean&gt; loadList(ResultSet rs) throws SQLException {
+<span class="fc" id="L26">		List&lt;OphthalmologyScheduleOVRecordBean&gt; list = new ArrayList&lt;OphthalmologyScheduleOVRecordBean&gt;();</span>
+<span class="fc bfc" id="L27" title="All 2 branches covered.">		while (rs.next()) {</span>
+<span class="fc" id="L28">			list.add(loadSingle(rs));</span>
+		}
+<span class="fc" id="L30">		return list;</span>
+	}
+	
+	/**
+	 * Internal method used to load results into beans from ResultSets.
+	 * @param rs ResultSet that data is coming out of.
+	 * @param p bean that data is going into.
+	 * @throws SQLException thrown when there is a error resulting from accessing a field of the ResultSet.
+	 */
+	private void loadCommon(ResultSet rs, OphthalmologyScheduleOVRecordBean p) throws SQLException {
+<span class="fc" id="L40">		p.setPatientmid(rs.getLong(&quot;patientmid&quot;));</span>
+<span class="fc" id="L41">		p.setDoctormid(rs.getLong(&quot;doctormid&quot;));</span>
+<span class="fc" id="L42">		p.setOid(rs.getLong(&quot;oid&quot;));</span>
+<span class="fc" id="L43">		p.setDate(rs.getTimestamp(&quot;dateTime&quot;));</span>
+<span class="fc" id="L44">		p.setDocLastName(rs.getString(&quot;docLastName&quot;));</span>
+<span class="fc" id="L45">		p.setDocFirstName(rs.getString(&quot;docFirstName&quot;));</span>
+<span class="fc" id="L46">		p.setComment(rs.getString(&quot;comments&quot;));</span>
+<span class="fc" id="L47">		p.setPending(rs.getBoolean(&quot;pending&quot;));</span>
+<span class="fc" id="L48">		p.setAccepted(rs.getBoolean(&quot;accepted&quot;));</span>
+<span class="fc" id="L49">	}</span>
+	
+	/**
+	 * Takes the first result out of a ResultSet and returns a bean with that data in it.
+	 * @param rs ResultSet containing data from the database.
+	 * @return p bean containing the data.
+	 * @throws SQLException thrown when there is a error resulting from accessing a field of the ResultSet.
+	 */
+	public OphthalmologyScheduleOVRecordBean loadSingle(ResultSet rs) throws SQLException {
+<span class="fc" id="L58">		OphthalmologyScheduleOVRecordBean p = new OphthalmologyScheduleOVRecordBean();</span>
+<span class="fc" id="L59">		loadCommon(rs, p);</span>
+<span class="fc" id="L60">		return p;</span>
+	}
+	
+	/**
+	 * Loads values into the parameters of a preparedStatement from the given OphthalmologyOVRecordBean.
+	 * @param ps The PreparedStatement that will have it's parameters filled in.
+	 * @param p The OphthalmologyOVRecordBean used to fill in the parameters of the preparedStatement.
+	 * @return The preparedStatement with the parameters filled in.
+	 * @throws SQLException thrown when there is a error resulting from accessing a field of the ResultSet.
+	 */
+	public PreparedStatement loadParameters(PreparedStatement ps, OphthalmologyScheduleOVRecordBean p) throws SQLException {
+<span class="fc" id="L71">		int i = 1;</span>
+<span class="fc" id="L72">	    ps.setLong(i++, p.getPatientmid());</span>
+<span class="fc" id="L73">	    ps.setLong(i++, p.getDoctormid());</span>
+<span class="fc" id="L74">		ps.setTimestamp(i++, p.getDate());</span>
+<span class="fc" id="L75">		ps.setString(i++, p.getDocLastName());</span>
+<span class="fc" id="L76">		ps.setString(i++, p.getDocFirstName());</span>
+<span class="fc" id="L77">		ps.setString(i++, p.getComment());</span>
+<span class="fc" id="L78">		ps.setBoolean(i++, p.isPending());</span>
+<span class="fc" id="L79">		ps.setBoolean(i++, p.isAccepted());</span>
+<span class="fc" id="L80">		return ps;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

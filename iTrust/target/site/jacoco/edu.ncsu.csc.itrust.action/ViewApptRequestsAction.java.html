@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ViewApptRequestsAction.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.action</a> &gt; <span class="el_source">ViewApptRequestsAction.java</span></div><h1>ViewApptRequestsAction.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.action;
+
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.List;
+import edu.ncsu.csc.itrust.beans.ApptBean;
+import edu.ncsu.csc.itrust.beans.ApptRequestBean;
+import edu.ncsu.csc.itrust.beans.MessageBean;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.dao.mysql.ApptDAO;
+import edu.ncsu.csc.itrust.dao.mysql.ApptRequestDAO;
+import edu.ncsu.csc.itrust.dao.mysql.PersonnelDAO;
+import edu.ncsu.csc.itrust.exception.DBException;
+import edu.ncsu.csc.itrust.exception.FormValidationException;
+import edu.ncsu.csc.itrust.exception.ITrustException;
+
+/**
+ * ViewApptRequestsAction
+ */
+public class ViewApptRequestsAction {
+	private ApptRequestDAO arDAO;
+	private ApptDAO aDAO;
+	private long hcpid;
+	private SendMessageAction msgAction;
+	private PersonnelDAO pnDAO;
+
+	/**
+	 * ViewApptRequestsAction
+	 * @param hcpid hcpid
+	 * @param factory factory
+	 */
+<span class="fc" id="L32">	public ViewApptRequestsAction(long hcpid, DAOFactory factory) {</span>
+<span class="fc" id="L33">		arDAO = factory.getApptRequestDAO();</span>
+<span class="fc" id="L34">		aDAO = factory.getApptDAO();</span>
+<span class="fc" id="L35">		pnDAO = factory.getPersonnelDAO();</span>
+<span class="fc" id="L36">		this.hcpid = hcpid;</span>
+<span class="fc" id="L37">		msgAction = new SendMessageAction(factory, hcpid);</span>
+<span class="fc" id="L38">	}</span>
+
+	/**
+	 * getApptRequests
+	 * @return reqs
+	 * @throws SQLException
+	 * @throws DBException
+	 */
+	public List&lt;ApptRequestBean&gt; getApptRequests() throws SQLException, DBException {
+<span class="fc" id="L47">		List&lt;ApptRequestBean&gt; reqs = arDAO.getApptRequestsFor(hcpid);</span>
+<span class="fc" id="L48">		return reqs;</span>
+	}
+	/**
+	 * getNumRequests
+	 * @param reqs reqs
+	 * @return int 
+	 * 
+	 * Returns the number of times in the appointment request list
+	 */
+	public int getNumRequests(List&lt;ApptRequestBean&gt; reqs){
+<span class="fc" id="L58">		int numOfPendingAppointments = 0;</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">		for(int i = 0; i &lt; reqs.size(); i++){</span>
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">			if(reqs.get(i).isPending() == true){</span>
+<span class="fc" id="L61">				numOfPendingAppointments++;</span>
+			}
+		}
+<span class="fc" id="L64">		return numOfPendingAppointments;</span>
+	}
+
+	/**
+	 * acceptApptRequest
+	 * @param reqID reqID
+	 * @return message
+	 * @throws SQLException
+	 * @throws DBException
+	 */
+	public String acceptApptRequest(int reqID) throws SQLException, DBException {
+<span class="fc" id="L75">		ApptRequestBean req = arDAO.getApptRequest(reqID);</span>
+<span class="pc bpc" id="L76" title="2 of 4 branches missed.">		if (req.isPending() &amp;&amp; !req.isAccepted()) {</span>
+<span class="fc" id="L77">			req.setPending(false);</span>
+<span class="fc" id="L78">			req.setAccepted(true);</span>
+<span class="fc" id="L79">			arDAO.updateApptRequest(req);</span>
+<span class="fc" id="L80">			aDAO.scheduleAppt(req.getRequestedAppt());</span>
+			try {
+<span class="fc" id="L82">				MessageBean msg = constructMessage(req.getRequestedAppt(), req.isAccepted());</span>
+<span class="fc" id="L83">				msgAction.sendMessage(msg);</span>
+<span class="nc" id="L84">			} catch (Exception e) {</span>
+				//TODO
+<span class="fc" id="L86">			}</span>
+<span class="fc" id="L87">			return &quot;The appointment request you selected has been accepted and scheduled.&quot;;</span>
+		} else {
+<span class="nc" id="L89">			return &quot;The appointment request you selected has already been acted upon.&quot;;</span>
+		}
+	}
+
+	/**
+	 * rejectApptRequest
+	 * @param reqID reqID
+	 * @return message
+	 * @throws SQLException
+	 * @throws DBException
+	 */
+	public String rejectApptRequest(int reqID) throws SQLException, DBException {
+<span class="fc" id="L101">		ApptRequestBean req = arDAO.getApptRequest(reqID);</span>
+<span class="pc bpc" id="L102" title="2 of 4 branches missed.">		if (req.isPending() &amp;&amp; !req.isAccepted()) {</span>
+<span class="fc" id="L103">			req.setPending(false);</span>
+<span class="fc" id="L104">			req.setAccepted(false);</span>
+<span class="fc" id="L105">			arDAO.updateApptRequest(req);</span>
+			try {
+<span class="fc" id="L107">				MessageBean msg = constructMessage(req.getRequestedAppt(), req.isAccepted());</span>
+<span class="fc" id="L108">				msgAction.sendMessage(msg);</span>
+<span class="nc" id="L109">			} catch (Exception e) {</span>
+				//TODO
+<span class="fc" id="L111">			}</span>
+<span class="fc" id="L112">			return &quot;The appointment request you selected has been rejected.&quot;;</span>
+		} else {
+<span class="nc" id="L114">			return &quot;The appointment request you selected has already been acted upon.&quot;;</span>
+		}
+	}
+
+	/**
+	 * constructMessage
+	 * @param appt appt
+	 * @param accepted accepted
+	 * @return msg
+	 * @throws ITrustException
+	 * @throws SQLException
+	 * @throws FormValidationException
+	 */
+	private MessageBean constructMessage(ApptBean appt, boolean accepted) throws ITrustException, SQLException, FormValidationException {
+<span class="fc" id="L128">		MessageBean msg = new MessageBean();</span>
+<span class="fc" id="L129">		msg.setFrom(appt.getHcp());</span>
+<span class="fc" id="L130">		msg.setTo(appt.getPatient());</span>
+<span class="fc" id="L131">		msg.setSubject(&quot;Your appointment request&quot;);</span>
+<span class="fc" id="L132">		msg.setSentDate(new Timestamp(System.currentTimeMillis()));</span>
+<span class="fc" id="L133">		String body = &quot;Your appointment request with &quot; + pnDAO.getName(appt.getHcp()) + &quot; on &quot;</span>
+<span class="fc" id="L134">				+ appt.getDate() + &quot; has been &quot;;</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">		if (accepted)</span>
+<span class="fc" id="L136">			body += &quot;accepted.&quot;;</span>
+		else
+<span class="fc" id="L138">			body += &quot;rejected.&quot;;</span>
+<span class="fc" id="L139">		msg.setBody(body);</span>
+<span class="fc" id="L140">		return msg;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

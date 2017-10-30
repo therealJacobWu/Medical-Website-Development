@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>LabelDAO.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.dao.mysql</a> &gt; <span class="el_source">LabelDAO.java</span></div><h1>LabelDAO.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.dao.mysql;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+
+import edu.ncsu.csc.itrust.DBUtil;
+import edu.ncsu.csc.itrust.beans.LabelBean;
+import edu.ncsu.csc.itrust.beans.loaders.LabelLoader;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.exception.DBException;
+import edu.ncsu.csc.itrust.exception.ITrustException;
+
+public class LabelDAO {
+	private transient final DAOFactory factory;
+	private transient final LabelLoader labelLoader;
+	
+	/**
+	 * Basic constructor
+	 * @param factory the factory to use for getting connections
+	 */
+<span class="fc" id="L24">	public LabelDAO(final DAOFactory factory) {</span>
+<span class="fc" id="L25">		this.factory = factory;</span>
+<span class="fc" id="L26">		labelLoader = new LabelLoader();</span>
+<span class="fc" id="L27">	}</span>
+	
+	/**
+	 * Returns a single label
+	 * @param entryID ID of the label in the database
+	 * @return a LabelBean if there exist any labels
+	 * @throws DBException
+	 */
+	public LabelBean getLabel(long entryID) throws DBException {
+<span class="fc" id="L36">		Connection conn = null;</span>
+<span class="fc" id="L37">		PreparedStatement pstring = null;	</span>
+		try {
+<span class="fc" id="L39">			conn = factory.getConnection();</span>
+<span class="fc" id="L40">			pstring = conn.prepareStatement(&quot;SELECT * FROM labels WHERE EntryID = ?&quot;);</span>
+<span class="fc" id="L41">			pstring.setLong(1, entryID);</span>
+<span class="fc" id="L42">			final ResultSet results = pstring.executeQuery();</span>
+<span class="pc bpc" id="L43" title="1 of 2 branches missed.">			if (results.next()) {</span>
+<span class="nc" id="L44">				LabelBean bean = labelLoader.loadSingle(results);</span>
+<span class="nc" id="L45">				results.close();</span>
+<span class="nc" id="L46">				pstring.close();</span>
+<span class="nc" id="L47">				return bean;</span>
+			} else{
+<span class="fc" id="L49">				results.close();</span>
+<span class="fc" id="L50">				pstring.close();</span>
+<span class="fc" id="L51">				return null;</span>
+			}
+<span class="fc" id="L53">		} catch(SQLException e){</span>
+			
+<span class="fc" id="L55">			throw new DBException(e);</span>
+		} finally{
+<span class="pc" id="L57">			DBUtil.closeConnection(conn, pstring);</span>
+		}
+	}
+	
+	/**
+	 * Returns all of the entries in the Labels table that contain
+	 * the ID of the patient.
+	 * @param patientMID which patient to select labels for
+	 * @return the list of all of that patient's labels
+	 * @throws DBException
+	 */
+	public List&lt;LabelBean&gt; getLabels(long patientMID) throws DBException {
+<span class="fc" id="L69">		Connection conn = null;</span>
+<span class="fc" id="L70">		PreparedStatement pstring = null;	</span>
+		try {
+<span class="fc" id="L72">			conn = factory.getConnection();</span>
+<span class="fc" id="L73">			pstring = conn.prepareStatement(&quot;SELECT * FROM labels WHERE &quot;</span>
+					+ &quot;PatientID = ? ORDER BY LabelName ASC&quot;);
+<span class="fc" id="L75">			pstring.setLong(1, patientMID);</span>
+<span class="fc" id="L76">			final ResultSet results = pstring.executeQuery();</span>
+<span class="fc" id="L77">			final List&lt;LabelBean&gt; labelList = this.labelLoader.loadList(results);</span>
+<span class="fc" id="L78">			results.close();</span>
+<span class="fc" id="L79">			pstring.close();</span>
+<span class="fc" id="L80">			return labelList;</span>
+<span class="fc" id="L81">		} catch(SQLException e){</span>
+			
+<span class="fc" id="L83">			throw new DBException(e);</span>
+		} finally{
+<span class="fc" id="L85">			DBUtil.closeConnection(conn, pstring);</span>
+		}
+	}
+	
+	
+	/**
+	 * Adds a label 
+	 * @param label the label to add
+	 * @throws DBException
+	 */
+	public void addLabel(LabelBean label) 
+			throws DBException, ITrustException {
+		
+<span class="fc" id="L98">		Connection conn = null;</span>
+<span class="fc" id="L99">		PreparedStatement pstring = null;</span>
+		try {
+<span class="fc" id="L101">			conn = factory.getConnection();</span>
+<span class="fc" id="L102">			pstring = conn.prepareStatement(&quot;INSERT INTO labels(EntryID,&quot;</span>
+					+ &quot; PatientID, LabelName, LabelColor) &quot;
+					+ &quot;VALUES (?,?,?,?)&quot;);
+<span class="fc" id="L105">			pstring = labelLoader.loadParameters(pstring, label);</span>
+<span class="fc" id="L106">			pstring.executeUpdate();</span>
+<span class="fc" id="L107">		} catch (SQLException e) {</span>
+			
+<span class="fc" id="L109">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L111">			DBUtil.closeConnection(conn, pstring);</span>
+<span class="fc" id="L112">		}</span>
+<span class="fc" id="L113">	}</span>
+	
+	/**
+	 * Updates a particular label with the new data. Neither the entryid
+	 * nor the patientid will ever change, so there is no reason to include them
+	 * as possiblities to change. It includes the patientMID in an attempt to
+	 * ensure that patients can only udpate their own previous food entries.
+	 * 
+	 * @param entryID
+	 *            the label to update
+	 * @param patientMID
+	 *            who the patient is making this update
+	 * @param label
+	 *            the edited form of the label
+	 * @return the number of rows updated (should never be more than 1)
+	 * @throws DBException
+	 */
+	public int editLabel(long entryID, long patientMID,
+			LabelBean label) throws DBException {
+
+<span class="fc" id="L133">		Connection conn = null;</span>
+<span class="fc" id="L134">		PreparedStatement pstmt = null;</span>
+		try {
+<span class="fc" id="L136">			conn = factory.getConnection();</span>
+<span class="fc" id="L137">			pstmt = conn.prepareStatement(&quot;UPDATE labels &quot;</span>
+					+ &quot;SET LabelName = ?, LabelColor = ? &quot; 
+					+ &quot;WHERE EntryID = ? AND PatientID = ?&quot;);
+<span class="fc" id="L140">			pstmt.setString(1, label.getLabelName());</span>
+<span class="fc" id="L141">			pstmt.setString(2, label.getLabelColor());</span>
+<span class="fc" id="L142">			pstmt.setLong(3, entryID);</span>
+<span class="fc" id="L143">			pstmt.setLong(4, patientMID);</span>
+<span class="fc" id="L144">			final int numUpdated = pstmt.executeUpdate();</span>
+<span class="fc" id="L145">			return numUpdated;</span>
+<span class="fc" id="L146">		} catch (SQLException d) {</span>
+<span class="fc" id="L147">			throw new DBException(d);</span>
+		} finally {
+<span class="fc" id="L149">			DBUtil.closeConnection(conn, pstmt);</span>
+		}
+
+	}
+	
+	/**
+	 * Deletes the label from the database that has the same unique id
+	 * as the one passed in. Returns the count of the number of rows affected.
+	 * The number of rows affected should never be more than 1. The patientMID
+	 * is included to try to ensure that users cannot delete food diary 
+	 * entries that belong to users other than themselves.
+	 * @param entryID which food entry to delete
+	 * @param patientMID the owner of this food entry
+	 * @return how many entries were deleted from the food diary
+	 * @throws DBException
+	 */
+	public int deleteLabel(long entryID, long patientMID) 
+			throws DBException {
+<span class="fc" id="L167">		Connection conn = null;</span>
+<span class="fc" id="L168">		PreparedStatement pstmt = null;</span>
+		try {
+<span class="fc" id="L170">			conn = factory.getConnection();</span>
+<span class="fc" id="L171">			pstmt = conn.prepareStatement(&quot;DELETE FROM labels &quot;</span>
+					+ &quot;WHERE EntryID = ? AND PatientID = ?&quot;);
+<span class="fc" id="L173">			pstmt.setLong(1, entryID);</span>
+<span class="fc" id="L174">			pstmt.setLong(2, patientMID);</span>
+<span class="fc" id="L175">			final int numDeleted = pstmt.executeUpdate();</span>
+<span class="fc" id="L176">			return numDeleted;</span>
+<span class="fc" id="L177">		} catch (SQLException e) {</span>
+<span class="fc" id="L178">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L180">			DBUtil.closeConnection(conn, pstmt);</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

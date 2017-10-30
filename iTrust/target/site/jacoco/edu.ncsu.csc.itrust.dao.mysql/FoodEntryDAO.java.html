@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>FoodEntryDAO.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.dao.mysql</a> &gt; <span class="el_source">FoodEntryDAO.java</span></div><h1>FoodEntryDAO.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.dao.mysql;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.List;
+
+import edu.ncsu.csc.itrust.DBUtil;
+import edu.ncsu.csc.itrust.beans.FoodEntryBean;
+import edu.ncsu.csc.itrust.beans.loaders.FoodEntryLoader;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.exception.DBException;
+import edu.ncsu.csc.itrust.exception.ITrustException;
+
+/**
+ * FoodEntryDAO.java Version 1 2/21/2015 Copyright notice: none
+ * 
+ * Responsible for loading the entries in a patient's food diary, the totals a
+ * patient has eaten, and adding a new entry to a patient's food diary
+ */
+public class FoodEntryDAO {
+
+	private transient final DAOFactory factory;
+	private transient final FoodEntryLoader foodLoader;
+
+	/**
+	 * Basic constructor
+	 * 
+	 * @param factory
+	 *            the factory to use for getting connections
+	 */
+<span class="fc" id="L34">	public FoodEntryDAO(final DAOFactory factory) {</span>
+<span class="fc" id="L35">		this.factory = factory;</span>
+<span class="fc" id="L36">		foodLoader = new FoodEntryLoader();</span>
+<span class="fc" id="L37">	}</span>
+
+	/**
+	 * Returns all of the entries in the Food Entry table that contain the ID of
+	 * the patient.
+	 * 
+	 * @param patientMID
+	 *            which patient to select Food Diary for
+	 * @return the list of all of that patient's food entries
+	 * @throws DBException
+	 */
+	public List&lt;FoodEntryBean&gt; getPatientFoodDiary(long patientMID)
+			throws DBException {
+<span class="fc" id="L50">		Connection conn = null;</span>
+<span class="fc" id="L51">		PreparedStatement pstring = null;</span>
+		try {
+<span class="fc" id="L53">			conn = factory.getConnection();</span>
+<span class="fc" id="L54">			pstring = conn.prepareStatement(&quot;SELECT * FROM foodEntry WHERE &quot;</span>
+					+ &quot;PatientID = ? ORDER BY DateEaten DESC&quot;);
+<span class="fc" id="L56">			pstring.setLong(1, patientMID);</span>
+<span class="fc" id="L57">			final ResultSet results = pstring.executeQuery();</span>
+<span class="fc" id="L58">			final List&lt;FoodEntryBean&gt; diaryList = this.foodLoader</span>
+<span class="fc" id="L59">					.loadList(results);</span>
+<span class="fc" id="L60">			results.close();</span>
+<span class="fc" id="L61">			pstring.close();</span>
+<span class="fc" id="L62">			return diaryList;</span>
+<span class="fc" id="L63">		} catch (SQLException e) {</span>
+
+<span class="fc" id="L65">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L67">			DBUtil.closeConnection(conn, pstring);</span>
+		}
+	}
+
+	/**
+	 * Returns the totals of calories, fat, sodium, carbs, sugar, fiber, and
+	 * protein of each day in the food diary. The total is calculated by
+	 * multiplying the number of servings by the grams/milligrams per serving
+	 * for each individual food entry.
+	 * 
+	 * @param patientMID
+	 *            patient whose food diary we want
+	 * @return a list in descending order of date (dates closest to today first)
+	 *         of the totals eaten on each day for a patient
+	 * @throws DBException
+	 */
+	public List&lt;FoodEntryBean&gt; getPatientFoodDiaryTotals(long patientMID)
+			throws DBException {
+<span class="fc" id="L85">		Connection conn = null;</span>
+<span class="fc" id="L86">		PreparedStatement pstring = null;</span>
+		try {
+<span class="fc" id="L88">			conn = factory.getConnection();</span>
+			/*
+			 * We don't care about the mealtype, foodname, or servings but we
+			 * need to have some for the loader, so just bring back whatever.
+			 */
+<span class="fc" id="L93">			pstring = conn.prepareStatement(&quot;SELECT DateEaten AS DateEaten, &quot;</span>
+					+ &quot;EntryID AS EntryID, MealType AS MealType, &quot;
+					+ &quot;FoodName AS FoodName, &quot; + &quot;Servings AS Servings, &quot;
+					+ &quot;SUM(Servings * Calories) AS Calories, &quot;
+					+ &quot;SUM(Servings * Fat) AS Fat, &quot;
+					+ &quot;SUM(Servings * Sodium) AS Sodium, &quot;
+					+ &quot;SUM(Servings * Carbs) AS Carbs, &quot;
+					+ &quot;SUM(Servings * Sugar) AS Sugar, &quot;
+					+ &quot;SUM(Servings * Fiber) AS Fiber, &quot;
+					+ &quot;SUM(Servings * Protein) AS Protein, &quot;
+					+ &quot;PatientID AS PatientID, &quot;
+					+ &quot;LabelID AS LabelID FROM foodEntry &quot;
+					+ &quot;WHERE PatientID = ? GROUP BY DateEaten &quot;
+					+ &quot;ORDER BY DateEaten DESC&quot;);
+<span class="fc" id="L107">			pstring.setLong(1, patientMID);</span>
+<span class="fc" id="L108">			final ResultSet results = pstring.executeQuery();</span>
+<span class="fc" id="L109">			final List&lt;FoodEntryBean&gt; diaryTotals = this.foodLoader</span>
+<span class="fc" id="L110">					.loadList(results);</span>
+<span class="fc" id="L111">			results.close();</span>
+<span class="fc" id="L112">			pstring.close();</span>
+<span class="fc" id="L113">			return diaryTotals;</span>
+<span class="nc" id="L114">		} catch (SQLException e) {</span>
+<span class="nc" id="L115">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L117">			DBUtil.closeConnection(conn, pstring);</span>
+		}
+	}
+
+	/**
+	 * Adds a food entry to a patient's food diary
+	 * 
+	 * @param foodEntry
+	 *            the entry to add
+	 * @throws DBException
+	 */
+	public void addFoodEntry(FoodEntryBean foodEntry) throws DBException,
+			ITrustException {
+
+<span class="fc" id="L131">		Connection conn = null;</span>
+<span class="fc" id="L132">		PreparedStatement pstring = null;</span>
+<span class="fc" id="L133">		final long nextID = getNextEntryID();</span>
+<span class="fc" id="L134">		foodEntry.setEntryID(nextID);</span>
+		try {
+<span class="fc" id="L136">			conn = factory.getConnection();</span>
+<span class="fc" id="L137">			pstring = conn.prepareStatement(&quot;INSERT INTO foodEntry(EntryID,&quot;</span>
+					+ &quot; DateEaten, MealType, FoodName, Servings, Calories, &quot;
+					+ &quot;Fat, Sodium, Carbs, Sugar, Fiber, Protein, PatientID) &quot;
+					+ &quot;VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)&quot;);
+<span class="fc" id="L141">			pstring = foodLoader.loadParameters(pstring, foodEntry);</span>
+<span class="fc" id="L142">			pstring.executeUpdate();</span>
+<span class="nc" id="L143">		} catch (SQLException e) {</span>
+<span class="nc" id="L144">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L146">			DBUtil.closeConnection(conn, pstring);</span>
+<span class="fc" id="L147">		}</span>
+<span class="fc" id="L148">	}</span>
+
+	/**
+	 * Queries the db to find the highest food entry id currently in use and
+	 * then returns the next number so it can be used for a new food entry.
+	 * 
+	 * @return the next id available for a food entry
+	 * @throws DBException
+	 * @throws ITrustException
+	 */
+	public long getNextEntryID() throws DBException, ITrustException {
+<span class="fc" id="L159">		Connection conn = null;</span>
+<span class="fc" id="L160">		PreparedStatement pstmt = null;</span>
+<span class="fc" id="L161">		long nextID = 1;</span>
+
+		try {
+<span class="fc" id="L164">			conn = factory.getConnection();</span>
+
+<span class="fc" id="L166">			pstmt = conn.prepareStatement(&quot;SELECT MAX(foodEntry.EntryID) &quot;</span>
+					+ &quot;FROM foodEntry&quot;);
+<span class="fc" id="L168">			final ResultSet results = pstmt.executeQuery();</span>
+<span class="pc bpc" id="L169" title="1 of 2 branches missed.">			if (results.next()) {</span>
+<span class="fc" id="L170">				nextID = results.getLong(1) + 1;</span>
+			}
+<span class="fc" id="L172">			results.close();</span>
+<span class="fc" id="L173">			pstmt.close();</span>
+<span class="fc" id="L174">			return nextID;</span>
+<span class="fc" id="L175">		} catch (SQLException e) {</span>
+
+<span class="fc" id="L177">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L179">			DBUtil.closeConnection(conn, pstmt);</span>
+		}
+	}
+
+	/**
+	 * Deletes the food entry from the food diary that has the same unique id as
+	 * the one passed in. Returns the count of the number of rows affected. The
+	 * number of rows affected should never be more than 1. The patientMID is
+	 * included to try to ensure that users cannot delete food diary entries
+	 * that belong ot users other than themselves.
+	 * 
+	 * @param entryID
+	 *            which food entry to delete
+	 * @param patientMID
+	 *            the owner of this food entry
+	 * @return how many entries were deleted from the food diary
+	 * @throws DBException
+	 */
+	public int deleteFoodEntry(long entryID, long patientMID)
+			throws DBException {
+<span class="fc" id="L199">		Connection conn = null;</span>
+<span class="fc" id="L200">		PreparedStatement pstmt = null;</span>
+		try {
+<span class="fc" id="L202">			conn = factory.getConnection();</span>
+<span class="fc" id="L203">			pstmt = conn.prepareStatement(&quot;DELETE FROM foodEntry &quot;</span>
+					+ &quot;WHERE EntryID = ? AND PatientID = ?&quot;);
+<span class="fc" id="L205">			pstmt.setLong(1, entryID);</span>
+<span class="fc" id="L206">			pstmt.setLong(2, patientMID);</span>
+<span class="fc" id="L207">			final int numDeleted = pstmt.executeUpdate();</span>
+<span class="fc" id="L208">			return numDeleted;</span>
+<span class="fc" id="L209">		} catch (SQLException e) {</span>
+<span class="fc" id="L210">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L212">			DBUtil.closeConnection(conn, pstmt);</span>
+		}
+	}
+
+	/**
+	 * Updates a particular food entry with the new data. Neither the entryid
+	 * nor the patientid will ever change, so there is no reason to include them
+	 * as possiblities to change. It includes the patientMID in an attempt to
+	 * ensure that patients can only udpate their own previous food entries.
+	 * 
+	 * @param entryID
+	 *            the food entry to update
+	 * @param patientMID
+	 *            who the patient is making this update
+	 * @param foodEntry
+	 *            the edited form of the food entry
+	 * @return the number of rows updated (should never be more than 1)
+	 * @throws DBException
+	 */
+	public int updateFoodEntry(long entryID, long patientMID,
+			FoodEntryBean foodEntry) throws DBException {
+
+<span class="fc" id="L234">		Connection conn = null;</span>
+<span class="fc" id="L235">		PreparedStatement pstmt = null;</span>
+		try {
+<span class="fc" id="L237">			conn = factory.getConnection();</span>
+<span class="fc" id="L238">			pstmt = conn.prepareStatement(&quot;UPDATE foodEntry &quot;</span>
+					+ &quot;SET DateEaten = ?, MealType = ?, &quot;
+					+ &quot; FoodName = ?, Servings = ?, Calories = ?, &quot;
+					+ &quot;Fat = ?, Sodium = ?, Carbs = ?, Sugar = ?, &quot;
+					+ &quot;Fiber = ?, Protein = ?, LabelID = ? &quot; 
+					+ &quot;WHERE EntryID = ? AND PatientID = ?&quot;);
+<span class="fc" id="L244">			pstmt.setDate(1, new java.sql.Date(foodEntry.getDateEaten()</span>
+<span class="fc" id="L245">					.getTime()));</span>
+
+<span class="fc" id="L247">			pstmt.setString(2, foodEntry.getMealType().getName());</span>
+<span class="fc" id="L248">			pstmt.setString(3, foodEntry.getFood());</span>
+<span class="fc" id="L249">			pstmt.setDouble(4, foodEntry.getServings());</span>
+<span class="fc" id="L250">			pstmt.setDouble(5, foodEntry.getCalories());</span>
+<span class="fc" id="L251">			pstmt.setDouble(6, foodEntry.getFatGrams());</span>
+<span class="fc" id="L252">			pstmt.setDouble(7, foodEntry.getMilligramsSodium());</span>
+<span class="fc" id="L253">			pstmt.setDouble(8, foodEntry.getCarbGrams());</span>
+<span class="fc" id="L254">			pstmt.setDouble(9, foodEntry.getSugarGrams());</span>
+<span class="fc" id="L255">			pstmt.setDouble(10, foodEntry.getFiberGrams());</span>
+<span class="fc" id="L256">			pstmt.setDouble(11, foodEntry.getProteinGrams());</span>
+<span class="fc" id="L257">			pstmt.setLong(12, foodEntry.getLabelID());</span>
+<span class="fc" id="L258">			pstmt.setLong(13, entryID);</span>
+<span class="fc" id="L259">			pstmt.setLong(14, patientMID);</span>
+			
+<span class="fc" id="L261">			final int numUpdated = pstmt.executeUpdate();</span>
+<span class="fc" id="L262">			return numUpdated;</span>
+<span class="fc" id="L263">		} catch (SQLException d) {</span>
+<span class="fc" id="L264">			throw new DBException(d);</span>
+		} finally {
+<span class="fc" id="L266">			DBUtil.closeConnection(conn, pstmt);</span>
+		}
+
+	}
+
+	/**
+	 * Returns the entries in the Food Entry table that are within a specified
+	 * date range.
+	 * 
+	 * @param lower
+	 *            the lower date
+	 * @param upper
+	 *            the lower date
+	 * @param patientMID
+	 *            which patient to select Food Diary for
+	 * 
+	 * @return the list of food entries between the two dates
+	 * @throws DBException
+	 */
+	public List&lt;FoodEntryBean&gt; getBoundedFoodDiary(Date lower, Date upper,
+			long patientMID) throws DBException {
+<span class="fc" id="L287">		Connection conn = null;</span>
+<span class="fc" id="L288">		PreparedStatement pstring = null;</span>
+		try {
+<span class="fc" id="L290">			conn = factory.getConnection();</span>
+
+<span class="fc" id="L292">			pstring = conn.prepareStatement(&quot;SELECT * FROM foodEntry &quot;</span>
+					+ &quot; WHERE PatientID = ? &quot;
+					+ &quot; AND DateEaten BETWEEN ? AND ? &quot;
+					+ &quot; ORDER BY DateEaten DESC&quot;);
+
+<span class="fc" id="L297">			pstring.setLong(1, patientMID);</span>
+			// Convert java.util.Date to java.sql.Date
+<span class="fc" id="L299">			java.sql.Date lowerSQLDate = new java.sql.Date(lower.getTime());</span>
+<span class="fc" id="L300">			java.sql.Date upperSQLDate = new java.sql.Date(upper.getTime());</span>
+<span class="fc" id="L301">			pstring.setDate(2, lowerSQLDate);</span>
+<span class="fc" id="L302">			pstring.setDate(3, upperSQLDate);</span>
+
+<span class="fc" id="L304">			final ResultSet results = pstring.executeQuery();</span>
+<span class="fc" id="L305">			final List&lt;FoodEntryBean&gt; diaryList = this.foodLoader</span>
+<span class="fc" id="L306">					.loadList(results);</span>
+<span class="fc" id="L307">			results.close();</span>
+<span class="fc" id="L308">			pstring.close();</span>
+
+<span class="fc" id="L310">			return diaryList;</span>
+<span class="nc" id="L311">		} catch (SQLException e) {</span>
+<span class="nc" id="L312">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L314">			DBUtil.closeConnection(conn, pstring);</span>
+		}
+	}
+
+	public List&lt;FoodEntryBean&gt; getBoundedFoodDiaryTotals(Date lower,
+			Date upper, long patientMID) throws DBException {
+<span class="fc" id="L320">		Connection conn = null;</span>
+<span class="fc" id="L321">		PreparedStatement pstring = null;</span>
+		try {
+<span class="fc" id="L323">			conn = factory.getConnection();</span>
+
+<span class="fc" id="L325">			pstring = conn.prepareStatement(&quot;SELECT DateEaten AS DateEaten, &quot;</span>
+					+ &quot; EntryID AS EntryID, MealType AS MealType, &quot;
+					+ &quot; FoodName AS FoodName, &quot; + &quot;Servings AS Servings, &quot;
+					+ &quot; SUM(Servings * Calories) AS Calories, &quot;
+					+ &quot; SUM(Servings * Fat) AS Fat, &quot;
+					+ &quot; SUM(Servings * Sodium) AS Sodium, &quot;
+					+ &quot; SUM(Servings * Carbs) AS Carbs, &quot;
+					+ &quot; SUM(Servings * Sugar) AS Sugar, &quot;
+					+ &quot; SUM(Servings * Fiber) AS Fiber, &quot;
+					+ &quot; SUM(Servings * Protein) AS Protein,&quot;
+					+ &quot; LabelID AS LabelID,&quot;
+					+ &quot; PatientID AS PatientID &quot;
+					+ &quot; FROM foodEntry &quot;
+					+ &quot; WHERE PatientID = ? &quot;
+					+ &quot; AND DateEaten BETWEEN ? AND ? &quot;
+					+ &quot; GROUP BY DateEaten &quot; + &quot; ORDER BY DateEaten DESC&quot;);
+
+			// Add params
+<span class="fc" id="L343">			pstring.setLong(1, patientMID);</span>
+			// Convert java.util.Date to java.sql.Date
+<span class="fc" id="L345">			java.sql.Date lowerSQLDate = new java.sql.Date(lower.getTime());</span>
+<span class="fc" id="L346">			java.sql.Date upperSQLDate = new java.sql.Date(upper.getTime());</span>
+<span class="fc" id="L347">			pstring.setDate(2, lowerSQLDate);</span>
+<span class="fc" id="L348">			pstring.setDate(3, upperSQLDate);</span>
+
+<span class="fc" id="L350">			final ResultSet results = pstring.executeQuery();</span>
+<span class="fc" id="L351">			final List&lt;FoodEntryBean&gt; diaryList = this.foodLoader</span>
+<span class="fc" id="L352">					.loadList(results);</span>
+<span class="fc" id="L353">			results.close();</span>
+<span class="fc" id="L354">			pstring.close();</span>
+
+<span class="fc" id="L356">			return diaryList;</span>
+<span class="nc" id="L357">		} catch (SQLException e) {</span>
+<span class="nc" id="L358">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L360">			DBUtil.closeConnection(conn, pstring);</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

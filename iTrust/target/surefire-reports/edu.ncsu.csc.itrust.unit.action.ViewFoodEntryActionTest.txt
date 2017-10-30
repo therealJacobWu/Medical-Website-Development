@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: edu.ncsu.csc.itrust.unit.action.ViewFoodEntryActionTest
+-------------------------------------------------------------------------------
+Tests run: 21, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 9.607 sec - in edu.ncsu.csc.itrust.unit.action.ViewFoodEntryActionTest

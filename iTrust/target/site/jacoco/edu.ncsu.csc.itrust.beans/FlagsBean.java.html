@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>FlagsBean.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.beans</a> &gt; <span class="el_source">FlagsBean.java</span></div><h1>FlagsBean.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.beans;
+
+import edu.ncsu.csc.itrust.enums.FlagValue;
+
+/**
+ * FlagsBean represents a flag.
+ */
+<span class="fc" id="L8">public class FlagsBean {</span>
+	private long fid;
+	private long mid;
+	private long pregId;
+	private FlagValue flagValue;
+	private boolean flagged;
+	
+	/** the max */
+	public static final int FHR_MAX_TRIGGER = 170;
+	/** the min */
+	public static final int FHR_MIN_TRIGGER = 105;
+	/** the max */
+	public static final int SYS_BP_MAX_TRIGGER = 140;
+	/** the min */
+	public static final int DIA_BP_MAX_TRIGGER = 90;
+	/** the weight bounds*/
+<span class="fc" id="L24">	public static final double WEIGHTGAINBMIBOUNDS[] = {18.5, 24.9, 29.9, 999};</span>
+	/** minimum */
+<span class="fc" id="L26">	public static final double WEIGHTGAINBMIMIN[] = {28, 25, 15, 11};</span>
+	/** maximum */
+<span class="fc" id="L28">	public static final double WeightGainBMIMax[] = {40, 35, 25, 20};</span>
+	/** twins minimum */
+<span class="fc" id="L30">	public static final double WeightGainTwinsBMIMin[] = {37, 37, 31, 25};</span>
+	/** twins maximum */
+<span class="fc" id="L32">	public static final double WeightGainTwinsBMIMax[] = {54, 54, 50, 42};</span>
+	
+	/**
+	 * Returns the FID
+	 * @return the fid
+	 */
+	public long getFid() {
+<span class="fc" id="L39">		return fid;</span>
+	}
+	
+	/**
+	 * Sets the FID
+	 * @param fid
+	 */
+	public void setFid(long fid) {
+<span class="fc" id="L47">		this.fid = fid;</span>
+<span class="fc" id="L48">	}</span>
+	
+	/**
+	 * Returns the MID
+	 * @return
+	 */
+	public long getMid() {
+<span class="fc" id="L55">		return mid;</span>
+	}
+	
+	/**
+	 * Sets the MID
+	 * @param mid
+	 */
+	public void setMid(long mid) {
+<span class="fc" id="L63">		this.mid = mid;</span>
+<span class="fc" id="L64">	}</span>
+	
+	/**
+	 * Returns the flag enum value
+	 * @return
+	 */
+	public FlagValue getFlagValue() {
+<span class="fc" id="L71">		return flagValue;</span>
+	}
+	
+	/**
+	 * Sets the flag enum value
+	 * @param flagValue
+	 */
+	public void setFlagValue(FlagValue flagValue) {
+<span class="fc" id="L79">		this.flagValue = flagValue;</span>
+<span class="fc" id="L80">	}</span>
+	
+	/**
+	 * Returns true if the flag is set
+	 * @return
+	 */
+	public boolean isFlagged() {
+<span class="fc" id="L87">		return flagged;</span>
+	}
+	
+	/**
+	 * Sets the flag boolean value
+	 * @param flagged
+	 */
+	public void setFlagged(boolean flagged) {
+<span class="fc" id="L95">		this.flagged = flagged;</span>
+<span class="fc" id="L96">	}</span>
+	
+	/**
+	 * Returns the pregnancy ID
+	 * @return
+	 */
+	public long getPregId() {
+<span class="fc" id="L103">		return pregId;</span>
+	}
+	
+	/**
+	 * Sets the pregnancy ID
+	 * @param pregId
+	 */
+	public void setPregId(long pregId) {
+<span class="fc" id="L111">		this.pregId = pregId;</span>
+<span class="fc" id="L112">	}</span>
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>FlagsDAO.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.dao.mysql</a> &gt; <span class="el_source">FlagsDAO.java</span></div><h1>FlagsDAO.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.dao.mysql;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import edu.ncsu.csc.itrust.DBUtil;
+import edu.ncsu.csc.itrust.beans.FlagsBean;
+import edu.ncsu.csc.itrust.beans.loaders.FlagsLoader;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.exception.DBException;
+
+/**
+ * FlagsDAO is the data accessor object for the obstetrics flags.
+ *
+ */
+public class FlagsDAO {
+	private DAOFactory factory;
+	private FlagsLoader flagsLoader;
+
+	/**
+	 * The typical constructor.
+	 * @param factory The {@link DAOFactory} associated with this DAO, which is used for obtaining SQL connections, etc.
+	 */
+<span class="fc" id="L26">	public FlagsDAO(DAOFactory factory) {</span>
+<span class="fc" id="L27">		this.factory = factory;</span>
+<span class="fc" id="L28">		this.flagsLoader = new FlagsLoader();</span>
+<span class="fc" id="L29">	}</span>
+ 
+	/**
+	 * Based on input, either inserts a new flag record, deletes an existing flag record,
+	 * or does nothing. It will insert the flag if a match is not found for the MID and flagType.
+	 * It will delete a flag if a match is found in the database and the flagged value is false.
+	 * The idea is that the database only holds flagged flags, so missing = false.
+	 * 
+	 * @throws DBException
+	 */
+	public void setFlag(FlagsBean p) throws DBException {
+<span class="fc" id="L40">		Connection conn = null;</span>
+<span class="fc" id="L41">		PreparedStatement ps = null;</span>
+		
+		try {
+<span class="fc" id="L44">			conn = factory.getConnection();</span>
+<span class="fc" id="L45">			ps = conn.prepareStatement(&quot;SELECT * FROM flags WHERE MID = ? AND pregId = ? AND flagType = ?&quot;);</span>
+<span class="fc" id="L46">			ps.setLong(1, p.getMid());</span>
+<span class="fc" id="L47">			ps.setLong(2, p.getPregId());</span>
+<span class="fc" id="L48">			ps.setString(3, p.getFlagValue().toString());</span>
+<span class="fc" id="L49">			ResultSet rs = ps.executeQuery();</span>
+			
+			//if the result exists
+<span class="fc bfc" id="L52" title="All 2 branches covered.">			if (rs.next()) {</span>
+				//if it's set to false, delete from the DB
+<span class="fc bfc" id="L54" title="All 2 branches covered.">				if (!p.isFlagged()) {</span>
+<span class="fc" id="L55">					rs.close();</span>
+<span class="fc" id="L56">					ps.close();</span>
+<span class="fc" id="L57">					ps = conn.prepareStatement(&quot;DELETE FROM flags WHERE MID = ? AND pregId=? AND flagType = ?&quot;);</span>
+<span class="fc" id="L58">					ps.setLong(1, p.getMid());</span>
+<span class="fc" id="L59">					ps.setLong(2, p.getPregId());</span>
+<span class="fc" id="L60">					ps.setString(3, p.getFlagValue().toString());</span>
+<span class="fc" id="L61">					ps.execute();</span>
+				}
+				//else, it's true and it exists so nothing needs to change
+				
+<span class="fc" id="L65">				rs.close();</span>
+<span class="fc" id="L66">				ps.close();</span>
+			}
+			//else, it doesn't exist in the DB
+			else {
+				//if it's true, add it
+<span class="fc bfc" id="L71" title="All 2 branches covered.">				if (p.isFlagged()) {</span>
+<span class="fc" id="L72">					rs.close();</span>
+<span class="fc" id="L73">					ps.close();</span>
+<span class="fc" id="L74">					ps = conn.prepareStatement(&quot;INSERT INTO flags VALUES(?, ?, ?, ?)&quot;);</span>
+<span class="fc" id="L75">					flagsLoader.loadParameters(ps, p);</span>
+<span class="fc" id="L76">					ps.execute();</span>
+				}
+				//else, it's false, so ignore it
+				
+			}
+			
+<span class="fc" id="L82">			ps.close();</span>
+<span class="nc" id="L83">		} catch (SQLException e) {</span>
+<span class="nc" id="L84">			e.printStackTrace();</span>
+<span class="nc" id="L85">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L87">			DBUtil.closeConnection(conn, ps);</span>
+<span class="fc" id="L88">		}</span>
+<span class="fc" id="L89">	}</span>
+	
+	/**
+	 * Returns a FlagsBean object for the record indicated in the FlagsBean argument.
+	 * @param p
+	 * @return
+	 * @throws DBException
+	 */
+	public FlagsBean getFlag(FlagsBean p) throws DBException {
+<span class="fc" id="L98">		Connection conn = null;</span>
+<span class="fc" id="L99">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L101">			conn = factory.getConnection();</span>
+<span class="fc" id="L102">			ps = conn.prepareStatement(&quot;SELECT * FROM flags WHERE MID = ? AND pregId = ? AND flagType = ?&quot;);</span>
+<span class="fc" id="L103">			ps.setLong(1, p.getMid());</span>
+<span class="fc" id="L104">			ps.setLong(2, p.getPregId());</span>
+<span class="fc" id="L105">			ps.setString(3, p.getFlagValue().toString());</span>
+<span class="fc" id="L106">			ResultSet rs = ps.executeQuery();</span>
+			
+			//now set the bean to whether or not the record exists in the database
+<span class="fc" id="L109">			p.setFlagged(rs.next());</span>
+			
+<span class="fc" id="L111">			ps.close();</span>
+<span class="fc" id="L112">			return p;</span>
+<span class="nc" id="L113">		} catch (SQLException e) {</span>
+<span class="nc" id="L114">			e.printStackTrace();</span>
+<span class="nc" id="L115">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L117">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>PatientInstructionsBeanValidator.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.validate</a> &gt; <span class="el_source">PatientInstructionsBeanValidator.java</span></div><h1>PatientInstructionsBeanValidator.java</h1><pre class="source lang-java linenums">/**
+ * 
+ */
+package edu.ncsu.csc.itrust.validate;
+
+import org.apache.commons.validator.UrlValidator;
+import edu.ncsu.csc.itrust.beans.PatientInstructionsBean;
+import edu.ncsu.csc.itrust.exception.ErrorList;
+import edu.ncsu.csc.itrust.exception.FormValidationException;
+
+/**
+ *  Validates a patient instructions bean.
+ */
+<span class="fc" id="L14">public class PatientInstructionsBeanValidator extends BeanValidator&lt;PatientInstructionsBean&gt; {</span>
+
+	/* (non-Javadoc)
+	 * @see edu.ncsu.csc.itrust.validate.BeanValidator#validate(java.lang.Object)
+	 */
+	@Override
+	public void validate(PatientInstructionsBean bean) throws FormValidationException {
+<span class="fc" id="L21">		ErrorList errorList = new ErrorList();</span>
+<span class="fc" id="L22">		errorList.addIfNotNull(</span>
+<span class="fc" id="L23">				checkFormat(&quot;Name&quot;, bean.getName(), ValidationFormat.PATIENT_INSTRUCTIONS_NAME, false));</span>
+<span class="fc" id="L24">		errorList.addIfNotNull(</span>
+<span class="fc" id="L25">				checkFormat(&quot;Comments&quot;, bean.getComment(), ValidationFormat.PATIENT_INSTRUCTIONS_COMMENTS, false));</span>
+		// The following checks URL length.
+<span class="fc" id="L27">		errorList.addIfNotNull(</span>
+<span class="fc" id="L28">				checkFormat(&quot;URL&quot;, bean.getUrl(), ValidationFormat.PATIENT_INSTRUCTIONS_URL, false));</span>
+		// The following checks URL format.
+<span class="fc" id="L30">		UrlValidator urlValidator = new UrlValidator();</span>
+<span class="fc bfc" id="L31" title="All 2 branches covered.">		if (!urlValidator.isValid(bean.getUrl().trim())) {</span>
+<span class="fc" id="L32">			errorList.addIfNotNull(&quot;URL: A valid URL is required.&quot;);</span>
+		}
+		
+<span class="fc bfc" id="L35" title="All 2 branches covered.">		if (errorList.hasErrors())</span>
+<span class="fc" id="L36">			throw new FormValidationException(errorList);</span>
+
+<span class="fc" id="L38">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

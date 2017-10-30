@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>UpdateCPTCodeListAction.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.action</a> &gt; <span class="el_source">UpdateCPTCodeListAction.java</span></div><h1>UpdateCPTCodeListAction.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.action;
+
+import edu.ncsu.csc.itrust.beans.ProcedureBean;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.dao.mysql.CPTCodesDAO;
+import edu.ncsu.csc.itrust.exception.DBException;
+import edu.ncsu.csc.itrust.exception.FormValidationException;
+import edu.ncsu.csc.itrust.exception.ITrustException;
+import edu.ncsu.csc.itrust.validate.ProcedureBeanValidator;
+
+/**
+ * Updates the CPT Code (Medical Procedures) List Used by editCPTProcedureCodes.jsp
+ * 
+ * The CPT code set accurately describes medical, surgical, and diagnostic services 
+ * and is designed to communicate uniform information about medical services and procedures 
+ * among physicians, coders, patients, accreditation organizations, and payers for administrative, 
+ * financial, and analytical purposes.
+ *
+ * @see http://www.ama-assn.org/ama/pub/physician-resources/solutions-managing-your-practice/coding-billing-insurance/cpt/about-cpt.shtml
+ */
+public class UpdateCPTCodeListAction {
+	private CPTCodesDAO cptDAO;
+<span class="fc" id="L23">	private ProcedureBeanValidator validator = new ProcedureBeanValidator();</span>
+
+	/**
+	 * 
+	 * @param factory The DAOFactory used to create the DAOs used in this action.
+	 * @param loggedInMID The MID of the administrator who is updating the CPTs.
+	 */
+<span class="fc" id="L30">	public UpdateCPTCodeListAction(DAOFactory factory, long loggedInMID) {</span>
+<span class="fc" id="L31">		this.cptDAO = factory.getCPTCodesDAO();</span>
+<span class="fc" id="L32">	}</span>
+
+	/**
+	 * Adds a new cpt code (med procedure)
+	 * 
+	 * @param proc
+	 *            ProcedureBean that holds the new cpt code
+	 * @return status message
+	 * @throws FormValidationException
+	 */
+	public String addCPTCode(ProcedureBean proc) throws FormValidationException {
+<span class="fc" id="L43">		validator.validate(proc);</span>
+		try {
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">			if (cptDAO.addCPTCode(proc)) {</span>
+<span class="fc" id="L46">				return &quot;Success: &quot; + proc.getCPTCode() + &quot; - &quot; + proc.getDescription() + &quot; added&quot;;</span>
+			} else
+<span class="nc" id="L48">				return &quot;The database has become corrupt. Please contact the system administrator for assistance.&quot;;</span>
+<span class="fc" id="L49">		} catch (DBException e) {</span>
+			
+<span class="fc" id="L51">			return e.getMessage();</span>
+<span class="fc" id="L52">		} catch (ITrustException e) {</span>
+<span class="fc" id="L53">			return e.getMessage();</span>
+		}
+	}
+
+	/**
+	 * Updates a procedure with new information from the ProcedureBean
+	 * 
+	 * @param proc
+	 *            ProcedureBean with new information (but same CPT code)
+	 * @return Status message
+	 * @throws FormValidationException
+	 */
+	public String updateInformation(ProcedureBean proc) throws FormValidationException {
+<span class="fc" id="L66">		validator.validate(proc);</span>
+		try {
+<span class="fc" id="L68">			int rows = updateCode(proc);</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">			if (0 == rows) {</span>
+<span class="fc" id="L70">				return &quot;Error: Code not found. To edit an actual code, &quot;</span>
+						+ &quot;change the description and add a new code with the old description&quot;;
+			} else {
+<span class="fc" id="L73">				return &quot;Success: &quot; + rows + &quot; row(s) updated&quot;;</span>
+			}
+<span class="nc" id="L75">		} catch (DBException e) {</span>
+			
+<span class="nc" id="L77">			return e.getMessage();</span>
+		}
+	}
+
+	/**
+	 * Updates the cpt code
+	 * 
+	 * @param proc the code to be updated
+	 * @return updated code
+	 * @throws DBException
+	 */
+	private int updateCode(ProcedureBean proc) throws DBException {
+<span class="fc" id="L89">		return cptDAO.updateCode(proc);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

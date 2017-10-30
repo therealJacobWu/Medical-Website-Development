@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>OphthalmologyScheduleOVRecordBean.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.beans</a> &gt; <span class="el_source">OphthalmologyScheduleOVRecordBean.java</span></div><h1>OphthalmologyScheduleOVRecordBean.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.beans;
+
+import java.sql.Timestamp;
+
+/**
+ * Bean for Scheduled Ophthalmology Office Visits.
+ * Holds all of the data needed for a scheduled Ophthalmology Office Visit.
+ */
+<span class="fc" id="L9">public class OphthalmologyScheduleOVRecordBean {</span>
+
+	/**The mid of the patient.*/
+	private long patientmid;
+	/**The mid of the doctor.*/
+	private long doctormid;
+	/**The scheduled Ophthalmology office visit id.*/
+	private long oid;
+	/**The time of the scheduled Ophthalmology office visit.*/
+	private Timestamp date;
+	/**The last name of the optometrist.*/
+	private String docLastName;
+	/**The first name of the optometrist.*/
+	private String docFirstName;
+	/**The comment attached to the office visit request.*/
+	private String comment;
+	/**The status of the requested ophthalmology office visit.*/
+	private Boolean status;
+	
+	/**
+	 * Getter for the patientmid value.
+	 * @return the patientmid.
+	 */
+	public long getPatientmid() {
+<span class="fc" id="L33">		return patientmid;</span>
+	}
+	
+	/**
+	 * Set the patientmid value.
+	 * @param patientmid the new value.
+	 */
+	public void setPatientmid(long patientmid) {
+<span class="fc" id="L41">		this.patientmid = patientmid;</span>
+<span class="fc" id="L42">	}</span>
+	
+	/**
+	 * Getter for the doctormid value.
+	 * @return the doctormid.
+	 */
+	public long getDoctormid() {
+<span class="fc" id="L49">		return doctormid;</span>
+	}
+	
+	/**
+	 * Set the doctormid value.
+	 * @param doctormid the new value.
+	 */
+	public void setDoctormid(long doctormid) {
+<span class="fc" id="L57">		this.doctormid = doctormid;</span>
+<span class="fc" id="L58">	}</span>
+	
+	/**
+	 * Getter for the oid value.
+	 * @return the oid.
+	 */
+	public long getOid() {
+<span class="nc" id="L65">		return oid;</span>
+	}
+	
+	/**
+	 * Set the oid value.
+	 * @param oid the new value.
+	 */
+	public void setOid(long oid) {
+<span class="fc" id="L73">		this.oid = oid;</span>
+<span class="fc" id="L74">	}</span>
+	
+	/**
+	 * Get the time of the scheduled appointment.
+	 * @return the date.
+	 */
+	public Timestamp getDate() {
+<span class="fc" id="L81">		return date;</span>
+	}
+	
+	/**
+	 * Set the time of the scheduled appointment.
+	 * @param date the new value.
+	 */
+	public void setDate(Timestamp date) {
+<span class="fc" id="L89">		this.date = date;</span>
+<span class="fc" id="L90">	}</span>
+	
+	/**
+	 * Getter for the last name of the optometrist.
+	 * @return the optometrist last name.
+	 */
+	public String getDocLastName() {
+<span class="fc" id="L97">		return docLastName;</span>
+	}
+	
+	/**
+	 * Set the last name of the optometrist.
+	 * @param docLastName the new value.
+	 */
+	public void setDocLastName(String docLastName) {
+<span class="fc" id="L105">		this.docLastName = docLastName;</span>
+<span class="fc" id="L106">	}</span>
+	
+	/**
+	 * Getter for the first name of the optometrist.
+	 * @return the doctors first name.
+	 */
+	public String getDocFirstName() {
+<span class="fc" id="L113">		return docFirstName;</span>
+	}
+	
+	/**
+	 * Set the first name of the optometrist.
+	 * @param docFirstName the new value.
+	 */
+	public void setDocFirstName(String docFirstName) {
+<span class="fc" id="L121">		this.docFirstName = docFirstName;</span>
+<span class="fc" id="L122">	}</span>
+	
+	/**
+	 * Getter for the comment.
+	 * @return the comment.
+	 */
+	public String getComment() {
+<span class="fc" id="L129">		return comment;</span>
+	}
+	
+	/**
+	 * Set the comment.
+	 * @param comment the new value.
+	 */
+	public void setComment(String comment) {
+<span class="fc" id="L137">		this.comment = comment;</span>
+<span class="fc" id="L138">	}</span>
+	
+	/**
+	 * Check whether the scheduled appointment is pending.
+	 * @return status
+	 */
+	public boolean isPending() {
+<span class="fc bfc" id="L145" title="All 2 branches covered.">		return status == null;</span>
+	}
+	
+	/**
+	 * Set if the scheduled appointment is pending.
+	 * @param pending the new value.
+	 */
+	public void setPending(boolean pending) {
+<span class="fc bfc" id="L153" title="All 2 branches covered.">		if (pending) {</span>
+<span class="fc" id="L154">			status = null;</span>
+		} else {
+<span class="fc" id="L156">			status = Boolean.valueOf(false);</span>
+		}
+<span class="fc" id="L158">	}</span>
+
+	/**
+	 * Check whether the scheduled appointment is pending.
+	 * @return status
+	 */
+	public boolean isAccepted() {
+<span class="pc bpc" id="L165" title="1 of 4 branches missed.">		return status != null &amp;&amp; status.booleanValue();</span>
+	}
+	
+	/**
+	 * Set if the scheduled appointment is accepted.
+	 * If setPending(false) has not been called before using this method, this method will have no effect.
+	 * @param accepted accepted
+	 */
+	public void setAccepted(boolean accepted) {
+<span class="fc bfc" id="L174" title="All 2 branches covered.">		if (status != null) {</span>
+<span class="fc" id="L175">			status = Boolean.valueOf(accepted);</span>
+		}
+<span class="fc" id="L177">	}</span>
+
+	/**
+	 * Method used to compute the hashcode for a OphthalmologyOVRecordBean. 
+	 * @return true if the OphthalmologyOVRecordBeans are equal, false otherwise.
+	 */
+	@Override
+	public int hashCode() {
+<span class="fc" id="L185">		final int prime = 31;</span>
+<span class="fc" id="L186">		int result = 1;</span>
+<span class="pc bpc" id="L187" title="1 of 2 branches missed.">		result = prime * result + ((comment == null) ? 0 : comment.hashCode());</span>
+<span class="pc bpc" id="L188" title="1 of 2 branches missed.">		result = prime * result + ((date == null) ? 0 : date.hashCode());</span>
+<span class="pc bpc" id="L189" title="1 of 2 branches missed.">		result = prime * result</span>
+<span class="fc" id="L190">				+ ((docFirstName == null) ? 0 : docFirstName.hashCode());</span>
+<span class="pc bpc" id="L191" title="1 of 2 branches missed.">		result = prime * result</span>
+<span class="fc" id="L192">				+ ((docLastName == null) ? 0 : docLastName.hashCode());</span>
+<span class="fc" id="L193">		result = prime * result + (int) (doctormid ^ (doctormid &gt;&gt;&gt; 32));</span>
+<span class="fc" id="L194">		result = prime * result + (int) (oid ^ (oid &gt;&gt;&gt; 32));</span>
+<span class="fc" id="L195">		result = prime * result + (int) (patientmid ^ (patientmid &gt;&gt;&gt; 32));</span>
+<span class="pc bpc" id="L196" title="1 of 2 branches missed.">		result = prime * result + ((status == null) ? 0 : status.hashCode());</span>
+<span class="fc" id="L197">		return result;</span>
+	}
+
+	/**
+	 * Method used to determine if OphthalmologyOVRecordBeans are equal. 
+	 * @return true if the OphthalmologyOVRecordBeans are equal, false otherwise.
+	 */
+	@Override
+	public boolean equals(Object obj) {
+<span class="pc bpc" id="L206" title="1 of 2 branches missed.">		if (this == obj)</span>
+<span class="nc" id="L207">			return true;</span>
+<span class="pc bpc" id="L208" title="1 of 2 branches missed.">		if (obj == null)</span>
+<span class="nc" id="L209">			return false;</span>
+<span class="pc bpc" id="L210" title="1 of 2 branches missed.">		if (getClass() != obj.getClass())</span>
+<span class="nc" id="L211">			return false;</span>
+<span class="fc" id="L212">		OphthalmologyScheduleOVRecordBean other = (OphthalmologyScheduleOVRecordBean) obj;</span>
+<span class="fc bfc" id="L213" title="All 2 branches covered.">		if (comment == null) {</span>
+<span class="pc bpc" id="L214" title="1 of 2 branches missed.">			if (other.comment != null)</span>
+<span class="fc" id="L215">				return false;</span>
+<span class="pc bpc" id="L216" title="1 of 2 branches missed.">		} else if (!comment.equals(other.comment))</span>
+<span class="nc" id="L217">			return false;</span>
+<span class="pc bpc" id="L218" title="1 of 2 branches missed.">		if (date == null) {</span>
+<span class="nc bnc" id="L219" title="All 2 branches missed.">			if (other.date != null)</span>
+<span class="nc" id="L220">				return false;</span>
+<span class="pc bpc" id="L221" title="1 of 2 branches missed.">		} else if (!date.equals(other.date))</span>
+<span class="nc" id="L222">			return false;</span>
+<span class="pc bpc" id="L223" title="1 of 2 branches missed.">		if (docFirstName == null) {</span>
+<span class="nc bnc" id="L224" title="All 2 branches missed.">			if (other.docFirstName != null)</span>
+<span class="nc" id="L225">				return false;</span>
+<span class="fc bfc" id="L226" title="All 2 branches covered.">		} else if (!docFirstName.equals(other.docFirstName))</span>
+<span class="fc" id="L227">			return false;</span>
+<span class="pc bpc" id="L228" title="1 of 2 branches missed.">		if (docLastName == null) {</span>
+<span class="nc bnc" id="L229" title="All 2 branches missed.">			if (other.docLastName != null)</span>
+<span class="nc" id="L230">				return false;</span>
+<span class="fc bfc" id="L231" title="All 2 branches covered.">		} else if (!docLastName.equals(other.docLastName))</span>
+<span class="fc" id="L232">			return false;</span>
+<span class="fc bfc" id="L233" title="All 2 branches covered.">		if (doctormid != other.doctormid)</span>
+<span class="fc" id="L234">			return false;</span>
+<span class="pc bpc" id="L235" title="1 of 2 branches missed.">		if (oid != other.oid)</span>
+<span class="nc" id="L236">			return false;</span>
+<span class="fc bfc" id="L237" title="All 2 branches covered.">		if (patientmid != other.patientmid)</span>
+<span class="fc" id="L238">			return false;</span>
+<span class="fc bfc" id="L239" title="All 2 branches covered.">		if (status == null) {</span>
+<span class="pc bpc" id="L240" title="1 of 2 branches missed.">			if (other.status != null)</span>
+<span class="nc" id="L241">				return false;</span>
+<span class="fc bfc" id="L242" title="All 2 branches covered.">		} else if (!status.equals(other.status))</span>
+<span class="fc" id="L243">			return false;</span>
+<span class="fc" id="L244">		return true;</span>
+	}
+
+	/**
+	 * Creates a string representation of this object.
+	 * @return The string representation.
+	 */
+	@Override
+	public String toString() {
+<span class="fc" id="L253">		return &quot;OphthalmologyScheduleOVRecordBean [patientmid=&quot; + patientmid</span>
+				+ &quot;, doctormid=&quot; + doctormid + &quot;, oid=&quot; + oid + &quot;, date=&quot;
+				+ date + &quot;, docLastName=&quot; + docLastName + &quot;, docFirstName=&quot;
+				+ docFirstName + &quot;, comment=&quot; + comment + &quot;, status=&quot; + status
+				+ &quot;]&quot;;
+	}
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

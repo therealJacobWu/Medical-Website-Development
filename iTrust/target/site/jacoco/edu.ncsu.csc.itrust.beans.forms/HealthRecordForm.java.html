@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>HealthRecordForm.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.beans.forms</a> &gt; <span class="el_source">HealthRecordForm.java</span></div><h1>HealthRecordForm.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.beans.forms;
+
+/**
+ * A form to contain data coming from editing a health record.
+ * 
+ * A form is a bean, kinda. You could say that it's a form of a bean :) 
+ * Think of a form as a real-life administrative form that you would fill out to get 
+ * something done, not necessarily making sense by itself.
+ */
+public class HealthRecordForm {
+<span class="fc" id="L11">	private String height = &quot;0.0&quot;;</span>
+<span class="fc" id="L12">	private String weight = &quot;0.0&quot;;</span>
+<span class="fc" id="L13">	private String isSmoker = &quot;9&quot;;</span>
+<span class="fc" id="L14">	private String householdSmokingStatus = &quot;1&quot;;</span>
+<span class="fc" id="L15">	private String headCircumference = &quot;0&quot;;</span>
+<span class="fc" id="L16">	private String bloodPressureN = &quot;0&quot;;</span>
+<span class="fc" id="L17">	private String bloodPressureD = &quot;0&quot;;</span>
+<span class="fc" id="L18">	private String cholesterolHDL = &quot;0&quot;;</span>
+<span class="fc" id="L19">	private String cholesterolLDL = &quot;0&quot;;</span>
+<span class="fc" id="L20">	private String cholesterolTri = &quot;0&quot;;</span>
+
+<span class="fc" id="L22">	public HealthRecordForm() {</span>
+<span class="fc" id="L23">	}</span>
+	
+	public String getHouseholdSmokingStatus(){
+<span class="fc" id="L26">		return householdSmokingStatus;</span>
+	}
+	
+	public void setHouseholdSmokingStatus(String householdSmokingStatus){
+<span class="fc" id="L30">		this.householdSmokingStatus = householdSmokingStatus;</span>
+<span class="fc" id="L31">	}</span>
+	
+	public String getHeadCircumference(){
+<span class="fc" id="L34">		return headCircumference;</span>
+	}
+	
+	public void setHeadCircumference(String headCircumference){
+<span class="fc" id="L38">		this.headCircumference = headCircumference;</span>
+<span class="fc" id="L39">	}</span>
+
+	public String getBloodPressureD() {
+<span class="fc" id="L42">		return bloodPressureD;</span>
+	}
+
+	public void setBloodPressureD(String bloodPressureD) {
+<span class="fc" id="L46">		this.bloodPressureD = bloodPressureD;</span>
+<span class="fc" id="L47">	}</span>
+
+	public String getBloodPressureN() {
+<span class="fc" id="L50">		return bloodPressureN;</span>
+	}
+
+	public void setBloodPressureN(String bloodPressureN) {
+<span class="fc" id="L54">		this.bloodPressureN = bloodPressureN;</span>
+<span class="fc" id="L55">	}</span>
+
+	public String getCholesterolHDL() {
+<span class="fc" id="L58">		return cholesterolHDL;</span>
+	}
+
+	public void setCholesterolHDL(String cholesterolHDL) {
+<span class="fc" id="L62">		this.cholesterolHDL = cholesterolHDL;</span>
+<span class="fc" id="L63">	}</span>
+
+	public String getCholesterolLDL() {
+<span class="fc" id="L66">		return cholesterolLDL;</span>
+	}
+
+	public void setCholesterolLDL(String cholesterolLDL) {
+<span class="fc" id="L70">		this.cholesterolLDL = cholesterolLDL;</span>
+<span class="fc" id="L71">	}</span>
+
+	public String getCholesterolTri() {
+<span class="fc" id="L74">		return cholesterolTri;</span>
+	}
+
+	public void setCholesterolTri(String cholesterolTri) {
+<span class="fc" id="L78">		this.cholesterolTri = cholesterolTri;</span>
+<span class="fc" id="L79">	}</span>
+
+	public String getHeight() {
+<span class="fc" id="L82">		return height;</span>
+	}
+
+	public void setHeight(String height) {
+<span class="fc" id="L86">		this.height = height;</span>
+<span class="fc" id="L87">	}</span>
+
+	public String getIsSmoker() {
+<span class="fc" id="L90">		return isSmoker;</span>
+	}
+
+	public void setIsSmoker(String isSmoker) {
+<span class="fc" id="L94">		this.isSmoker = isSmoker;</span>
+<span class="fc" id="L95">	}</span>
+
+	public String getWeight() {
+<span class="fc" id="L98">		return weight;</span>
+	}
+
+	public void setWeight(String weight) {
+<span class="fc" id="L102">		this.weight = weight;</span>
+<span class="fc" id="L103">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DeclareHCPAction.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.action</a> &gt; <span class="el_source">DeclareHCPAction.java</span></div><h1>DeclareHCPAction.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.action;
+
+import java.util.List;
+import edu.ncsu.csc.itrust.beans.PersonnelBean;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.dao.mysql.AuthDAO;
+import edu.ncsu.csc.itrust.dao.mysql.PatientDAO;
+import edu.ncsu.csc.itrust.enums.Role;
+import edu.ncsu.csc.itrust.exception.ITrustException;
+
+/**
+ * Used by the patient to declare HCPs as &quot;designated&quot;, in editHCPs.jsp.
+ * 
+ * 
+ */
+public class DeclareHCPAction {
+	private PatientDAO patientDAO;
+	private AuthDAO authDAO;
+	private long loggedInMID;
+
+	/**
+	 * Sets up defaults
+	 * 
+	 * @param factory The DAO factory to be used for generating the DAOs for this action.
+	 * @param loggedInMID
+	 *            This patient
+	 */
+<span class="fc" id="L28">	public DeclareHCPAction(DAOFactory factory, long loggedInMID) {</span>
+<span class="fc" id="L29">		this.loggedInMID = loggedInMID;</span>
+<span class="fc" id="L30">		this.patientDAO = factory.getPatientDAO();</span>
+<span class="fc" id="L31">		this.authDAO = factory.getAuthDAO();</span>
+<span class="fc" id="L32">	}</span>
+
+	/**
+	 * Lists the declared HCPs for this current patient
+	 * 
+	 * @return Returns a list of the declared HCPs
+	 * @throws ITrustException
+	 */
+	public List&lt;PersonnelBean&gt; getDeclaredHCPS() throws ITrustException {
+<span class="fc" id="L41">		return patientDAO.getDeclaredHCPs(loggedInMID);</span>
+	}
+
+	/**
+	 * Validate an HCP's MID and declare them, if possible
+	 * 
+	 * @param hcpStr
+	 *            The MID of an HCP to declare
+	 * @return A status message,
+	 * @throws ITrustException
+	 */
+	public String declareHCP(String hcpStr) throws ITrustException {
+		try {
+<span class="fc" id="L54">			long hcpID = Long.valueOf(hcpStr);</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">			if (authDAO.getUserRole(hcpID) != Role.HCP)</span>
+<span class="fc" id="L56">				throw new ITrustException(&quot;This user is not a licensed healthcare professional!&quot;);</span>
+
+<span class="fc" id="L58">			boolean confirm = patientDAO.declareHCP(loggedInMID, hcpID);</span>
+
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">			if (confirm) {</span>
+<span class="fc" id="L61">				return &quot;HCP successfully declared&quot;;</span>
+			} else
+<span class="nc" id="L63">				return &quot;HCP not declared&quot;;</span>
+<span class="fc" id="L64">		} catch (NumberFormatException e) {</span>
+<span class="fc" id="L65">			throw new ITrustException(&quot;HCP's MID not a number&quot;);</span>
+		} 
+	}
+
+	/**
+	 * Validate an HCP's MID and undeclare them, if possible
+	 * 
+	 * @param input
+	 *            The MID of an HCP to undeclare
+	 * @return
+	 * @throws ITrustException
+	 */
+	public String undeclareHCP(String input) throws ITrustException {
+		try {
+<span class="fc" id="L79">			long hcpID = Long.valueOf(input);</span>
+<span class="fc" id="L80">			boolean confirm = patientDAO.undeclareHCP(loggedInMID, hcpID);</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">			if (confirm) {</span>
+<span class="fc" id="L82">				return &quot;HCP successfully undeclared&quot;;</span>
+			} else
+<span class="fc" id="L84">				return &quot;HCP not undeclared&quot;;</span>
+<span class="fc" id="L85">		} catch (NumberFormatException e) {</span>
+<span class="fc" id="L86">			throw new ITrustException(&quot;HCP's MID not a number&quot;);</span>
+		} 
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

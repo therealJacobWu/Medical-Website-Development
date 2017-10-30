@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CDCStatsDAO.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.dao.mysql</a> &gt; <span class="el_source">CDCStatsDAO.java</span></div><h1>CDCStatsDAO.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.dao.mysql;
+
+import edu.ncsu.csc.itrust.beans.CDCStatsBean;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.exception.DBException;
+
+/**
+ * Abstract class for interacting with the cdc health statistics tables
+ * 
+ * DAO stands for Database Access Object. All DAOs are intended to be reflections of the database, that is,
+ * one DAO per table in the database (most of the time). For more complex sets of queries, extra DAOs are
+ * added. DAOs can assume that all data has been validated and is correct.
+ * 
+ * DAOs should never have setters or any other parameter to the constructor than a factory. All DAOs should be
+ * accessed by DAOFactory (@see {@link DAOFactory}) and every DAO should have a factory - for obtaining JDBC
+ * connections and/or accessing other DAOs.
+ * 
+ */
+<span class="fc" id="L19">public abstract class CDCStatsDAO {</span>
+	
+	/**
+	 * Stores a CDCStatsBean into a cdc stats table. Inserts and creates a new entry if the sex and age of the bean
+	 * are not currently in the table. Otherwise, the matching row in the table will be updated with the data from the 
+	 * passed in CDCStatsBean. 
+	 * @param statsBean The CDCStatsBean to store in the database
+	 */
+	public abstract void storeStats(CDCStatsBean stats) throws DBException;
+	
+	/**
+	 * Gets a CDCStatsBean with the specified sex and age from a cdc stats table.
+	 * If there are no associated CDC stats with the specified parameters, then null is returned.
+	 * @param sex integer for the sex of the patient. 1 for male and 2 for female.
+	 * @param age float for the age of the patient.
+	 */
+	public abstract CDCStatsBean getCDCStats(int sex, float age) throws DBException;
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

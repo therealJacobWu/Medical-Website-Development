@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>EditImmunizationsAction.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.action</a> &gt; <span class="el_source">EditImmunizationsAction.java</span></div><h1>EditImmunizationsAction.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.action;
+
+import java.util.ArrayList;
+import java.util.List;
+import edu.ncsu.csc.itrust.action.base.EditOfficeVisitBaseAction;
+import edu.ncsu.csc.itrust.beans.ProcedureBean;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.dao.mysql.CPTCodesDAO;
+import edu.ncsu.csc.itrust.dao.mysql.ProceduresDAO;
+import edu.ncsu.csc.itrust.exception.DBException;
+import edu.ncsu.csc.itrust.exception.ITrustException;
+
+/**
+ * Handle immunization for the patients
+ * Edit Immunizations
+ * Add Immunizations
+ * Delete Immunizations
+ *  
+ *  
+ */
+public class EditImmunizationsAction extends EditOfficeVisitBaseAction {
+
+	private ProceduresDAO proceduresDAO;
+	private CPTCodesDAO cptDAO;
+	
+	public EditImmunizationsAction(DAOFactory factory, long hcpid, 
+			   	String pidString, String ovIDString) 
+		throws ITrustException {
+<span class="fc" id="L29">		super(factory, hcpid, pidString, ovIDString);</span>
+<span class="fc" id="L30">		proceduresDAO = factory.getProceduresDAO();</span>
+<span class="fc" id="L31">		cptDAO = factory.getCPTCodesDAO();</span>
+<span class="fc" id="L32">	}</span>
+	
+	public EditImmunizationsAction(DAOFactory factory, long hcpid, 
+				String pidString) 
+		throws ITrustException {
+<span class="fc" id="L37">		super(factory, hcpid, pidString);</span>
+<span class="fc" id="L38">		proceduresDAO = factory.getProceduresDAO();</span>
+<span class="fc" id="L39">		cptDAO = factory.getCPTCodesDAO();</span>
+<span class="fc" id="L40">	}</span>
+	
+	public List&lt;ProcedureBean&gt; getImmunizations() throws DBException {
+<span class="fc bfc" id="L43" title="All 2 branches covered.">		if (isUnsaved()) {</span>
+<span class="fc" id="L44">			return new ArrayList&lt;ProcedureBean&gt;();</span>
+		} else {
+<span class="fc" id="L46">			return proceduresDAO.getImmunizationList(getOvID());</span>
+		}
+	}
+	
+	public void addImmunization(ProcedureBean bean) throws ITrustException {
+<span class="fc" id="L51">		verifySaved();</span>
+<span class="fc" id="L52">		proceduresDAO.add(bean);</span>
+<span class="fc" id="L53">	}</span>
+	
+	public void editImmunization(ProcedureBean bean) throws ITrustException {
+<span class="fc" id="L56">		verifySaved();</span>
+<span class="fc" id="L57">		proceduresDAO.edit(bean);</span>
+<span class="fc" id="L58">	}</span>
+	
+	public void deleteImmunization(ProcedureBean bean) throws ITrustException {
+<span class="fc" id="L61">		verifySaved();</span>
+<span class="fc" id="L62">		proceduresDAO.remove(bean.getOvProcedureID());</span>
+<span class="fc" id="L63">	}</span>
+	
+	public List&lt;ProcedureBean&gt; getImmunizationCodes() throws DBException {
+<span class="fc" id="L66">		return cptDAO.getImmunizationCPTCodes();</span>
+	}
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

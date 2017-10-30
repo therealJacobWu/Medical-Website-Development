@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: edu.ncsu.csc.itrust.unit.action.DesignateNutritionistActionTest
+-------------------------------------------------------------------------------
+Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.139 sec - in edu.ncsu.csc.itrust.unit.action.DesignateNutritionistActionTest

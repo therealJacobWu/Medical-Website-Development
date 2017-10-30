@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ReportRequestDAO.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.dao.mysql</a> &gt; <span class="el_source">ReportRequestDAO.java</span></div><h1>ReportRequestDAO.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.dao.mysql;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.List;
+import edu.ncsu.csc.itrust.DBUtil;
+import edu.ncsu.csc.itrust.beans.ReportRequestBean;
+import edu.ncsu.csc.itrust.beans.loaders.ReportRequestBeanLoader;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.exception.DBException;
+
+/**
+ * Used for handling data related to report requests.
+ * 
+ * DAO stands for Database Access Object. 
+ * All DAOs are intended to be reflections of the database, that is,
+ * one DAO per table in the database (most of the time). 
+ * For more complex sets of queries, extra DAOs are
+ * added. DAOs can assume that all data has been validated and is correct.
+ * 
+ * DAOs should never have setters or any other parameter 
+ * to the constructor than a factory. All DAOs should be
+ * accessed by DAOFactory (@see {@link DAOFactory}) 
+ * and every DAO should have a factory - for obtaining JDBC
+ * connections and/or accessing other DAOs.
+ */
+@SuppressWarnings({})
+public class ReportRequestDAO {
+	private transient final DAOFactory factory;
+	private transient final ReportRequestBeanLoader loader;
+
+	/**
+	 * The typical constructor.
+	 * @param factory The {@link DAOFactory} associated with this DAO, 
+	 * 		which is used for obtaining SQL connections, etc.
+	 */
+<span class="fc" id="L40">	public ReportRequestDAO(final DAOFactory factory) {</span>
+<span class="fc" id="L41">		this.factory = factory;</span>
+<span class="fc" id="L42">		loader = new ReportRequestBeanLoader();</span>
+<span class="fc" id="L43">	}</span>
+	
+	/**
+	 * Returns a full bean describing a given report request.
+	 * 
+	 * @param id The unique ID of the bean in the database.
+	 * @return The bean describing this report request.
+	 * @throws DBException
+	 */
+	public ReportRequestBean getReportRequest(final long id) throws DBException {
+<span class="fc" id="L53">		Connection conn = null;</span>
+<span class="fc" id="L54">		PreparedStatement pstmt = null;</span>
+		try {
+<span class="fc bfc" id="L56" title="All 2 branches covered.">			if (id == 0L) {</span>
+<span class="fc" id="L57">				throw new SQLException(&quot;ID cannot be null&quot;);</span>
+			}
+<span class="fc" id="L59">			conn = factory.getConnection();</span>
+<span class="fc" id="L60">			pstmt = conn.prepareStatement(&quot;SELECT * FROM reportrequests WHERE ID = ?&quot;);</span>
+<span class="fc" id="L61">			pstmt.setLong(1, id);</span>
+<span class="fc" id="L62">			final ResultSet results = pstmt.executeQuery();</span>
+<span class="fc" id="L63">			results.next();</span>
+<span class="fc" id="L64">			final ReportRequestBean result = loader.loadSingle(results);</span>
+<span class="fc" id="L65">			results.close();</span>
+<span class="fc" id="L66">			return result;</span>
+<span class="fc" id="L67">		} catch (SQLException e) {</span>
+			
+<span class="fc" id="L69">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L71">			DBUtil.closeConnection(conn, pstmt);</span>
+		}
+	}
+	
+	/**
+	 * Returns all report requests associated with a given requester.
+	 * 
+	 * @param mid The MID of the personnel in question.
+	 * @return A java.util.List of report requests.
+	 * @throws DBException
+	 */
+	public List&lt;ReportRequestBean&gt; getAllReportRequestsForRequester(final long mid) throws DBException {
+<span class="fc" id="L83">		Connection conn = null;</span>
+<span class="fc" id="L84">		PreparedStatement pstmt = null;</span>
+
+		try {
+<span class="fc bfc" id="L87" title="All 2 branches covered.">			if (mid == 0L) {</span>
+<span class="fc" id="L88">				throw new SQLException(&quot;RequesterMID cannot be null&quot;);</span>
+			}
+<span class="fc" id="L90">			conn = factory.getConnection();</span>
+<span class="fc" id="L91">			pstmt = conn.prepareStatement(&quot;SELECT * FROM reportrequests WHERE RequesterMID = ?&quot;);</span>
+<span class="fc" id="L92">			pstmt.setLong(1, mid);</span>
+<span class="fc" id="L93">			final ResultSet results = pstmt.executeQuery();</span>
+<span class="fc" id="L94">			final List&lt;ReportRequestBean&gt; loadlist = loader.loadList(results);</span>
+<span class="fc" id="L95">			results.close();</span>
+<span class="fc" id="L96">			return loadlist;</span>
+<span class="fc" id="L97">		} catch (SQLException e) {</span>
+			
+<span class="fc" id="L99">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L101">			DBUtil.closeConnection(conn, pstmt);</span>
+		}
+	}
+
+	/**
+	 * Returns all of the report requests associated with a specific patient.
+	 * 
+	 * @param pid The MID of the patient in question.
+	 * @return A java.util.List of report requests.
+	 * @throws DBException
+	 */
+	public List&lt;ReportRequestBean&gt; getAllReportRequestsForPatient(final long pid) throws DBException {
+<span class="fc" id="L113">		Connection conn = null;</span>
+<span class="fc" id="L114">		PreparedStatement pstmt = null;</span>
+
+		try {
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">			if (pid == 0L) {</span>
+<span class="nc" id="L118">				throw new SQLException(&quot;PatientMID cannot be null&quot;);</span>
+			}
+<span class="fc" id="L120">			conn = factory.getConnection();</span>
+<span class="fc" id="L121">			pstmt = conn.prepareStatement(&quot;SELECT * FROM reportrequests WHERE PatientMID = ?&quot;);</span>
+<span class="fc" id="L122">			pstmt.setLong(1, pid);</span>
+<span class="fc" id="L123">			final ResultSet results = pstmt.executeQuery();</span>
+<span class="fc" id="L124">			final List&lt;ReportRequestBean&gt; loadlist = loader.loadList(results);</span>
+<span class="fc" id="L125">			results.close();</span>
+<span class="fc" id="L126">			return loadlist;</span>
+<span class="nc" id="L127">		} catch (SQLException e) {</span>
+			
+<span class="nc" id="L129">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L131">			DBUtil.closeConnection(conn, pstmt);</span>
+		}
+	}
+	
+	/**
+	 * Adds a request for a report.
+	 * 
+	 * @param requesterMID The MID of the requester.
+	 * @param patientMID The MID of the patient in question.
+	 * @param date The date the request was made.
+	 * @return A long of the unique ID of the report request.
+	 * @throws DBException
+	 */
+	public long addReportRequest(final long requesterMID, final long patientMID, final Date date) throws DBException {
+<span class="fc" id="L145">		Connection conn = null;</span>
+<span class="fc" id="L146">		PreparedStatement pstmt = null;</span>
+		try {
+<span class="fc bfc" id="L148" title="All 2 branches covered.">			if (requesterMID == 0L) {</span>
+<span class="fc" id="L149">				throw new SQLException(&quot;RequesterMID cannot be null&quot;);</span>
+			}
+<span class="fc" id="L151">			conn = factory.getConnection();</span>
+<span class="fc" id="L152">			pstmt = conn.prepareStatement(&quot;INSERT INTO reportrequests (ID, RequesterMID, PatientMID, RequestedDate, Status) VALUES (null,?,?,?,'Requested')&quot;);</span>
+<span class="fc" id="L153">			pstmt.setLong(1, requesterMID);</span>
+<span class="fc" id="L154">			pstmt.setLong(2, patientMID);</span>
+<span class="fc" id="L155">			pstmt.setTimestamp(3, new java.sql.Timestamp(date.getTime()));</span>
+<span class="fc" id="L156">			pstmt.executeUpdate();</span>
+<span class="fc" id="L157">			return DBUtil.getLastInsert(conn);</span>
+<span class="fc" id="L158">		} catch (SQLException e) {</span>
+			
+<span class="fc" id="L160">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L162">			DBUtil.closeConnection(conn, pstmt);</span>
+		}
+	}
+	
+	/**
+	 * Sets the status of a report request to 'Viewed'
+	 * 
+	 * @param ID The unique ID of the request in question.
+	 * @param date The date the request was viewed.
+	 * @throws DBException
+	 */
+	public void setViewed(final long ID, final Date date) throws DBException {
+<span class="fc" id="L174">		Connection conn = null;</span>
+<span class="fc" id="L175">		PreparedStatement pstmt = null;</span>
+		try {
+<span class="fc bfc" id="L177" title="All 2 branches covered.">			if (ID == 0L) {</span>
+<span class="fc" id="L178">				throw new SQLException(&quot;ID cannot be null&quot;);</span>
+			}
+<span class="fc" id="L180">			conn = factory.getConnection();</span>
+<span class="fc" id="L181">			pstmt = conn.prepareStatement(&quot;UPDATE reportrequests set ViewedDate = ?, Status = 'Viewed' where ID = ?&quot;);</span>
+<span class="fc" id="L182">			pstmt.setTimestamp(1, new java.sql.Timestamp(date.getTime()));</span>
+<span class="fc" id="L183">			pstmt.setLong(2, ID);</span>
+<span class="fc" id="L184">			pstmt.executeUpdate();</span>
+<span class="fc" id="L185">		} catch (SQLException e) {</span>
+			
+<span class="fc" id="L187">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L189">			DBUtil.closeConnection(conn, pstmt);</span>
+<span class="fc" id="L190">		}</span>
+		
+<span class="fc" id="L192">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

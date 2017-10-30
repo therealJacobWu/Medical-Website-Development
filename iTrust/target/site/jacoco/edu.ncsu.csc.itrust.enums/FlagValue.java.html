@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>FlagValue.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.enums</a> &gt; <span class="el_source">FlagValue.java</span></div><h1>FlagValue.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.enums;
+
+/**
+ * FlagValue is an enum that represents the different flags that exist in iTrust for obstetrics.
+ */
+<span class="fc" id="L6">public enum FlagValue {</span>
+	/** Has High Blood Pressure */
+<span class="fc" id="L8">	HighBloodPressure(&quot;High Blood Pressure&quot;, &quot;hbp&quot;), </span>
+	/** Has an advanced maternal age */
+<span class="fc" id="L10">	AdvancedMaternalAge(&quot;Advanced Maternal Age&quot;, &quot;ama&quot;),</span>
+	/** Has maternal allergies*/
+<span class="fc" id="L12">	MaternalAllergies(&quot;Maternal Allergies&quot;, &quot;allergies&quot;), </span>
+	/** Has low lying placenta */
+<span class="fc" id="L14">	LowLyingPlacenta(&quot;Low-Lying Placenta&quot;, &quot;placenta&quot;),</span>
+	/** Has a genetic miscarriage */
+<span class="fc" id="L16">	GeneticMiscarriage(&quot;Genetic Miscarriage&quot;, &quot;geneticMiscarriage&quot;), </span>
+	/** Has abnormality */
+<span class="fc" id="L18">	AbnormalFHR(&quot;Abnormal FHR&quot;, &quot;fhr&quot;),</span>
+	/** Has twins */
+<span class="fc" id="L20">	Twins(&quot;Twins&quot;, &quot;twins&quot;), </span>
+	/** Has a weight change */
+<span class="fc" id="L22">	WeightChange(&quot;Abnormal Weight Change&quot;, &quot;weightChange&quot;), </span>
+	/** has rh negative blood type */
+<span class="fc" id="L24">	rhNeg(&quot;Negative Blood Type&quot;, &quot;rhNeg&quot;),</span>
+	/** has preexisting conditions */
+<span class="fc" id="L26">	PreExistingConditions(&quot;Pregnancy relevant pre-existing conditions&quot;, &quot;pec&quot;);</span>
+	
+	private String name; //represents a good output string
+	private String id; //represents a good id/name for an HTML form
+	
+	/**
+	 * Constructor for a FlagValue that takes a name and id.
+	 * @param name the flag name
+	 * @param id the flag ID
+	 */
+<span class="fc" id="L36">	private FlagValue(String name, String id) {</span>
+<span class="fc" id="L37">		this.name = name;</span>
+<span class="fc" id="L38">		this.id = id;</span>
+<span class="fc" id="L39">	}</span>
+	
+	/**
+	 * Custom replacement method for the un-overridable valueOf method.
+	 * Parses non-case sensitive and can use either ID or Name as needed.
+	 * @param idOrName A string, assumed to likely be a match to either ID or name of some FlagValue
+	 * @return The corresponding FlagValue
+	 */
+	public static FlagValue parseEnum(String idOrName) {
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">		for(FlagValue v : values())</span>
+<span class="fc bfc" id="L49" title="All 4 branches covered.">            if(v.id.equalsIgnoreCase(idOrName) || v.name.equalsIgnoreCase(idOrName)) return v;</span>
+<span class="nc" id="L50">        throw new IllegalArgumentException();</span>
+	}
+	
+	/**
+	 * Returns the ID of the flag.
+	 * @return the ID of the flag
+	 */
+	public String getId() {
+<span class="nc" id="L58">		return this.id;</span>
+	}
+	
+	/**
+	 * Returns the string value of the flag.
+	 * @return the string value of the flag
+	 */
+	@Override
+	public String toString() {
+<span class="pc bpc" id="L67" title="1 of 2 branches missed.">		if (name == null)</span>
+<span class="nc" id="L68">			return &quot;&quot;;</span>
+<span class="fc" id="L69">		return name;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

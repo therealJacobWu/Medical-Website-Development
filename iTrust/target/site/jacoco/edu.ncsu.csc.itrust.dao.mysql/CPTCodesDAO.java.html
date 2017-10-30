@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CPTCodesDAO.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.dao.mysql</a> &gt; <span class="el_source">CPTCodesDAO.java</span></div><h1>CPTCodesDAO.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.dao.mysql;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import edu.ncsu.csc.itrust.DBUtil;
+import edu.ncsu.csc.itrust.beans.ProcedureBean;
+import edu.ncsu.csc.itrust.beans.loaders.ProcedureBeanLoader;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.exception.DBException;
+import edu.ncsu.csc.itrust.exception.ITrustException;
+
+/**
+ * Used for managing CPT codes.
+ * 
+ * DAO stands for Database Access Object. All DAOs are intended to be reflections of the database, that is,
+ * one DAO per table in the database (most of the time). For more complex sets of queries, extra DAOs are
+ * added. DAOs can assume that all data has been validated and is correct.
+ * 
+ * DAOs should never have setters or any other parameter to the constructor than a factory. All DAOs should be
+ * accessed by DAOFactory (@see {@link DAOFactory}) and every DAO should have a factory - for obtaining JDBC
+ * connections and/or accessing other DAOs.
+ * 
+ * The CPT code set accurately describes medical, surgical, and diagnostic services 
+ * and is designed to communicate uniform information about medical services and procedures 
+ * among physicians, coders, patients, accreditation organizations, and payers for administrative, 
+ * financial, and analytical purposes.
+ *
+ * @see http://www.ama-assn.org/ama/pub/physician-resources/solutions-managing-your-practice/coding-billing-insurance/cpt/about-cpt.shtml
+ *  
+ * 
+ */
+public class CPTCodesDAO {
+	private DAOFactory factory;
+<span class="fc" id="L37">	private ProcedureBeanLoader procedureBeanLoader = new ProcedureBeanLoader();</span>
+
+	/**
+	 * The typical constructor.
+	 * @param factory The {@link DAOFactory} associated with this DAO, which is used for obtaining SQL connections, etc.
+	 */
+<span class="fc" id="L43">	public CPTCodesDAO(DAOFactory factory) {</span>
+<span class="fc" id="L44">		this.factory = factory;</span>
+<span class="fc" id="L45">	}</span>
+
+	/**
+	 * Returns a list of all CPT codes.
+	 * 
+	 * @return A java.util.List of ProcedureBeans for the CPT codes.
+	 * @throws DBException
+	 */
+	public List&lt;ProcedureBean&gt; getAllCPTCodes() throws DBException {
+<span class="fc" id="L54">		Connection conn = null;</span>
+<span class="fc" id="L55">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L57">			conn = factory.getConnection();</span>
+<span class="fc" id="L58">			ps = conn.prepareStatement(&quot;SELECT * FROM cptcodes ORDER BY CODE&quot;);</span>
+<span class="fc" id="L59">			ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L60">			List&lt;ProcedureBean&gt; loadlist = procedureBeanLoader.loadList(rs);</span>
+<span class="fc" id="L61">			rs.close();</span>
+<span class="fc" id="L62">			ps.close();</span>
+<span class="fc" id="L63">			return loadlist;</span>
+<span class="nc" id="L64">		} catch (SQLException e) {</span>
+			
+<span class="nc" id="L66">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L68">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+	/**
+	 * Returns a list of all immunization CPT codes.
+	 * 
+	 * @return A java.util.List of all Immunization-related CPT codes.
+	 * @throws DBException
+	 */
+	public List&lt;ProcedureBean&gt; getImmunizationCPTCodes() throws DBException {
+<span class="fc" id="L79">		Connection conn = null;</span>
+<span class="fc" id="L80">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L82">			conn = factory.getConnection();</span>
+<span class="fc" id="L83">			ps = conn.prepareStatement(&quot;select * from cptcodes where attribute='immunization' order by code&quot;);</span>
+<span class="fc" id="L84">			ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L85">			List&lt;ProcedureBean&gt; loadlist = procedureBeanLoader.loadList(rs);</span>
+<span class="fc" id="L86">			rs.close();</span>
+<span class="fc" id="L87">			ps.close();</span>
+<span class="fc" id="L88">			return loadlist;</span>
+<span class="fc" id="L89">		} catch (SQLException e) {</span>
+			
+<span class="fc" id="L91">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L93">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+	/**
+	 * Returns a list of all non-immunization CPT codes.
+	 * 
+	 * @return A java.util.List of all Immunization-related CPT codes.
+	 * @throws DBException
+	 */
+	public List&lt;ProcedureBean&gt; getProcedureCPTCodes() throws DBException {
+<span class="fc" id="L104">		Connection conn = null;</span>
+<span class="fc" id="L105">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L107">			conn = factory.getConnection();</span>
+<span class="fc" id="L108">			ps = conn.prepareStatement(&quot;select * from cptcodes where attribute is NULL order by code&quot;);</span>
+<span class="fc" id="L109">			ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L110">			List&lt;ProcedureBean&gt; loadlist = procedureBeanLoader.loadList(rs);</span>
+<span class="fc" id="L111">			rs.close();</span>
+<span class="fc" id="L112">			ps.close();</span>
+<span class="fc" id="L113">			return loadlist;</span>
+<span class="nc" id="L114">		} catch (SQLException e) {</span>
+			
+<span class="nc" id="L116">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L118">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+
+	/**
+	 * Returns a particular procedure description for a code.
+	 * 
+	 * @param code The string representation of the code.
+	 * @return The textual description of the code.
+	 * @throws DBException
+	 */
+	public ProcedureBean getCPTCode(String code) throws DBException {
+<span class="fc" id="L130">		Connection conn = null;</span>
+<span class="fc" id="L131">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L133">			conn = factory.getConnection();</span>
+<span class="fc" id="L134">			ps = conn.prepareStatement(&quot;SELECT * FROM cptcodes WHERE Code = ?&quot;);</span>
+<span class="fc" id="L135">			ps.setString(1, code);</span>
+<span class="fc" id="L136">			ResultSet rs = ps.executeQuery();</span>
+<span class="fc bfc" id="L137" title="All 2 branches covered.">			if (rs.next()){</span>
+<span class="fc" id="L138">				ProcedureBean loaded = procedureBeanLoader.loadSingle(rs);</span>
+<span class="fc" id="L139">				rs.close();</span>
+<span class="fc" id="L140">				ps.close();</span>
+<span class="fc" id="L141">				return loaded;</span>
+			}
+<span class="fc" id="L143">			rs.close();</span>
+<span class="fc" id="L144">			ps.close();</span>
+<span class="fc" id="L145">			return null;</span>
+<span class="nc" id="L146">		} catch (SQLException e) {</span>
+			
+<span class="nc" id="L148">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L150">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+
+	/**
+	 * Adds a new CPT code, returns that it was added successfully
+	 * 
+	 * @param proc A ProcedureBean representing the new code information.
+	 * @return A boolean for whether the operation was successful.
+	 * @throws DBException
+	 * @throws ITrustException
+	 */
+	public boolean addCPTCode(ProcedureBean proc) throws DBException, ITrustException {
+<span class="fc" id="L163">		Connection conn = null;</span>
+<span class="fc" id="L164">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L166">			conn = factory.getConnection();</span>
+<span class="fc" id="L167">			ps = conn.prepareStatement(&quot;INSERT INTO cptcodes (Code, Description, Attribute) &quot; + &quot;VALUES (?,?,?)&quot;);</span>
+<span class="fc" id="L168">			ps.setString(1, proc.getCPTCode());</span>
+<span class="fc" id="L169">			ps.setString(2, proc.getDescription());</span>
+<span class="fc" id="L170">			ps.setString(3, proc.getAttribute());</span>
+<span class="pc bpc" id="L171" title="1 of 2 branches missed.">			boolean check = (1==ps.executeUpdate());</span>
+<span class="fc" id="L172">			ps.close();</span>
+<span class="fc" id="L173">			return check;</span>
+<span class="fc" id="L174">		} catch (SQLException e) {</span>
+			
+<span class="fc bfc" id="L176" title="All 2 branches covered.">			if (1062 == e.getErrorCode())</span>
+<span class="fc" id="L177">				throw new ITrustException(&quot;Error: Code already exists.&quot;);</span>
+<span class="fc" id="L178">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L180">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+
+	/**
+	 * Change the procedure description for a particular CPT code
+	 * 
+	 * @param proc A ProcedureBean representing the new code information.
+	 * @return A boolean for whether the operation was successful.
+	 * @throws DBException
+	 */
+	public int updateCode(ProcedureBean proc) throws DBException {
+<span class="fc" id="L192">		Connection conn = null;</span>
+<span class="fc" id="L193">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L195">			conn = factory.getConnection();</span>
+<span class="fc" id="L196">			ps = conn.prepareStatement(&quot;UPDATE cptcodes SET Description = ?, Attribute = ? WHERE Code = ?&quot;);</span>
+<span class="fc" id="L197">			ps.setString(1, proc.getDescription());</span>
+<span class="fc" id="L198">			ps.setString(2, proc.getAttribute());</span>
+<span class="fc" id="L199">			ps.setString(3, proc.getCPTCode());</span>
+<span class="fc" id="L200">			int check = ps.executeUpdate();</span>
+<span class="fc" id="L201">			ps.close();</span>
+<span class="fc" id="L202">			return check;</span>
+<span class="fc" id="L203">		} catch (SQLException e) {</span>
+			
+<span class="fc" id="L205">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L207">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

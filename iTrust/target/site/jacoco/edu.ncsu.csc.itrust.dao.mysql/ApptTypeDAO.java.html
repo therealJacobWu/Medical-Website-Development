@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ApptTypeDAO.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.dao.mysql</a> &gt; <span class="el_source">ApptTypeDAO.java</span></div><h1>ApptTypeDAO.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.dao.mysql;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import edu.ncsu.csc.itrust.DBUtil;
+import edu.ncsu.csc.itrust.beans.ApptTypeBean;
+import edu.ncsu.csc.itrust.beans.loaders.ApptTypeBeanLoader;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.exception.DBException;
+
+@SuppressWarnings({})
+public class ApptTypeDAO {
+	private transient final DAOFactory factory;
+	private transient final ApptTypeBeanLoader atLoader;
+	
+<span class="fc" id="L19">	public ApptTypeDAO(final DAOFactory factory) {</span>
+<span class="fc" id="L20">		this.factory = factory;</span>
+<span class="fc" id="L21">		this.atLoader = new ApptTypeBeanLoader();</span>
+<span class="fc" id="L22">	}</span>
+	
+	
+	
+	public List&lt;ApptTypeBean&gt; getApptTypes() throws SQLException, DBException {
+<span class="fc" id="L27">		Connection conn = null;</span>
+<span class="fc" id="L28">		PreparedStatement stmt = null;</span>
+		try{
+<span class="fc" id="L30">			conn = factory.getConnection();</span>
+<span class="fc" id="L31">			stmt = conn.prepareStatement(&quot;SELECT * FROM appointmenttype&quot;);</span>
+<span class="fc" id="L32">			final ResultSet results = stmt.executeQuery();</span>
+		
+<span class="fc" id="L34">			final List&lt;ApptTypeBean&gt; atList = this.atLoader.loadList(results);</span>
+<span class="fc" id="L35">			results.close();</span>
+<span class="fc" id="L36">			stmt.close();</span>
+<span class="fc" id="L37">			return atList;</span>
+<span class="fc" id="L38">		}catch(SQLException e){</span>
+<span class="fc" id="L39">			throw new DBException(e);</span>
+		}finally{
+<span class="fc" id="L41">			DBUtil.closeConnection(conn, stmt);</span>
+		}
+
+	}
+	
+	public boolean addApptType(final ApptTypeBean apptType) throws SQLException, DBException {
+<span class="fc" id="L47">		Connection conn = null;</span>
+<span class="fc" id="L48">		PreparedStatement stmt = null;</span>
+		try{
+<span class="fc" id="L50">			conn = factory.getConnection();</span>
+<span class="fc" id="L51">			stmt = conn.prepareStatement(</span>
+				&quot;INSERT INTO appointmenttype (appt_type, duration) &quot;
+			  + &quot;VALUES (?, ?)&quot;);
+<span class="fc" id="L54">			this.atLoader.loadParameters(stmt, apptType);</span>
+<span class="fc" id="L55">			final int rowCount = stmt.executeUpdate();</span>
+<span class="fc" id="L56">			stmt.close();</span>
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">			return rowCount &gt; 0;</span>
+<span class="fc" id="L58">		}catch(SQLException e){</span>
+<span class="fc" id="L59">			throw new DBException(e);</span>
+		}finally{
+<span class="fc" id="L61">			DBUtil.closeConnection(conn, stmt);</span>
+		}
+		
+		
+	}
+	
+	public boolean editApptType(final ApptTypeBean apptType) throws SQLException, DBException {
+<span class="fc" id="L68">		Connection conn = null;</span>
+<span class="fc" id="L69">		PreparedStatement stmt = null;</span>
+		try{
+<span class="fc" id="L71">			conn = factory.getConnection();</span>
+<span class="fc" id="L72">			stmt = conn.prepareStatement(&quot;UPDATE appointmenttype SET duration=? WHERE appt_type=?&quot;);</span>
+<span class="fc" id="L73">			stmt.setInt(1, apptType.getDuration());</span>
+<span class="fc" id="L74">			stmt.setString(2, apptType.getName());</span>
+<span class="fc" id="L75">			final int rowCount = stmt.executeUpdate();</span>
+<span class="fc" id="L76">			stmt.close();</span>
+<span class="pc bpc" id="L77" title="1 of 2 branches missed.">			return rowCount &gt; 0;</span>
+<span class="fc" id="L78">		}catch(SQLException e){</span>
+<span class="fc" id="L79">			throw new DBException(e);</span>
+		}finally{
+<span class="fc" id="L81">			DBUtil.closeConnection(conn, stmt);</span>
+		}
+		
+		
+	}
+	public ApptTypeBean getApptType(final String apptType) throws SQLException, DBException{
+<span class="fc" id="L87">		Connection conn = null;</span>
+<span class="fc" id="L88">		PreparedStatement stmt = null;</span>
+<span class="fc" id="L89">		ApptTypeBean bean = null;</span>
+		try{
+<span class="fc" id="L91">			conn = factory.getConnection();</span>
+<span class="fc" id="L92">			stmt = conn.prepareStatement(&quot;SELECT * FROM appointmenttype WHERE appt_type=?&quot;);</span>
+<span class="fc" id="L93">			stmt.setString(1, apptType);</span>
+		
+<span class="fc" id="L95">			final ResultSet results = stmt.executeQuery();</span>
+		
+<span class="fc" id="L97">			final List&lt;ApptTypeBean&gt; beans = atLoader.loadList(results);</span>
+<span class="fc" id="L98">			results.close();</span>
+<span class="fc" id="L99">			stmt.close();</span>
+<span class="pc bpc" id="L100" title="1 of 2 branches missed.">			if(!beans.isEmpty()){</span>
+<span class="fc" id="L101">				bean = beans.get(0);</span>
+			}
+<span class="fc" id="L103">		}catch(SQLException e){</span>
+<span class="fc" id="L104">			throw new DBException(e);</span>
+		}finally{
+<span class="fc" id="L106">			DBUtil.closeConnection(conn, stmt);</span>
+<span class="fc" id="L107">		}</span>
+<span class="fc" id="L108">		return bean;</span>
+	}
+	
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

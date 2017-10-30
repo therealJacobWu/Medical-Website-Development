@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ViewMyReportRequestsAction.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.action</a> &gt; <span class="el_source">ViewMyReportRequestsAction.java</span></div><h1>ViewMyReportRequestsAction.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.action;
+
+import java.util.Calendar;
+import java.util.List;
+import edu.ncsu.csc.itrust.beans.PersonnelBean;
+import edu.ncsu.csc.itrust.beans.ReportRequestBean;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.dao.mysql.PersonnelDAO;
+import edu.ncsu.csc.itrust.dao.mysql.ReportRequestDAO;
+import edu.ncsu.csc.itrust.exception.ITrustException;
+
+/**
+ * Action class for ViewMyReports.jsp.  Allows the user to see all their reports
+ */
+public class ViewMyReportRequestsAction {
+	private long loggedInMID;
+	private ReportRequestDAO reportRequestDAO;
+	private PersonnelDAO personnelDAO;
+
+	/**
+	 * Set up
+	 * 
+	 * @param factory The DAOFactory used to create the DAOs used in this action.
+	 * @param loggedInMID The MID of the person viewing their report requests.
+	 */
+<span class="fc" id="L26">	public ViewMyReportRequestsAction(DAOFactory factory, long loggedInMID) {</span>
+<span class="fc" id="L27">		this.loggedInMID = loggedInMID;</span>
+<span class="fc" id="L28">		this.reportRequestDAO = factory.getReportRequestDAO();</span>
+<span class="fc" id="L29">		this.personnelDAO = factory.getPersonnelDAO();</span>
+<span class="fc" id="L30">	}</span>
+
+	/**
+	 * Returns all the reports for the currently logged in HCP
+	 * 
+	 * @return list of all reports for the logged in HCP
+	 * @throws ITrustException
+	 */
+	public List&lt;ReportRequestBean&gt; getAllReportRequestsForRequester() throws ITrustException {
+<span class="fc" id="L39">		return reportRequestDAO.getAllReportRequestsForRequester(loggedInMID);</span>
+	}
+
+
+	/**
+	 * Adds a report request to the list
+	 * 
+	 * @param patientMID ID of the patient that the report request is for
+	 * @return id
+	 * @throws ITrustException
+	 */
+	public long addReportRequest(long patientMID) throws ITrustException {
+<span class="fc" id="L51">		long id = reportRequestDAO</span>
+<span class="fc" id="L52">				.addReportRequest(loggedInMID, patientMID, Calendar.getInstance().getTime());</span>
+<span class="fc" id="L53">		return id;</span>
+
+	}
+
+
+	/**
+	 * Returns the requested report
+	 * 
+	 * @param ID id of the requested report
+	 * @return the requested report
+	 * @throws ITrustException
+	 */
+	public ReportRequestBean getReportRequest(int ID) throws ITrustException {
+<span class="fc" id="L66">		return reportRequestDAO.getReportRequest(ID);</span>
+	}
+	
+/**
+ * Sets the viewed status of the report.  If the report is &quot;viewed&quot; the HCP must request a new one to see it again.
+ * 
+ * @param ID id of the report
+ * @throws ITrustException
+ */
+	public void setViewed(int ID) throws ITrustException {
+<span class="nc" id="L76">		reportRequestDAO.setViewed(ID, Calendar.getInstance().getTime());</span>
+<span class="nc" id="L77">	}</span>
+
+
+	/**
+	 * Gets the status of the request
+	 * 
+	 * @param id id of the request
+	 * @return the request's status
+	 * @throws ITrustException
+	 */
+	public String getLongStatus(long id) throws ITrustException {
+<span class="fc" id="L88">		StringBuilder s = new StringBuilder();</span>
+<span class="fc" id="L89">		ReportRequestBean r = reportRequestDAO.getReportRequest(id);</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">		if (r.getStatus().equals(ReportRequestBean.Requested)) {</span>
+<span class="fc" id="L91">			PersonnelBean p = personnelDAO.getPersonnel(r.getRequesterMID());</span>
+<span class="fc" id="L92">			s.append(String.format(&quot;Request was requested on %s by %s&quot;, r.getRequestedDateString(), p</span>
+<span class="fc" id="L93">					.getFullName()));</span>
+		}
+		
+<span class="fc bfc" id="L96" title="All 2 branches covered.">		if (r.getStatus().equals(ReportRequestBean.Viewed)) {</span>
+<span class="fc" id="L97">			PersonnelBean p = personnelDAO.getPersonnel(r.getRequesterMID());</span>
+<span class="fc" id="L98">			String fullName = &quot;Unknown&quot;;</span>
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">			if(p != null){</span>
+<span class="fc" id="L100">				fullName = p.getFullName();</span>
+<span class="fc" id="L101">				s.append(String.format(&quot;Request was requested on %s by %s, &quot;, r.getRequestedDateString(), p</span>
+<span class="fc" id="L102">					.getFullName()));</span>
+			}
+<span class="fc" id="L104">			s.append(&quot;&quot;); // removed &quot;&lt;br /&gt;&quot; because it caused unit test to fail and seems to have no</span>
+			// purpose
+<span class="fc" id="L106">			s.append(String.format(&quot;and viewed on %s by %s&quot;, r.getViewedDateString(), fullName));</span>
+		}
+
+<span class="fc" id="L109">		return s.toString();</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

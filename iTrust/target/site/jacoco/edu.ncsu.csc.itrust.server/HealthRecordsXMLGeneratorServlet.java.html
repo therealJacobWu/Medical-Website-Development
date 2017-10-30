@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>HealthRecordsXMLGeneratorServlet.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.server</a> &gt; <span class="el_source">HealthRecordsXMLGeneratorServlet.java</span></div><h1>HealthRecordsXMLGeneratorServlet.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.server;
+
+import javax.servlet.*;
+import javax.servlet.http.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import edu.ncsu.csc.itrust.action.ViewRecordsReleaseAction;
+import edu.ncsu.csc.itrust.beans.HealthRecord;
+import edu.ncsu.csc.itrust.beans.RecordsReleaseBean;
+
+import java.io.*;
+import java.util.List;
+
+<span class="fc" id="L24">public class HealthRecordsXMLGeneratorServlet extends HttpServlet  {</span>
+
+	private static final long serialVersionUID = 1L;
+	
+	private ViewRecordsReleaseAction viewAction;
+	private RecordsReleaseBean release;
+	
+	@SuppressWarnings(&quot;unchecked&quot;)
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
+
+		try{
+			//Get the ViewRecordsReleaseAction object
+<span class="fc" id="L36">			viewAction = (ViewRecordsReleaseAction)request.getSession().getAttribute(&quot;viewAction&quot;);</span>
+			//Get the release request
+<span class="fc" id="L38">			int index = Integer.parseInt(request.getParameter(&quot;index&quot;));</span>
+<span class="fc" id="L39">			List&lt;RecordsReleaseBean&gt; releaseRequests = (List&lt;RecordsReleaseBean&gt;)request.getSession().getAttribute(&quot;recRequests&quot;);</span>
+<span class="fc" id="L40">			release = releaseRequests.get(index);</span>
+<span class="nc" id="L41">		} catch(NullPointerException e){</span>
+<span class="nc" id="L42">			e.printStackTrace();</span>
+<span class="fc" id="L43">		}</span>
+		
+		try {
+<span class="fc" id="L46">			printHealthRecordsXML(release, response);</span>
+<span class="nc" id="L47">		} catch (Exception e) {</span>
+<span class="nc" id="L48">			e.printStackTrace();</span>
+<span class="fc" id="L49">		}</span>
+<span class="fc" id="L50">	}</span>
+	
+	private void printHealthRecordsXML(RecordsReleaseBean release, HttpServletResponse response) throws Exception {
+<span class="fc" id="L53">		response.setContentType(&quot;text/xml&quot;);</span>
+<span class="fc" id="L54">		PrintWriter out = response.getWriter();</span>
+		
+		//Get all of the patient's health records from the specified hospital
+<span class="fc" id="L57">		List&lt;HealthRecord&gt; records = viewAction.getRequestedHealthRecords(release);</span>
+		
+<span class="fc" id="L59">		Document document = null;</span>
+<span class="fc" id="L60">		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();</span>
+<span class="fc" id="L61">		DocumentBuilder builder = factory.newDocumentBuilder();</span>
+<span class="fc" id="L62">		DOMImplementation impl = builder.getDOMImplementation();</span>
+<span class="fc" id="L63">		document = impl.createDocument(null, &quot;MedicalHealthRecords&quot;, null);</span>
+		//Get the root element
+<span class="fc" id="L65">		Element rootElement = document.getDocumentElement();</span>
+		
+		//Create a release information element
+<span class="fc" id="L68">		Element releaseInfo = document.createElement(&quot;ReleaseInformation&quot;);</span>
+<span class="fc" id="L69">		rootElement.appendChild(releaseInfo);</span>
+		//Define the request date
+<span class="fc" id="L71">		Element child = document.createElement(&quot;requestDate&quot;);</span>
+<span class="fc" id="L72">		child.appendChild(document.createTextNode(release.getDateRequestedStr()));</span>
+<span class="fc" id="L73">		releaseInfo.appendChild(child);</span>
+		//Define the patient name
+<span class="fc" id="L75">		child = document.createElement(&quot;patientName&quot;);</span>
+<span class="fc" id="L76">		child.appendChild(document.createTextNode(viewAction.getPatientName(release.getPid())));</span>
+<span class="fc" id="L77">		releaseInfo.appendChild(child);</span>
+		//Define the release hospital
+<span class="fc" id="L79">		child = document.createElement(&quot;releaseHospital&quot;);</span>
+<span class="fc" id="L80">		child.appendChild(document.createTextNode(viewAction.getHospitalName(release.getReleaseHospitalID())));</span>
+<span class="fc" id="L81">		releaseInfo.appendChild(child);</span>
+		//Define the doctor to release to's name
+<span class="fc" id="L83">		child = document.createElement(&quot;recDoctor&quot;);</span>
+<span class="fc" id="L84">		child.appendChild(document.createTextNode(release.getDocFirstName() + &quot; &quot; + release.getDocLastName()));</span>
+<span class="fc" id="L85">		releaseInfo.appendChild(child);</span>
+		//Define the doctor to release to's contact information
+<span class="fc" id="L87">		child = document.createElement(&quot;recDoctorPhone&quot;);</span>
+<span class="fc" id="L88">		child.appendChild(document.createTextNode(release.getDocPhone()));</span>
+<span class="fc" id="L89">		releaseInfo.appendChild(child);</span>
+<span class="fc" id="L90">		child = document.createElement(&quot;recDoctorEmail&quot;);</span>
+<span class="fc" id="L91">		child.appendChild(document.createTextNode(release.getDocEmail()));</span>
+<span class="fc" id="L92">		releaseInfo.appendChild(child);</span>
+		//Define the hospital to release to
+<span class="fc" id="L94">		child = document.createElement(&quot;recHospital&quot;);</span>
+<span class="fc" id="L95">		child.appendChild(document.createTextNode(release.getRecHospitalName()));</span>
+<span class="fc" id="L96">		releaseInfo.appendChild(child);</span>
+		//Define the hospital to release to's address
+<span class="fc" id="L98">		child = document.createElement(&quot;recHospitalAddress&quot;);</span>
+<span class="fc" id="L99">		child.appendChild(document.createTextNode(release.getRecHospitalAddress()));</span>
+<span class="fc" id="L100">		releaseInfo.appendChild(child);</span>
+		
+		
+<span class="fc bfc" id="L103" title="All 2 branches covered.">		for (int i = 0; i &lt; records.size(); i++) {</span>
+			//Define health record elements
+<span class="fc" id="L105">			Element healthRecord = document.createElement(&quot;HealthRecord&quot;);</span>
+<span class="fc" id="L106">			rootElement.appendChild(healthRecord);</span>
+
+			//Define visit date elements
+<span class="fc" id="L109">			child = document.createElement(&quot;visitDate&quot;);</span>
+<span class="fc" id="L110">			child.appendChild(document.createTextNode(records.get(i).getVisitDateStr()));</span>
+<span class="fc" id="L111">			healthRecord.appendChild(child);</span>
+
+			//Define height elements
+<span class="fc" id="L114">			child = document.createElement(&quot;height&quot;);</span>
+<span class="fc" id="L115">			child.appendChild(document.createTextNode(String.valueOf(records.get(i).getHeight()) + &quot; in&quot;));</span>
+<span class="fc" id="L116">			healthRecord.appendChild(child);</span>
+
+			//Define weight elements
+<span class="fc" id="L119">			child = document.createElement(&quot;weight&quot;);</span>
+<span class="fc" id="L120">			child.appendChild(document.createTextNode(String.valueOf(records.get(i).getWeight()) + &quot; lbs&quot;));</span>
+<span class="fc" id="L121">			healthRecord.appendChild(child);</span>
+
+			//Define blood pressure elements
+<span class="fc" id="L124">			child = document.createElement(&quot;bloodPressure&quot;);</span>
+<span class="fc" id="L125">			String bpString = records.get(i).getBloodPressureSystolic() + &quot;/&quot; </span>
+<span class="fc" id="L126">							+ records.get(i).getBloodPressureDiastolic() + &quot; mmHg&quot;;</span>
+<span class="fc" id="L127">			child.appendChild(document.createTextNode(bpString));</span>
+<span class="fc" id="L128">			healthRecord.appendChild(child);</span>
+			
+			//Define patient smoking status elements
+<span class="fc" id="L131">			child = document.createElement(&quot;smokeStatus&quot;);</span>
+<span class="fc" id="L132">			child.appendChild(document.createTextNode(String.valueOf(records.get(i).getSmokingStatusDesc())));</span>
+<span class="fc" id="L133">			healthRecord.appendChild(child);</span>
+			
+			//Define household smoke status elements
+<span class="fc" id="L136">			child = document.createElement(&quot;houseSmokeStatus&quot;);</span>
+<span class="fc" id="L137">			child.appendChild(document.createTextNode(String.valueOf(records.get(i).getHouseholdSmokingStatusDesc())));</span>
+<span class="fc" id="L138">			healthRecord.appendChild(child);</span>
+		
+			//Define hdl elements
+<span class="fc" id="L141">			child = document.createElement(&quot;hdl&quot;);</span>
+<span class="fc" id="L142">			child.appendChild(document.createTextNode(String.valueOf(records.get(i).getCholesterolHDL()) + &quot; mg/dL&quot;));</span>
+<span class="fc" id="L143">			healthRecord.appendChild(child);</span>
+			
+			//Define ldl elements
+<span class="fc" id="L146">			child = document.createElement(&quot;ldl&quot;);</span>
+<span class="fc" id="L147">			child.appendChild(document.createTextNode(String.valueOf(records.get(i).getCholesterolLDL()) + &quot; mg/dL&quot;));</span>
+<span class="fc" id="L148">			healthRecord.appendChild(child);</span>
+			
+			//Define triglycerides elements
+<span class="fc" id="L151">			child = document.createElement(&quot;triglycerides&quot;);</span>
+<span class="fc" id="L152">			child.appendChild(document.createTextNode(String.valueOf(records.get(i).getCholesterolTri()) + &quot; mg/dL&quot;));</span>
+<span class="fc" id="L153">			healthRecord.appendChild(child);</span>
+			
+			//Define doctor elements
+<span class="fc" id="L156">			child = document.createElement(&quot;doctor&quot;);</span>
+<span class="fc" id="L157">			String docName = viewAction.getDoctorName(records.get(i).getPersonnelID());</span>
+<span class="fc" id="L158">			child.appendChild(document.createTextNode(docName));</span>
+<span class="fc" id="L159">			healthRecord.appendChild(child);</span>
+		}
+		
+		//Serialisation through Transform and print to html
+<span class="fc" id="L163">		DOMSource domSource = new DOMSource(document);</span>
+<span class="fc" id="L164">		StreamResult streamResult = new StreamResult(out);</span>
+<span class="fc" id="L165">		TransformerFactory tf = TransformerFactory.newInstance();</span>
+<span class="fc" id="L166">		Transformer serializer = tf.newTransformer();</span>
+<span class="fc" id="L167">		serializer.setOutputProperty(OutputKeys.ENCODING, &quot;ISO-8859-1&quot;);</span>
+<span class="fc" id="L168">		serializer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, &quot;users.dtd&quot;);</span>
+<span class="fc" id="L169">		serializer.setOutputProperty(OutputKeys.INDENT, &quot;yes&quot;);</span>
+<span class="fc" id="L170">		serializer.transform(domSource, streamResult);</span>
+		
+<span class="fc" id="L172">	}</span>
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

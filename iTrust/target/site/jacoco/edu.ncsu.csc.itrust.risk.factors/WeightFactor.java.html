@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>WeightFactor.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.risk.factors</a> &gt; <span class="el_source">WeightFactor.java</span></div><h1>WeightFactor.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.risk.factors;
+
+import edu.ncsu.csc.itrust.beans.HealthRecord;
+
+/**
+ * Checks the patient's body mass index over the given threshold
+ * See {@link PatientRiskFactor} for details on what each method typically does.
+ * 
+ *  
+ * 
+ */
+public class WeightFactor extends PatientRiskFactor {
+	private HealthRecord currentHealthRecord;
+	private int bmiThreshold;
+
+<span class="fc" id="L16">	public WeightFactor(HealthRecord currentHealthRecord, int bmiThreshold) {</span>
+<span class="fc" id="L17">		this.currentHealthRecord = currentHealthRecord;</span>
+<span class="fc" id="L18">		this.bmiThreshold = bmiThreshold;</span>
+<span class="fc" id="L19">	}</span>
+
+	@Override
+	public String getDescription() {
+<span class="fc" id="L23">		return &quot;Patient's body mass index is over &quot; + bmiThreshold;</span>
+	}
+
+	@Override
+	public boolean hasFactor() {
+<span class="fc" id="L28">		double bmi = currentHealthRecord.getBodyMassIndex();</span>
+<span class="pc bpc" id="L29" title="1 of 4 branches missed.">		return bmi &gt; bmiThreshold &amp;&amp; !Double.isInfinite(bmi);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

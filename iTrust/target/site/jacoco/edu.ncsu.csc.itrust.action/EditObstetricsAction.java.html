@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>EditObstetricsAction.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.action</a> &gt; <span class="el_source">EditObstetricsAction.java</span></div><h1>EditObstetricsAction.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.action;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import edu.ncsu.csc.itrust.beans.FlagsBean;
+import edu.ncsu.csc.itrust.beans.HealthRecord;
+import edu.ncsu.csc.itrust.beans.ObstetricsRecordBean;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.dao.mysql.FlagsDAO;
+import edu.ncsu.csc.itrust.dao.mysql.HealthRecordsDAO;
+import edu.ncsu.csc.itrust.dao.mysql.ObstetricsRecordDAO;
+import edu.ncsu.csc.itrust.enums.FlagValue;
+import edu.ncsu.csc.itrust.enums.PregnancyStatus;
+import edu.ncsu.csc.itrust.enums.TransactionType;
+import edu.ncsu.csc.itrust.exception.DBException;
+import edu.ncsu.csc.itrust.exception.FormValidationException;
+import edu.ncsu.csc.itrust.exception.ITrustException;
+import edu.ncsu.csc.itrust.validate.ObstetricsRecordValidator;
+
+public class EditObstetricsAction {
+    private ObstetricsRecordDAO obstetricsDAO;
+    private FlagsDAO flagsDAO;
+    private long loggedInMID;
+    private EventLoggingAction loggingAction;
+    private HealthRecordsDAO hDao;
+    
+    /**
+	 * Just the factory and logged in MID
+	 * 
+	 * @param factory
+	 * @param loggedInMID
+	 */
+<span class="fc" id="L34">	public EditObstetricsAction(DAOFactory factory, long loggedInMID) {</span>
+<span class="fc" id="L35">		this.obstetricsDAO = factory.getObstetricsRecordDAO();</span>
+<span class="fc" id="L36">		this.flagsDAO = factory.getFlagsDAO();</span>
+<span class="fc" id="L37">		this.loggedInMID = loggedInMID;</span>
+<span class="fc" id="L38">		this.loggingAction = new EventLoggingAction(factory);</span>
+<span class="fc" id="L39">		this.hDao = new HealthRecordsDAO(factory);</span>
+<span class="fc" id="L40">	}</span>
+    
+	public void updateFhrFlag(ObstetricsRecordBean p) throws DBException {
+<span class="fc" id="L43">		List&lt;ObstetricsRecordBean&gt; lst = obstetricsDAO.getObstetricsRecordsByMID(loggedInMID);</span>
+		
+		//Get the current flag bean
+<span class="fc" id="L46">		FlagsBean f = new FlagsBean();</span>
+<span class="fc" id="L47">		f.setMid(p.getMid());</span>
+<span class="fc" id="L48">		f.setPregId(p.getPregId());</span>
+<span class="fc" id="L49">		f.setFlagValue(FlagValue.AbnormalFHR);</span>
+<span class="fc" id="L50">		f = flagsDAO.getFlag(f);</span>
+		
+<span class="fc" id="L52">		boolean setFlag = false;</span>
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">		for (ObstetricsRecordBean r : lst) {</span>
+<span class="nc bnc" id="L54" title="All 4 branches missed.">			if(r.getFhr() &gt; FlagsBean.FHR_MAX_TRIGGER || r.getFhr() &lt; FlagsBean.FHR_MIN_TRIGGER) {</span>
+<span class="nc" id="L55">				setFlag = true;</span>
+			}
+<span class="nc" id="L57">		}</span>
+		
+<span class="fc" id="L59">		f.setFlagged(setFlag);</span>
+<span class="fc" id="L60">		flagsDAO.setFlag(f);</span>
+<span class="fc" id="L61">	}</span>
+	
+    public void editObstetricsRecord(long oid, ObstetricsRecordBean p, ArrayList&lt;FlagsBean&gt; flags)
+    		throws FormValidationException, ITrustException {
+<span class="fc bfc" id="L65" title="All 2 branches covered.">    	if (p != null) {</span>
+<span class="fc" id="L66">    		List&lt;ObstetricsRecordBean&gt; initialBeans = obstetricsDAO.getObstetricsRecordsByMIDPregStatus(</span>
+<span class="fc" id="L67">					p.getMid(), PregnancyStatus.Initial.toString());</span>
+<span class="pc bpc" id="L68" title="2 of 4 branches missed.">			if (initialBeans == null || initialBeans.isEmpty()) {</span>
+<span class="nc" id="L69">				throw new ITrustException(&quot;Invalid office visit to edit.&quot;);</span>
+			}
+			else {
+<span class="fc" id="L72">				p.setPregId(initialBeans.get(0).getPregId());</span>
+			}
+<span class="fc" id="L74">    		new ObstetricsRecordValidator().validate(p);</span>
+    		//TODO set the calculation flags
+
+<span class="fc" id="L77">	    	obstetricsDAO.editObstetricsRecord(p.getOid(), p);</span>
+	    	
+<span class="fc" id="L79">			boolean isTwins = false;</span>
+			
+			//set the manual flags first to load from later and pull if twins is set
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">			for (FlagsBean flag : flags) {</span>
+<span class="nc" id="L83">				flag.setPregId(p.getPregId());</span>
+<span class="nc" id="L84">				flagsDAO.setFlag(flag);</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">				if (flag.getFlagValue() == FlagValue.Twins)</span>
+<span class="nc" id="L86">					isTwins = flag.isFlagged();</span>
+<span class="nc" id="L87">			}</span>
+	    	
+	    	//Download the list of office visits for this patient
+<span class="fc" id="L90">	    	List&lt;ObstetricsRecordBean&gt; visits = obstetricsDAO.getObstetricsRecordsByMIDPregStatus(</span>
+<span class="fc" id="L91">					p.getMid(), PregnancyStatus.Office.toString());</span>
+	    	
+	    	//Get FHR flag
+<span class="fc" id="L94">			FlagsBean fhrFlag = new FlagsBean();</span>
+<span class="fc" id="L95">			fhrFlag.setMid(p.getMid());</span>
+<span class="fc" id="L96">			fhrFlag.setPregId(p.getPregId());</span>
+<span class="fc" id="L97">			fhrFlag.setFlagValue(FlagValue.AbnormalFHR);</span>
+<span class="fc" id="L98">			fhrFlag = flagsDAO.getFlag(fhrFlag);</span>
+<span class="fc" id="L99">			fhrFlag.setFlagged(false);</span>
+			
+			//Get BP flag
+<span class="fc" id="L102">			FlagsBean bpFlag = new FlagsBean();</span>
+<span class="fc" id="L103">			bpFlag.setMid(p.getMid());</span>
+<span class="fc" id="L104">			bpFlag.setPregId(p.getPregId());</span>
+<span class="fc" id="L105">			bpFlag.setFlagValue(FlagValue.HighBloodPressure);</span>
+<span class="fc" id="L106">			bpFlag = flagsDAO.getFlag(bpFlag);</span>
+<span class="fc" id="L107">			bpFlag.setFlagged(false);</span>
+			
+			//Weight flag processing
+<span class="fc" id="L110">			boolean setWeightFlag = false;</span>
+<span class="fc" id="L111">			List&lt;HealthRecord&gt; records = hDao.getAllRecordsBeforeOVDate(p.getMid(), p.getLmp());</span>
+			//can only do BMI calculations if a normal office visit (with height/weight) exists before LMP
+<span class="pc bpc" id="L113" title="1 of 2 branches missed.">			if (records.isEmpty()) {</span>
+<span class="fc" id="L114">				records = hDao.getAllHealthRecords(p.getMid());</span>
+			} 
+			
+			//check if any record trigges any flags
+<span class="fc bfc" id="L118" title="All 2 branches covered.">			for (ObstetricsRecordBean bean : visits){	</span>
+				
+				//Do weight gain stuff
+<span class="pc bpc" id="L121" title="2 of 4 branches missed.">				if (!records.isEmpty() &amp;&amp; !setWeightFlag) {</span>
+<span class="fc" id="L122">					double height = records.get(0).getHeight();</span>
+<span class="fc" id="L123">					double origWeight = records.get(0).getWeight();</span>
+<span class="fc" id="L124">					double newWeight = p.getWeight();</span>
+					
+					//caluclate the original BMI
+<span class="fc" id="L127">					double origBMI = HealthRecord.calculateBMI(height, origWeight);</span>
+<span class="fc" id="L128">					double weightChange = newWeight - origWeight;</span>
+<span class="fc" id="L129">					double scaler = ((double)(p.getDateVisit().getTime() - p.getLmp().getTime())) / ((double)(p.getEdd().getTime() - p.getLmp().getTime()));</span>
+					
+					//find the expected weight offsets in BMI/weight tables
+<span class="pc bpc" id="L132" title="1 of 2 branches missed.">					for (int i = 0; i &lt; FlagsBean.WEIGHTGAINBMIBOUNDS.length; i++) {</span>
+						//This is the correct upper bound
+<span class="fc bfc" id="L134" title="All 2 branches covered.">						if (FlagsBean.WEIGHTGAINBMIBOUNDS[i] &gt; origBMI) {</span>
+<span class="pc bpc" id="L135" title="1 of 2 branches missed.">							if (isTwins) {</span>
+								//If not in expected twins range
+<span class="nc bnc" id="L137" title="All 4 branches missed.">								if (FlagsBean.WeightGainTwinsBMIMin[i] * scaler &gt; weightChange ||</span>
+										FlagsBean.WeightGainTwinsBMIMax[i] &lt; weightChange) {
+<span class="nc" id="L139">									setWeightFlag = true;								</span>
+								}
+							} else {
+								//If not in expected range
+<span class="pc bpc" id="L143" title="2 of 4 branches missed.">								if (FlagsBean.WEIGHTGAINBMIMIN[i] * scaler &gt; weightChange ||</span>
+										FlagsBean.WeightGainBMIMax[i] &lt; weightChange) {
+<span class="fc" id="L145">									setWeightFlag = true;								</span>
+								}
+							}					
+							break; //exit after computed
+						}
+					}
+				}
+				
+				//do fhr stuff
+<span class="pc bpc" id="L154" title="1 of 2 branches missed.">				if (!fhrFlag.isFlagged()) {</span>
+<span class="pc bpc" id="L155" title="2 of 4 branches missed.">					if(bean.getFhr() &gt; FlagsBean.FHR_MAX_TRIGGER || bean.getFhr() &lt; FlagsBean.FHR_MIN_TRIGGER) {</span>
+<span class="fc" id="L156">						fhrFlag.setFlagged(true);</span>
+					}
+				}
+				
+				//do bp stuff
+<span class="pc bpc" id="L161" title="1 of 2 branches missed.">				if (!bpFlag.isFlagged()) {</span>
+<span class="pc bpc" id="L162" title="2 of 4 branches missed.">					if(bean.getBloodPressureS() &gt; FlagsBean.SYS_BP_MAX_TRIGGER || bean.getBloodPressureD() &gt; FlagsBean.DIA_BP_MAX_TRIGGER) {</span>
+<span class="nc" id="L163">						bpFlag.setFlagged(true);</span>
+						
+					}
+				}
+<span class="fc" id="L167">	    	}</span>
+<span class="fc" id="L168">			flagsDAO.setFlag(fhrFlag);</span>
+<span class="fc" id="L169">			flagsDAO.setFlag(bpFlag);</span>
+			
+			//Set weight flag if needed
+<span class="fc" id="L172">			FlagsBean wFlag = new FlagsBean();</span>
+<span class="fc" id="L173">			wFlag.setMid(p.getMid());</span>
+<span class="fc" id="L174">			wFlag.setPregId(p.getPregId());</span>
+<span class="fc" id="L175">			wFlag.setFlagValue(FlagValue.WeightChange);</span>
+<span class="fc" id="L176">			wFlag = flagsDAO.getFlag(wFlag);</span>
+<span class="fc" id="L177">			wFlag.setFlagged(setWeightFlag);</span>
+<span class="fc" id="L178">			flagsDAO.setFlag(wFlag);</span>
+			
+<span class="fc" id="L180">	    	loggingAction.logEvent(TransactionType.parse(6402), loggedInMID, </span>
+<span class="fc" id="L181">					p.getMid(), &quot;Obstetrics Office Visit &quot; +  p.getOid() + &quot; edited by &quot; + loggedInMID);</span>
+<span class="fc" id="L182">    	}</span>
+    	else {
+<span class="fc" id="L184">			throw new ITrustException(&quot;Cannot edit a null Obstetrics Record.&quot;);</span>
+		}
+<span class="fc" id="L186">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

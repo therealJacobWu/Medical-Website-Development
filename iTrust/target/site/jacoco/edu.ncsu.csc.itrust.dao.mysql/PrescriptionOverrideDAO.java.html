@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>PrescriptionOverrideDAO.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.dao.mysql</a> &gt; <span class="el_source">PrescriptionOverrideDAO.java</span></div><h1>PrescriptionOverrideDAO.java</h1><pre class="source lang-java linenums">/**
+ * 
+ */
+package edu.ncsu.csc.itrust.dao.mysql;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import edu.ncsu.csc.itrust.DBUtil;
+import edu.ncsu.csc.itrust.beans.OverrideReasonBean;
+import edu.ncsu.csc.itrust.beans.loaders.OverrideReasonBeanLoader;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.exception.DBException;
+
+/**
+ * Used for managing prescriptions given during a particular office visit.
+ * 
+ * DAO stands for Database Access Object. All DAOs are intended to be reflections of the database, that is,
+ * one DAO per table in the database (most of the time). For more complex sets of queries, extra DAOs are
+ * added. DAOs can assume that all data has been validated and is correct.
+ * 
+ * DAOs should never have setters or any other parameter to the constructor than a factory. All DAOs should be
+ * accessed by DAOFactory (@see {@link DAOFactory}) and every DAO should have a factory - for obtaining JDBC
+ * connections and/or accessing other DAOs.
+ * 
+ *  
+ * 
+ */
+public class PrescriptionOverrideDAO {
+	private DAOFactory factory;
+<span class="fc" id="L33">	private OverrideReasonBeanLoader loader = new OverrideReasonBeanLoader();</span>
+	
+<span class="fc" id="L35">	public PrescriptionOverrideDAO(DAOFactory factory) {</span>
+<span class="fc" id="L36">		this.factory = factory;</span>
+<span class="fc" id="L37">	}</span>
+	
+	public List&lt;OverrideReasonBean&gt; getList(long medID) throws DBException {
+<span class="fc" id="L40">		Connection conn = null;</span>
+<span class="fc" id="L41">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L43">			conn = factory.getConnection();</span>
+<span class="fc" id="L44">			ps = conn.prepareStatement(&quot;Select * From ovreactionoverride Where ovmedicationID = ? &quot;);</span>
+<span class="fc" id="L45">			ps.setLong(1, medID);</span>
+<span class="fc" id="L46">			ResultSet rs = ps.executeQuery();</span>
+			
+<span class="fc" id="L48">			List&lt;OverrideReasonBean&gt; loadlist = loader.loadList(rs);</span>
+<span class="fc" id="L49">			rs.close();</span>
+
+<span class="fc" id="L51">			return loadlist;</span>
+<span class="fc" id="L52">		} catch (SQLException e) {</span>
+			
+<span class="fc" id="L54">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L56">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	/**
+	 * Adds a prescription bean to the database.
+	 * @param pres The prescription bean to be added.
+	 * @return The unique ID of the newly added bean.
+	 * @throws DBException
+	 */
+	public long add(OverrideReasonBean pres) throws DBException {
+<span class="fc" id="L66">		Connection conn = null;</span>
+<span class="fc" id="L67">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L69">			conn = factory.getConnection();</span>
+			
+			
+<span class="fc" id="L72">			ps = conn.prepareStatement(&quot;INSERT INTO ovreactionoverride (OVMedicationID,OverrideCode) VALUES (?,?)&quot;);</span>
+<span class="fc" id="L73">			ps.setLong(1, pres.getPresID());</span>
+<span class="fc" id="L74">			ps.setString(2, pres.getORCode());</span>
+
+<span class="fc" id="L76">			ps.executeUpdate();</span>
+			
+<span class="fc" id="L78">			return DBUtil.getLastInsert(conn) ;</span>
+<span class="fc" id="L79">		} catch (SQLException e) {</span>
+			
+<span class="fc" id="L81">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L83">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+
+	/**
+	 * Removes the given medication from its office visit
+	 * 
+	 * @param ovMedicationID The unique ID of the medication to be removed.
+	 * @throws DBException
+	 */
+	public void remove(long ovMedicationID) throws DBException {
+<span class="fc" id="L95">		Connection conn = null;</span>
+<span class="fc" id="L96">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L98">			conn = factory.getConnection();</span>
+<span class="fc" id="L99">			ps = conn.prepareStatement(&quot;DELETE FROM ovreactionoverride WHERE OVMedicationID=? &quot;);</span>
+<span class="fc" id="L100">			ps.setLong(1, ovMedicationID);</span>
+<span class="fc" id="L101">			ps.executeUpdate();</span>
+<span class="fc" id="L102">		} catch (SQLException e) {</span>
+			
+<span class="fc" id="L104">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L106">			DBUtil.closeConnection(conn, ps);</span>
+<span class="fc" id="L107">		}</span>
+<span class="fc" id="L108">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

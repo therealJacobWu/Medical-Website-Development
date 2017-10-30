@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ProcedureBean.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.beans</a> &gt; <span class="el_source">ProcedureBean.java</span></div><h1>ProcedureBean.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.beans;
+
+import java.sql.Date;
+
+/**
+ * A bean for storing data about a procedure.
+ * 
+ * A bean's purpose is to store data. Period. Little or no functionality is to be added to a bean 
+ * (with the exception of minor formatting such as concatenating phone numbers together). 
+ * A bean must only have Getters and Setters (Eclipse Hint: Use Source &gt; Generate Getters and Setters
+ * to create these easily)
+ */
+public class ProcedureBean {
+
+	private long visitID;
+<span class="fc" id="L16">	private long ovProcedureID = 0L;</span>
+	private String CPTCode;
+	private String description;
+	private String attribute;
+	private Date date;
+	private String hcpid;
+
+<span class="fc" id="L23">	public ProcedureBean() {</span>
+<span class="fc" id="L24">	}</span>
+
+<span class="fc" id="L26">	public ProcedureBean(String code) {</span>
+<span class="fc" id="L27">		CPTCode = code;</span>
+<span class="fc" id="L28">	}</span>
+
+<span class="fc" id="L30">	public ProcedureBean(String code, String description) {</span>
+<span class="fc" id="L31">		CPTCode = code;</span>
+<span class="fc" id="L32">		this.description = description;</span>
+<span class="fc" id="L33">	}</span>
+
+<span class="fc" id="L35">	public ProcedureBean(String code, String description, String attribute) {</span>
+<span class="fc" id="L36">		CPTCode = code;</span>
+<span class="fc" id="L37">		this.description = description;</span>
+<span class="fc" id="L38">		this.attribute = attribute;</span>
+<span class="fc" id="L39">	}</span>
+	
+<span class="fc" id="L41">	public ProcedureBean(String code, String description, String attribute, String hcpid) {</span>
+<span class="fc" id="L42">		CPTCode = code;</span>
+<span class="fc" id="L43">		this.description = description;</span>
+<span class="fc" id="L44">		this.attribute = attribute;</span>
+<span class="fc" id="L45">		this.hcpid = hcpid;</span>
+<span class="fc" id="L46">	}</span>
+	
+	public long getID() {
+<span class="nc" id="L49">		return ovProcedureID;</span>
+	}
+
+	public void setID(long id) {
+<span class="nc" id="L53">		this.ovProcedureID = id;</span>
+<span class="nc" id="L54">	}</span>
+	
+	/**
+	 * Gets the CPT Code for this procedure
+	 * 
+	 * @return The CPT Code for this procedure
+	 */
+	public String getCPTCode() {
+<span class="fc" id="L62">		return CPTCode;</span>
+	}
+
+	public void setCPTCode(String code) {
+<span class="fc" id="L66">		CPTCode = code;</span>
+<span class="fc" id="L67">	}</span>
+	
+	public long getVisitID() {
+<span class="fc" id="L70">		return visitID;</span>
+	}
+	public void setVisitID(long visitID) {
+<span class="fc" id="L73">		this.visitID = visitID;</span>
+<span class="fc" id="L74">	}</span>
+	
+	/**
+	 * Gets the CPT Description for this procedure
+	 * 
+	 * @return The CPT Description for this procedure
+	 */
+	public String getDescription() {
+<span class="fc" id="L82">		return description;</span>
+	}
+
+	/**
+	 * setDescription
+	 * @param description description
+	 */
+	public void setDescription(String description) {
+<span class="fc" id="L90">		this.description = description;</span>
+<span class="fc" id="L91">	}</span>
+	
+	/**
+	 * Gets the HCP ID of the HCP administering the immunization
+	 * @return String
+	 */
+	public String getHcpid() {
+<span class="fc" id="L98">		return hcpid;</span>
+	}
+
+	/**
+	 * setHcpid
+	 * @param hcpid hcpid
+	 */
+	public void setHcpid(String hcpid) {
+<span class="fc" id="L106">		this.hcpid = hcpid;</span>
+<span class="fc" id="L107">	}</span>
+		
+	/**
+	 * Gets the CPT attribute, used to determine if this is an immunization
+	 * @return String
+	 */
+	public String getAttribute() {
+<span class="fc" id="L114">		return attribute;</span>
+	}
+
+	/**
+	 * Sets the CPT attribute, used to determine if this is an immunization
+	 * @param attrib attrib
+	 */
+	public void setAttribute(String attrib) {
+<span class="fc" id="L122">		attribute = attrib;</span>
+<span class="fc" id="L123">	}</span>
+	
+	/**
+	 * getOvProcedureID
+	 * @return ovProcedureID
+	 */
+	public long getOvProcedureID() {
+<span class="fc" id="L130">		return ovProcedureID;</span>
+	}
+
+	/**
+	 * setOvProcedureID
+	 * @param ovProcedureID ovProcedureID
+	 */
+	public void setOvProcedureID(long ovProcedureID) {
+<span class="fc" id="L138">		this.ovProcedureID = ovProcedureID;</span>
+<span class="fc" id="L139">	}</span>
+	
+	/**
+	 * getDate
+	 * @return date
+	 */
+	public Date getDate() {
+<span class="nc" id="L146">		return (Date) date.clone();</span>
+	}
+	
+	/**
+	 * setDate
+	 * @param d date
+	 */
+	public void setDate(Date d) {
+<span class="fc" id="L154">		date = (Date) d.clone();</span>
+<span class="fc" id="L155">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

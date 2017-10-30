@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>MacronutrientsLoader.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.beans.loaders</a> &gt; <span class="el_source">MacronutrientsLoader.java</span></div><h1>MacronutrientsLoader.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.beans.loaders;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import edu.ncsu.csc.itrust.beans.MacronutrientsBean;
+
+/**
+ * MacronutrientsLoader.java
+ * Version 1
+ * 03/31/2015
+ * Copyright notice: none
+ * A loader for entries into Macronutrients (personalhealthinformation, patients). 
+ * 
+ * Loads information to/from beans using PreparedStatements and ResultSets.
+ */
+<span class="fc" id="L20">public class MacronutrientsLoader implements BeanLoader&lt;MacronutrientsBean&gt; {</span>
+	
+	/**
+	 * Returns the list of Food entries for a patient
+	 * @param rs the result set to load into beans
+	 * @return the list of food entries for a patient
+	 */
+	public List&lt;MacronutrientsBean&gt; loadList(ResultSet rs) throws SQLException {
+<span class="fc" id="L28">		ArrayList&lt;MacronutrientsBean&gt; list = new ArrayList&lt;MacronutrientsBean&gt;();</span>
+<span class="fc bfc" id="L29" title="All 2 branches covered.">		while (rs.next()) {</span>
+<span class="fc" id="L30">			list.add(loadSingle(rs));</span>
+		}
+<span class="fc" id="L32">		return list;</span>
+	}
+
+	/**
+	 * Loads a single food entry from a result set
+	 * @param rs the result of a query
+	 * @return a food entry bean that has the values from the db
+	 */
+	@Override
+	public MacronutrientsBean loadSingle(ResultSet rs) throws SQLException {
+<span class="fc" id="L42">		MacronutrientsBean msj = new MacronutrientsBean();</span>
+		// Some sort of database issue getting the results of the query
+<span class="fc" id="L44">		msj.setHeight(rs.getFloat(&quot;Height&quot;));</span>
+<span class="fc" id="L45">		msj.setWeight(rs.getFloat(&quot;personalhealthinformation.Weight&quot;));</span>
+<span class="fc" id="L46">		msj.setYears(rs.getDate(&quot;patients.DateOfBirth&quot;));</span>
+<span class="fc" id="L47">		msj.setMsj(rs.getFloat(&quot;height&quot;), rs.getFloat(&quot;weight&quot;), msj.getYears());</span>
+<span class="fc" id="L48">		msj.setPatientID(rs.getLong(&quot;PatientID&quot;));</span>
+<span class="fc" id="L49">		return msj;</span>
+	}
+
+	@Override
+	public PreparedStatement loadParameters(PreparedStatement ps,
+			MacronutrientsBean bean) throws SQLException {
+<span class="nc" id="L55">		return null;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

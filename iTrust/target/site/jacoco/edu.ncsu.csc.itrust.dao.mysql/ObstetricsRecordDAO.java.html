@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ObstetricsRecordDAO.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.dao.mysql</a> &gt; <span class="el_source">ObstetricsRecordDAO.java</span></div><h1>ObstetricsRecordDAO.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.dao.mysql;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+
+import edu.ncsu.csc.itrust.DBUtil;
+import edu.ncsu.csc.itrust.beans.ObstetricsRecordBean;
+import edu.ncsu.csc.itrust.beans.loaders.ObstetricsRecordLoader;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.exception.DBException;
+
+/**
+ * Used for managing all static information related to an obstetrics record. For other information related to all aspects
+ * of patient care, see the other DAOs.
+ * 
+ * DAO stands for Database Access Object. All DAOs are intended to be reflections of the database, that is,
+ * one DAO per table in the database (most of the time). For more complex sets of queries, extra DAOs are
+ * added. DAOs can assume that all data has been validated and is correct.
+ * 
+ * DAOs should never have setters or any other parameter to the constructor than a factory. All DAOs should be
+ * accessed by DAOFactory (@see {@link DAOFactory}) and every DAO should have a factory - for obtaining JDBC
+ * connections and/or accessing other DAOs.
+ * 
+ *  
+ * 
+ */
+public class ObstetricsRecordDAO {
+	private DAOFactory factory;
+	private ObstetricsRecordLoader obstetricsLoader;
+
+	/**
+	 * The typical constructor.
+	 * @param factory The {@link DAOFactory} associated with this DAO, which is used for obtaining SQL connections, etc.
+	 */
+<span class="fc" id="L38">	public ObstetricsRecordDAO(DAOFactory factory) {</span>
+<span class="fc" id="L39">		this.factory = factory;</span>
+<span class="fc" id="L40">		this.obstetricsLoader = new ObstetricsRecordLoader();</span>
+<span class="fc" id="L41">	}</span>
+ 
+	/**
+	 * Adds an obstetrics record to the table
+	 * 
+	 * @throws DBException
+	 */
+	public void addObstetricsRecord(ObstetricsRecordBean p) throws DBException {
+<span class="fc" id="L49">		Connection conn = null;</span>
+<span class="fc" id="L50">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L52">			conn = factory.getConnection();</span>
+			//first, insert the record
+			//used to have OID, between MID and pregId (also VALUES had another ?,
+<span class="fc" id="L55">			ps = conn.prepareStatement(&quot;INSERT INTO obstetrics(MID,pregId,LMP,EDD,weeksPregnant,&quot;</span>
+					+ &quot;dateVisit,yearConception,hoursInLabor,deliveryType,pregnancyStatus,&quot;
+					+ &quot;weight,bloodPressureS,bloodPressureD,FHR,FHU)&quot;
+					+ &quot; VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)&quot;);
+<span class="fc" id="L59">			ps = obstetricsLoader.loadParameters(ps, p);</span>
+<span class="fc" id="L60">			ps.executeUpdate();</span>
+<span class="fc" id="L61">			ps.close();</span>
+			
+			//then, set the OID of the original bean to the one the database generates
+<span class="fc" id="L64">			ps = conn.prepareStatement(&quot;SELECT * FROM obstetrics WHERE pregId=? ORDER BY oid DESC limit 1&quot;); //it will be the largest OID in the DB</span>
+<span class="fc" id="L65">			ps.setLong(1, p.getPregId());</span>
+<span class="fc" id="L66">			ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L67">			rs.first();</span>
+<span class="fc" id="L68">			p.setOid(rs.getLong(&quot;oid&quot;));</span>
+<span class="nc" id="L69">		} catch (SQLException e) {</span>
+<span class="nc" id="L70">			e.printStackTrace();</span>
+<span class="nc" id="L71">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L73">			DBUtil.closeConnection(conn, ps);</span>
+<span class="fc" id="L74">		}</span>
+<span class="fc" id="L75">	}</span>
+	
+	/**
+	 * Returns an obstetrics record correlating to the given OID
+	 * 
+	 * @param oid the obstetrics id
+	 * @return ObstetricsRecordBean with the information from the obstetrics record
+	 * @throws DBException
+	 */
+	public ObstetricsRecordBean getObstetricsRecord(long oid) throws DBException {
+<span class="fc" id="L85">		Connection conn = null;</span>
+<span class="fc" id="L86">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L88">			conn = factory.getConnection();</span>
+<span class="fc" id="L89">			ps = conn.prepareStatement(&quot;SELECT * FROM obstetrics WHERE OID = ?&quot;);</span>
+<span class="fc" id="L90">			ps.setLong(1, oid);</span>
+<span class="fc" id="L91">			ResultSet rs = ps.executeQuery();</span>
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">			if (rs.next()) {</span>
+<span class="fc" id="L93">				ObstetricsRecordBean pat = obstetricsLoader.loadSingle(rs);</span>
+<span class="fc" id="L94">				rs.close();</span>
+<span class="fc" id="L95">				ps.close();</span>
+<span class="fc" id="L96">				return pat;</span>
+			} else{
+<span class="nc" id="L98">				rs.close();</span>
+<span class="nc" id="L99">				ps.close();</span>
+<span class="nc" id="L100">				return null;</span>
+			}
+<span class="fc" id="L102">		} catch (SQLException e) {</span>
+<span class="fc" id="L103">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L105">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+	/**
+	 * Returns a list of obstetrics records correlating to the given MID
+	 * 
+	 * @param mid the patient's id
+	 * @return a list of ObstetricsRecordBean's with the information from all the obstetrics records
+	 * correlating to the given MID
+	 * @throws DBException
+	 */
+	public List&lt;ObstetricsRecordBean&gt; getObstetricsRecordsByMID(long mid)
+			throws DBException {
+<span class="fc" id="L119">		Connection conn = null;</span>
+<span class="fc" id="L120">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L122">			conn = factory.getConnection();</span>
+<span class="fc" id="L123">			ps = conn.prepareStatement(&quot;SELECT * FROM obstetrics WHERE MID=? ORDER BY dateVisit DESC&quot;);</span>
+<span class="fc" id="L124">			ps.setLong(1, mid);</span>
+<span class="fc" id="L125">			ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L126">			List&lt;ObstetricsRecordBean&gt; list = obstetricsLoader.loadList(rs);</span>
+<span class="fc" id="L127">			rs.close();</span>
+<span class="fc" id="L128">			ps.close();</span>
+<span class="fc" id="L129">			return list;</span>
+<span class="fc" id="L130">		} catch (SQLException e) {</span>
+<span class="fc" id="L131">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L133">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+	/**
+	 * Same as above method for get records by MID, but filters by PregnancyStatus
+	 * @param mid
+	 * @param pregStatus
+	 * @return
+	 * @throws DBException
+	 */
+	public List&lt;ObstetricsRecordBean&gt; getObstetricsRecordsByMIDPregStatus(long mid, String pregStatus)
+			throws DBException {
+<span class="fc" id="L146">		Connection conn = null;</span>
+<span class="fc" id="L147">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L149">			conn = factory.getConnection();</span>
+<span class="fc" id="L150">			ps = conn.prepareStatement(&quot;SELECT * FROM obstetrics WHERE MID=? AND pregnancyStatus=?&quot;</span>
+					+ &quot; ORDER BY dateVisit DESC&quot;);
+<span class="fc" id="L152">			ps.setLong(1, mid);</span>
+<span class="fc" id="L153">			ps.setString(2, pregStatus);</span>
+<span class="fc" id="L154">			ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L155">			List&lt;ObstetricsRecordBean&gt; list = obstetricsLoader.loadList(rs);</span>
+<span class="fc" id="L156">			rs.close();</span>
+<span class="fc" id="L157">			ps.close();</span>
+<span class="fc" id="L158">			return list;</span>
+<span class="nc" id="L159">		} catch (SQLException e) {</span>
+<span class="nc" id="L160">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L162">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+	public ObstetricsRecordBean getObstetricsRecordsByMIDLargestpregId(long mid)
+			throws DBException {
+<span class="fc" id="L168">		Connection conn = null;</span>
+<span class="fc" id="L169">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L171">			conn = factory.getConnection();</span>
+<span class="fc" id="L172">			ps = conn.prepareStatement(&quot;SELECT * FROM obstetrics WHERE MID=? ORDER BY pregId DESC&quot;);</span>
+<span class="fc" id="L173">			ps.setLong(1, mid);</span>
+
+<span class="fc" id="L175">			ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L176">			ObstetricsRecordBean bean = null;</span>
+			//check if result set was empty, then load if not
+<span class="fc bfc" id="L178" title="All 2 branches covered.">			if (rs.first()) {</span>
+<span class="fc" id="L179">				bean = obstetricsLoader.loadSingle(rs);</span>
+			}
+<span class="fc" id="L181">			rs.close();</span>
+<span class="fc" id="L182">			ps.close();</span>
+<span class="fc" id="L183">			return bean; //this will return null if there weren't any that meet this criteria</span>
+<span class="fc" id="L184">		} catch (SQLException e) {</span>
+<span class="fc" id="L185">			e.printStackTrace();</span>
+<span class="fc" id="L186">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L188">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+	/**
+	 * Updates an obstetrics record for the given OID
+	 * 
+	 * @param p The ObstetricsRecordBean representing the new information for the obstetrics record.
+	 * @throws DBException
+	 */
+	public void editObstetricsRecord(long oid, ObstetricsRecordBean p) throws DBException {
+<span class="fc" id="L199">		Connection conn = null;</span>
+<span class="fc" id="L200">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L202">			conn = factory.getConnection();</span>
+<span class="fc" id="L203">			ps = conn.prepareStatement(&quot;UPDATE obstetrics SET MID=?,pregId=?,LMP=?,EDD=?,weeksPregnant=?,&quot;</span>
+					+ &quot;dateVisit=?,yearConception=?,hoursInLabor=?,deliveryType=?,pregnancyStatus=?,&quot;
+					+ &quot;weight=?,bloodPressureS=?,bloodPressureD=?,fhr=?,fhu=? &quot;
+					+ &quot;WHERE OID=?&quot;);
+
+<span class="fc" id="L208">			obstetricsLoader.loadParameters(ps, p);</span>
+<span class="fc" id="L209">			ps.setLong(16, oid);</span>
+<span class="fc" id="L210">			ps.executeUpdate();</span>
+<span class="fc" id="L211">			ps.close();</span>
+<span class="nc" id="L212">		} catch (SQLException e) {</span>
+<span class="nc" id="L213">			e.printStackTrace();</span>
+<span class="nc" id="L214">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L216">			DBUtil.closeConnection(conn, ps);</span>
+<span class="fc" id="L217">		}</span>
+<span class="fc" id="L218">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

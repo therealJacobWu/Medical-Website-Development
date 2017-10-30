@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>PatientLabResults.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.charts</a> &gt; <span class="el_source">PatientLabResults.java</span></div><h1>PatientLabResults.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.charts;
+
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
+
+import de.laures.cewolf.DatasetProduceException;
+import de.laures.cewolf.DatasetProducer;
+import de.laures.cewolf.links.CategoryItemLinkGenerator;
+import de.laures.cewolf.tooltips.CategoryToolTipGenerator;
+import edu.ncsu.csc.itrust.beans.LabProcedureBean;
+
+
+/**
+ * This class handles the data for charting height and weight information in
+ * CeWolf/JFreeChart. This class implements DatasetProducer,
+ * CategoryToolTipGenerator, CategoryItemLinkGenerator, and Serializable.
+ */
+<span class="fc" id="L32">public class PatientLabResults implements DatasetProducer, Externalizable, CategoryToolTipGenerator, CategoryItemLinkGenerator, Serializable {</span>
+		
+	private static final long serialVersionUID = -41620615767475576L;
+
+	// Number of quarters to chart. Set to 12 quarters for 3 years.
+	private static final int historyLength = 12;
+	
+    private String[] quarters;
+
+    // Initialize the values for each month to 0
+    private double[] values;
+    
+    // Number of entries per quarter, used to calculate average.
+    private int[] numEntries;
+    
+    // This will be the list of health records
+<span class="fc" id="L48">    private List&lt;LabProcedureBean&gt; lpBeans = new LinkedList&lt;LabProcedureBean&gt;();</span>
+    
+    // This will be the name of the prescription or immunization under analysis
+    private String labProcedureName;
+    
+    /**
+     * Lets the JSP know if there is any data to be displayed.
+     * 
+     * @return False if there is no data to be displayed.
+     */
+    public boolean hasData() {
+<span class="fc" id="L59">    	Date threeYearsAgo = new Date();</span>
+    	Date recDate;
+    	String dateStr;
+<span class="fc" id="L62">    	DateFormat year = new SimpleDateFormat(&quot;yyyy&quot;);</span>
+<span class="fc" id="L63">    	DateFormat rest = new SimpleDateFormat(&quot;/MM/dd HHmma&quot;);</span>
+<span class="fc" id="L64">    	DateFormat sdf = new SimpleDateFormat(&quot;yyyy/MM/dd HHmma&quot;);</span>
+<span class="fc" id="L65">		dateStr = year.format(threeYearsAgo);</span>
+<span class="fc" id="L66">		dateStr = &quot;&quot; + (Integer.parseInt(dateStr) - 3);</span>
+<span class="fc" id="L67">		dateStr += rest.format(threeYearsAgo);</span>
+		try {
+<span class="fc" id="L69">			threeYearsAgo = sdf.parse(dateStr);</span>
+<span class="nc" id="L70">		} catch (ParseException e) {</span>
+<span class="nc" id="L71">			return false;</span>
+<span class="fc" id="L72">		}</span>
+    	
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">    	for (LabProcedureBean lpb : lpBeans) {</span>
+<span class="fc" id="L75">    		recDate = new Date(lpb.getTimestamp().getTime());</span>
+<span class="pc bpc" id="L76" title="1 of 2 branches missed.">    		if (recDate.before(threeYearsAgo))</span>
+<span class="nc" id="L77">    			continue;</span>
+    		else
+<span class="fc" id="L79">    			return true;</span>
+    	}
+
+<span class="nc" id="L82">    	return false;</span>
+    }
+    
+    
+    /**
+     * Called from the JSP to initialize the list of Lab Procedure beans needed
+     * to produce the desired chart.
+     * 
+     * @param lpbs lpbs
+     * @param name Name of the lab procedure
+     */
+    public void initializeLabProcedures(List&lt;LabProcedureBean&gt; lpbs, String name){
+<span class="fc" id="L94">    	lpBeans = lpbs;</span>
+<span class="fc" id="L95">    	this.labProcedureName = name;</span>
+<span class="fc" id="L96">    	quarters = new String[historyLength];</span>
+<span class="fc" id="L97">    	values = new double[historyLength];</span>
+<span class="fc" id="L98">    	numEntries = new int[historyLength];</span>
+    	
+<span class="fc" id="L100">    	Calendar cal = Calendar.getInstance();</span>
+
+<span class="fc" id="L102">    	cal.add(Calendar.MONTH, -3*(historyLength-1));</span>
+    	
+<span class="fc" id="L104">    	int startMonth = cal.get(Calendar.MONTH);</span>
+<span class="fc" id="L105">    	int startQ = startMonth / 3;</span>
+    	
+<span class="fc" id="L107">    	SimpleDateFormat sdf = new SimpleDateFormat(&quot;yy&quot;);</span>
+
+<span class="fc bfc" id="L109" title="All 2 branches covered.">    	for (int i = 0; i &lt; historyLength; i++) {</span>
+<span class="fc" id="L110">    		quarters[i] = &quot;Q&quot; + ((startQ + i)%4 + 1) + &quot; '&quot; + sdf.format(cal.getTime());</span>
+<span class="fc" id="L111">    		values[i] = 0;</span>
+<span class="fc" id="L112">    		numEntries[i] = 0;</span>
+<span class="fc" id="L113">    		cal.add(Calendar.MONTH, 3);</span>
+    	}
+<span class="fc" id="L115">    }</span>
+    
+    /**
+     * This method parses the list of Adverse Event Beans to initialize the
+     * chart dataset.
+     * @param params params
+     * @return A dataset containing information to be graphed
+     * @throws DatasetProduceException
+     */
+	public Object produceDataset(@SuppressWarnings(&quot;rawtypes&quot;) Map params) throws DatasetProduceException {
+    	// The DefaultCategoryDataset is used for bar charts.
+    	// This dataset class may change based on the type of chart you wish to produce.
+<span class="fc" id="L127">        DefaultCategoryDataset dataset = new DefaultCategoryDataset(){</span>
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			
+        };
+        
+<span class="fc" id="L136">        Calendar cur = Calendar.getInstance();</span>
+<span class="fc" id="L137">        int curQuarter = cur.get(Calendar.MONTH) / 3;</span>
+        
+<span class="fc bfc" id="L139" title="All 2 branches covered.">        for(LabProcedureBean lpb : lpBeans) {</span>
+<span class="fc" id="L140">        	Calendar cal = Calendar.getInstance();</span>
+<span class="fc" id="L141">			cal.setTime(lpb.getTimestamp());</span>
+<span class="fc" id="L142">			int yearOfReport = cal.get(Calendar.YEAR);</span>
+<span class="fc" id="L143">        	int monthOfReport = cal.get(Calendar.MONTH);</span>
+<span class="fc" id="L144">        	int quarterOfReport = monthOfReport / 3;</span>
+<span class="fc" id="L145">        	int quarter = historyLength - 4*(cur.get(Calendar.YEAR)-yearOfReport) - (curQuarter - quarterOfReport) - 1;</span>
+        	// Skip entry if it is out of the history range.
+<span class="pc bpc" id="L147" title="1 of 2 branches missed.">        	if (quarter &lt; 0)</span>
+<span class="nc" id="L148">        		continue;</span>
+        	
+        	// Calculate the average for the quarter.
+<span class="fc" id="L151">        	double newValue = 0;</span>
+        
+<span class="fc" id="L153">       		newValue = lpb.getNumericalResultAsDouble();</span>
+        	
+<span class="fc" id="L155">        	values[quarter] = (values[quarter]*numEntries[quarter] + newValue)/(numEntries[quarter] + 1);</span>
+<span class="fc" id="L156">        	numEntries[quarter]++;</span>
+<span class="fc" id="L157">        }</span>
+        
+        // For each month, add the monthly values to the dataset for
+        // producing the chart.
+<span class="fc bfc" id="L161" title="All 2 branches covered.">        for(int i = 0; i &lt; historyLength; i++) {</span>
+        	
+<span class="fc bfc" id="L163" title="All 2 branches covered.">        	if ( values[i] &gt; 0 ) {</span>
+        		
+<span class="fc" id="L165">        		dataset.addValue(values[i], labProcedureName, quarters[i]);</span>
+        		
+        	}
+        }
+
+<span class="fc" id="L170">        return dataset;</span>
+    }
+
+    /**
+     * This producer's data is invalidated after 5 seconds. By this method the
+     * producer can influence Cewolf's caching behavior the way it wants to.
+     * @param params params
+     * @param since since
+     * @return expire time
+     */
+	@SuppressWarnings(&quot;rawtypes&quot;)
+	public boolean hasExpired(Map params, Date since) {		
+<span class="nc bnc" id="L182" title="All 2 branches missed.">		return (System.currentTimeMillis() - since.getTime())  &gt; 5000;</span>
+	}
+
+	/**
+	 * getProcedureId
+	 * @return A unique ID for this DatasetProducer
+	 */
+	public String getProducerId() {
+<span class="nc" id="L190">		return &quot;HealthData DatasetProducer&quot;;</span>
+	}
+
+    /**
+     * generateLink
+     * @param data data
+     * @param series series
+     * @param category category
+     * @return A link target for a special data item.
+     */
+    public String generateLink(Object data, int series, Object category) {
+<span class="nc" id="L201">        return quarters[series];</span>
+    }
+    
+	
+
+	/**
+	 * generateTolTip
+	 * @param arg0 arg0
+	 * @param series series
+	 * @param arg2 arg2
+	 * @return quarters
+	 * @see org.jfree.chart.tooltips.CategoryToolTipGenerator#generateToolTip(CategoryDataset, int, int)
+	 */
+	public String generateToolTip(CategoryDataset arg0, int series, int arg2) {
+<span class="nc" id="L215">		return quarters[series];</span>
+	}
+
+
+	/**
+	 * readExternal
+	 * @param in in
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
+	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+		// Not supported for lab results.
+<span class="nc" id="L227">	}</span>
+
+	/**
+	 * writeExternal
+	 * @param out out
+	 * @throws IOException
+	 */
+	public void writeExternal(ObjectOutput out) throws IOException {
+		// Not supported for lab results.
+<span class="nc" id="L236">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

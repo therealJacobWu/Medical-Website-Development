@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>HealthRecordFormValidator.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.validate</a> &gt; <span class="el_source">HealthRecordFormValidator.java</span></div><h1>HealthRecordFormValidator.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.validate;
+
+import edu.ncsu.csc.itrust.action.EditHealthHistoryAction;
+import edu.ncsu.csc.itrust.beans.forms.HealthRecordForm;
+import edu.ncsu.csc.itrust.exception.ErrorList;
+import edu.ncsu.csc.itrust.exception.FormValidationException;
+
+/**
+ * Validator used in adding health information on Basic Health History, {@link EditHealthHistoryAction}
+ * 
+ *  
+ * 
+ */
+<span class="fc" id="L14">public class HealthRecordFormValidator extends BeanValidator&lt;HealthRecordForm&gt; {</span>
+	/**
+	 * Performs the act of validating the bean in question, which varies depending on the
+	 * type of validator.  If the validation does not succeed, a {@link FormValidationException} is thrown.
+	 * 
+	 * @param p A bean of the type to be validated.
+	 */
+	@Override
+	public void validate(HealthRecordForm bean) throws FormValidationException {
+<span class="fc" id="L23">		ErrorList errorList = new ErrorList();</span>
+<span class="fc" id="L24">		errorList.addIfNotNull(checkInt(&quot;Systolic blood pressure&quot;, bean.getBloodPressureN(), 0, 999, false));</span>
+<span class="fc" id="L25">		errorList.addIfNotNull(checkInt(&quot;Diastolic blood pressure&quot;, bean.getBloodPressureD(), 0, 999, false));</span>
+<span class="fc" id="L26">		errorList.addIfNotNull(checkInt(&quot;Cholesterol HDL&quot;, bean.getCholesterolHDL(), 0, 89, false));</span>
+<span class="fc" id="L27">		errorList.addIfNotNull(checkInt(&quot;Cholesterol LDL&quot;, bean.getCholesterolLDL(), 0, 600, false));</span>
+<span class="fc" id="L28">		errorList.addIfNotNull(checkInt(&quot;Cholesterol Triglycerides&quot;, bean.getCholesterolTri(), 100, 600,</span>
+				false));
+<span class="fc" id="L30">		errorList.addIfNotNull(checkNotZero(&quot;Height&quot;, bean.getHeight(), ValidationFormat.Height, false));</span>
+<span class="fc" id="L31">		errorList.addIfNotNull(checkNotZero(&quot;Weight&quot;, bean.getWeight(), ValidationFormat.Weight, false));</span>
+<span class="fc" id="L32">		errorList.addIfNotNull(checkInt(&quot;Smoker&quot;, bean.getIsSmoker(), 0, 10, false));</span>
+<span class="fc" id="L33">		errorList.addIfNotNull(checkInt(&quot;Household Smoking&quot;, bean.getHouseholdSmokingStatus(), 0, 4, false));</span>
+<span class="fc bfc" id="L34" title="All 2 branches covered.">		if (errorList.hasErrors())</span>
+<span class="fc" id="L35">			throw new FormValidationException(errorList);</span>
+<span class="fc" id="L36">	}</span>
+	
+	public void validateYouth(HealthRecordForm bean) throws FormValidationException{
+<span class="fc" id="L39">		ErrorList errorList = new ErrorList();</span>
+<span class="fc" id="L40">		errorList.addIfNotNull(checkNotZero(&quot;Height&quot;, bean.getHeight(), ValidationFormat.Height, false));</span>
+<span class="fc" id="L41">		errorList.addIfNotNull(checkNotZero(&quot;Weight&quot;, bean.getWeight(), ValidationFormat.Weight, false));</span>
+<span class="fc" id="L42">		errorList.addIfNotNull(checkInt(&quot;Systolic blood pressure&quot;, bean.getBloodPressureN(), 0, 999, false));</span>
+<span class="fc" id="L43">		errorList.addIfNotNull(checkInt(&quot;Diastolic blood pressure&quot;, bean.getBloodPressureD(), 0, 999, false));</span>
+<span class="fc" id="L44">		errorList.addIfNotNull(checkInt(&quot;Household Smoking&quot;, bean.getHouseholdSmokingStatus(), 0, 4, false));</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">		if (errorList.hasErrors())</span>
+<span class="fc" id="L46">			throw new FormValidationException(errorList);</span>
+<span class="fc" id="L47">	}</span>
+	
+	public void validateBaby(HealthRecordForm bean) throws FormValidationException{
+<span class="fc" id="L50">		ErrorList errorList = new ErrorList();</span>
+<span class="fc" id="L51">		errorList.addIfNotNull(checkNotZero(&quot;Height&quot;, bean.getHeight(), ValidationFormat.Height, false));</span>
+<span class="fc" id="L52">		errorList.addIfNotNull(checkNotZero(&quot;Weight&quot;, bean.getWeight(), ValidationFormat.Weight, false));</span>
+<span class="fc" id="L53">		errorList.addIfNotNull(checkInt(&quot;Household Smoking&quot;, bean.getHouseholdSmokingStatus(), 0, 4, false));</span>
+<span class="fc" id="L54">		errorList.addIfNotNull(checkNotZero(&quot;Head Circumference&quot;, bean.getHeadCircumference(), ValidationFormat.HeadCircumference, false));</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">		if (errorList.hasErrors())</span>
+<span class="fc" id="L56">			throw new FormValidationException(errorList);</span>
+<span class="fc" id="L57">	}</span>
+	
+	
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

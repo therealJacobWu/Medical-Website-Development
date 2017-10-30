@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>HeartDiseaseRisks.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.risk</a> &gt; <span class="el_source">HeartDiseaseRisks.java</span></div><h1>HeartDiseaseRisks.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.risk;
+
+import static edu.ncsu.csc.itrust.enums.Ethnicity.AfricanAmerican;
+import static edu.ncsu.csc.itrust.enums.Ethnicity.AmericanIndian;
+import static edu.ncsu.csc.itrust.enums.Ethnicity.Hispanic;
+import java.util.ArrayList;
+import java.util.List;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.enums.Gender;
+import edu.ncsu.csc.itrust.exception.DBException;
+import edu.ncsu.csc.itrust.exception.NoHealthRecordsException;
+import edu.ncsu.csc.itrust.risk.factors.AgeFactor;
+import edu.ncsu.csc.itrust.risk.factors.CholesterolFactor;
+import edu.ncsu.csc.itrust.risk.factors.EthnicityFactor;
+import edu.ncsu.csc.itrust.risk.factors.FamilyHistoryFactor;
+import edu.ncsu.csc.itrust.risk.factors.GenderFactor;
+import edu.ncsu.csc.itrust.risk.factors.HypertensionFactor;
+import edu.ncsu.csc.itrust.risk.factors.PatientRiskFactor;
+import edu.ncsu.csc.itrust.risk.factors.PriorDiagnosisFactor;
+import edu.ncsu.csc.itrust.risk.factors.SmokingFactor;
+import edu.ncsu.csc.itrust.risk.factors.WeightFactor;
+
+/**
+ * Checks to see if the given patient is at risk for Heart Disease
+ * For details on what each method does, see {@link RiskChecker}
+ *  
+ * 
+ */
+public class HeartDiseaseRisks extends RiskChecker {
+	public HeartDiseaseRisks(DAOFactory factory, long patientID) throws DBException, NoHealthRecordsException {
+<span class="fc" id="L31">		super(factory, patientID);</span>
+<span class="fc" id="L32">	}</span>
+
+	@Override
+	public boolean qualifiesForDisease() {
+<span class="fc" id="L36">		return true;</span>
+	}
+
+	@Override
+	protected List&lt;PatientRiskFactor&gt; getDiseaseRiskFactors() {
+<span class="fc" id="L41">		List&lt;PatientRiskFactor&gt; factors = new ArrayList&lt;PatientRiskFactor&gt;();</span>
+<span class="fc" id="L42">		factors.add(new GenderFactor(patient, Gender.Male));</span>
+<span class="fc" id="L43">		factors.add(new AgeFactor(patient, 45));</span>
+<span class="fc" id="L44">		factors.add(new EthnicityFactor(patient, Hispanic, AfricanAmerican, AmericanIndian));</span>
+<span class="fc" id="L45">		factors.add(new WeightFactor(currentHealthRecord, 30));</span>
+<span class="fc" id="L46">		factors.add(new HypertensionFactor(currentHealthRecord));</span>
+<span class="fc" id="L47">		factors.add(new CholesterolFactor(currentHealthRecord));</span>
+<span class="fc" id="L48">		factors.add(new SmokingFactor(factory, patient.getMID()));</span>
+<span class="fc" id="L49">		factors.add(new PriorDiagnosisFactor(factory, patient.getMID(), 250.0, 251.0));</span>
+<span class="fc" id="L50">		factors.add(new FamilyHistoryFactor(factory, patient.getMID(), 350.0, 460.0));</span>
+<span class="fc" id="L51">		return factors;</span>
+	}
+
+	@Override
+	public String getName() {
+<span class="fc" id="L56">		return &quot;Heart Disease&quot;;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

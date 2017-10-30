@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ViewOfficeVisitAction.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.action</a> &gt; <span class="el_source">ViewOfficeVisitAction.java</span></div><h1>ViewOfficeVisitAction.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.action;
+
+import java.util.Calendar;
+import java.util.List;
+import edu.ncsu.csc.itrust.action.base.OfficeVisitBaseAction;
+import edu.ncsu.csc.itrust.beans.DiagnosisBean;
+import edu.ncsu.csc.itrust.beans.HealthRecord;
+import edu.ncsu.csc.itrust.beans.LabProcedureBean;
+import edu.ncsu.csc.itrust.beans.OfficeVisitBean;
+import edu.ncsu.csc.itrust.beans.PatientBean;
+import edu.ncsu.csc.itrust.beans.PrescriptionBean;
+import edu.ncsu.csc.itrust.beans.ProcedureBean;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.dao.mysql.DiagnosesDAO;
+import edu.ncsu.csc.itrust.dao.mysql.HealthRecordsDAO;
+import edu.ncsu.csc.itrust.dao.mysql.LabProcedureDAO;
+import edu.ncsu.csc.itrust.dao.mysql.OfficeVisitDAO;
+import edu.ncsu.csc.itrust.dao.mysql.PatientDAO;
+import edu.ncsu.csc.itrust.dao.mysql.PersonnelDAO;
+import edu.ncsu.csc.itrust.dao.mysql.PrescriptionsDAO;
+import edu.ncsu.csc.itrust.dao.mysql.ProceduresDAO;
+import edu.ncsu.csc.itrust.exception.DBException;
+import edu.ncsu.csc.itrust.exception.ITrustException;
+import edu.ncsu.csc.itrust.Messages;
+
+/**
+ * Handles viewing the office visits, prescriptions, and HCP name for the given ovID Used by
+ * viewOfficeVisit.jsp
+ * 
+ * 
+ */
+public class ViewOfficeVisitAction extends OfficeVisitBaseAction {
+	
+	/** The number of months in a year */
+	public static final int MONTHS_IN_YEAR = 12;
+	
+	private OfficeVisitDAO ovDAO;
+	private HealthRecordsDAO healthRecordsDAO;
+	private PrescriptionsDAO prescriptionsDAO;
+	private ProceduresDAO proceduresDAO;
+	private LabProcedureDAO labProceduresDAO;
+	private DiagnosesDAO diagnosesDAO;
+	
+	private PersonnelDAO personnelDAO;
+	private PatientDAO patientDAO;
+
+	/**
+	 * Super class handles validating the loggedInMid and ovIDString
+	 * 
+	 * @param factory The DAOFactory used to create the DAOs used in this action.
+	 * @param loggedInMID The MID of the person viewing their office visits. 
+	 * @param ovIDString
+	 *            The unique identifier of the office visit as a String.
+	 * @throws ITrustException
+	 */
+	public ViewOfficeVisitAction(DAOFactory factory, long loggedInMID, String ovIDString)
+			throws ITrustException {
+<span class="fc" id="L58">		super(factory, String.valueOf(loggedInMID), ovIDString);</span>
+<span class="fc" id="L59">		this.patientDAO = factory.getPatientDAO();</span>
+<span class="fc" id="L60">		this.personnelDAO = factory.getPersonnelDAO();</span>
+<span class="fc" id="L61">		this.ovDAO = factory.getOfficeVisitDAO();</span>
+		
+<span class="fc" id="L63">		healthRecordsDAO = factory.getHealthRecordsDAO();</span>
+<span class="fc" id="L64">		prescriptionsDAO = factory.getPrescriptionsDAO();</span>
+<span class="fc" id="L65">		proceduresDAO = factory.getProceduresDAO();</span>
+<span class="fc" id="L66">		labProceduresDAO = factory.getLabProcedureDAO();</span>
+<span class="fc" id="L67">		diagnosesDAO = factory.getDiagnosesDAO();</span>
+<span class="fc" id="L68">	}</span>
+
+	/**
+	 * Super class handles validating the pidString and ovIDString. Usually used for representing a patient.
+	 * 
+	 * @param factory The DAOFactory used to create the DAOs used in this action.
+	 * @param repPIDString The MID of the representative viewing the records.
+	 * @param ovIDString
+	 *            The unique identifier of the office visit as a String.
+	 * @throws ITrustException
+	 */
+	public ViewOfficeVisitAction(DAOFactory factory, long loggedInMID, String repPIDString, String ovIDString)
+			throws ITrustException {
+<span class="fc" id="L81">		super(factory, repPIDString, ovIDString);</span>
+<span class="fc" id="L82">		this.personnelDAO = factory.getPersonnelDAO();</span>
+<span class="fc" id="L83">		this.patientDAO = factory.getPatientDAO();</span>
+<span class="fc" id="L84">		this.ovDAO = factory.getOfficeVisitDAO();</span>
+		
+<span class="fc" id="L86">		healthRecordsDAO = factory.getHealthRecordsDAO();</span>
+<span class="fc" id="L87">		prescriptionsDAO = factory.getPrescriptionsDAO();</span>
+<span class="fc" id="L88">		proceduresDAO = factory.getProceduresDAO();</span>
+<span class="fc" id="L89">		labProceduresDAO = factory.getLabProcedureDAO();</span>
+<span class="fc" id="L90">		diagnosesDAO = factory.getDiagnosesDAO();</span>
+		
+<span class="fc" id="L92">		checkRepresented(loggedInMID, repPIDString);</span>
+<span class="fc" id="L93">	}</span>
+
+	private void checkRepresented(long loggedInMID, String repPIDString) throws ITrustException {
+		try {
+<span class="fc" id="L97">			long repee = Long.valueOf(repPIDString);</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">			if (!patientDAO.represents(loggedInMID, repee))</span>
+<span class="fc" id="L99">				throw new ITrustException(</span>
+<span class="fc" id="L100">						Messages.getString(&quot;ViewOfficeVisitAction.0&quot;)); //$NON-NLS-1$</span>
+<span class="nc" id="L101">		} catch (NumberFormatException e) {</span>
+<span class="nc" id="L102">			throw new ITrustException(Messages.getString(&quot;ViewOfficeVisitAction.1&quot;)); //$NON-NLS-1$</span>
+<span class="fc" id="L103">		}</span>
+<span class="fc" id="L104">	}</span>
+
+	/**
+	 * Returns the office visit as an OfficeVisitBean for the ovID that was initially passed to the
+	 * constructor
+	 * 
+	 * @return the OfficeVisitBean for the ovID
+	 * @throws ITrustException
+	 */
+	public OfficeVisitBean getOfficeVisit() throws ITrustException {
+<span class="fc" id="L114">		return ovDAO.getOfficeVisit(ovID);</span>
+	}
+
+	/**
+	 * Returns the prescriptions associated with the ovID initially passed to the constructor
+	 * 
+	 * @return list of PrescriptionBeans for the ovID
+	 * @throws DBException
+	 */
+	public List&lt;PrescriptionBean&gt; getPrescriptions() throws DBException {
+<span class="fc" id="L124">		return prescriptionsDAO.getList(ovID);</span>
+	}
+
+	public List&lt;ProcedureBean&gt; getAllProcedures() throws DBException {
+<span class="fc" id="L128">		return proceduresDAO.getList(ovID);</span>
+	}
+
+	public List&lt;ProcedureBean&gt; getProcedures() throws DBException {
+<span class="fc" id="L132">		return proceduresDAO.getMedProceduresList(ovID);</span>
+	}
+	
+	public List&lt;ProcedureBean&gt; getImmunizations() throws DBException {
+<span class="fc" id="L136">		return proceduresDAO.getImmunizationList(ovID);</span>
+	}
+	
+	public List&lt;DiagnosisBean&gt; getDiagnoses() throws DBException {
+<span class="fc" id="L140">		return diagnosesDAO.getList(ovID);</span>
+	}
+	
+	public List&lt;LabProcedureBean&gt; getLabProcedures() throws DBException {
+<span class="fc" id="L144">		return labProceduresDAO.getLabProceduresForPatientOV(ovID);</span>
+	}
+	
+	/**
+	 * Returns the HealthRecord related to this office visit's ID
+	 * 
+	 * @return Health record specific to office visit ID
+	 * @throws DBException
+	 */
+	public HealthRecord getHealthRecord() throws DBException {
+<span class="fc" id="L154">		return healthRecordsDAO.getHealthRecordByOfficeVisit(ovID);</span>
+	}
+	
+	public void setViewed(List&lt;LabProcedureBean&gt; procs) throws DBException {
+<span class="nc bnc" id="L158" title="All 2 branches missed.">		for (LabProcedureBean b : procs) {</span>
+<span class="nc" id="L159">			b.setViewedByPatient(true);</span>
+<span class="nc" id="L160">			labProceduresDAO.markViewed(b);</span>
+<span class="nc" id="L161">		}</span>
+<span class="nc" id="L162">	}</span>
+
+	/**
+	 * Returns the name of the HCP for the hcpID passed as a param
+	 * 
+	 * @param hcpID
+	 * @return the name of the HCP
+	 * @throws ITrustException
+	 */
+	public String getHCPName(long hcpID) throws ITrustException {
+<span class="fc" id="L172">		String name = null;</span>
+		try {
+<span class="fc" id="L174">			name = personnelDAO.getName(hcpID);</span>
+<span class="fc" id="L175">		} catch (ITrustException e) {</span>
+			
+<span class="fc" id="L177">			name = e.getMessage();</span>
+<span class="fc" id="L178">		}</span>
+<span class="fc" id="L179">		return name;</span>
+			
+	}
+	
+	/**
+	 * Get patient's age in months by taking the office visit date and comparing it with the patient's
+	 * date of birth. 
+	 * 
+	 * @return the patient's age in months
+	 * @throws ITrustException 
+	 */
+	public int getPatientAgeInMonths() throws ITrustException {
+		//Create int for patient's age in months
+<span class="fc" id="L192">		int ageInMonths = 0;</span>
+		
+		//Get the office visit date
+<span class="fc" id="L195">		Calendar officeVisitDate = Calendar.getInstance();</span>
+<span class="fc" id="L196">		officeVisitDate.setTime(getOfficeVisit().getVisitDate());</span>
+				
+		//Get the patient's birthdate
+<span class="fc" id="L199">		Calendar birthDate = Calendar.getInstance();</span>
+<span class="fc" id="L200">		PatientBean patient = patientDAO.getPatient(pid);</span>
+<span class="fc" id="L201">		birthDate.setTime(patient.getDateOfBirth());</span>
+		
+		//Split the patient's birthdate into day, month, and year
+<span class="fc" id="L204">		int birthDay = birthDate.get(Calendar.DAY_OF_MONTH);</span>
+<span class="fc" id="L205">		int birthMonth = birthDate.get(Calendar.MONTH) + 1;</span>
+<span class="fc" id="L206">		int birthYear = birthDate.get(Calendar.YEAR);</span>
+		//Split the office visit date into day month and year
+<span class="fc" id="L208">		int visitDay = officeVisitDate.get(Calendar.DAY_OF_MONTH);</span>
+<span class="fc" id="L209">		int visitMonth = officeVisitDate.get(Calendar.MONTH) + 1;</span>
+<span class="fc" id="L210">		int visitYear = officeVisitDate.get(Calendar.YEAR);</span>
+		
+		//Calculate the year, month, and day differences
+<span class="fc" id="L213">		int yearDiff = visitYear - birthYear;</span>
+<span class="fc" id="L214">		int monthDiff = visitMonth - birthMonth;</span>
+<span class="fc" id="L215">		int dayDiff = visitDay - birthDay;</span>
+		
+		//Get the patient's age in months by multiplying the year difference by 12
+		//and adding the month difference
+<span class="fc" id="L219">		ageInMonths = yearDiff * MONTHS_IN_YEAR + monthDiff;</span>
+		
+		//If the day difference is negative, subtract a month from the age
+<span class="pc bpc" id="L222" title="1 of 2 branches missed.">		if (dayDiff &lt; 0) {</span>
+<span class="nc" id="L223">			ageInMonths -= 1;</span>
+		}
+		
+		//Return the age in months
+<span class="fc" id="L227">		return ageInMonths;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

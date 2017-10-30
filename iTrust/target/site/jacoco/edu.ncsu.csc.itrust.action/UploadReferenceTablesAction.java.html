@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>UploadReferenceTablesAction.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.action</a> &gt; <span class="el_source">UploadReferenceTablesAction.java</span></div><h1>UploadReferenceTablesAction.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.action;
+
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Scanner;
+
+import edu.ncsu.csc.itrust.beans.CDCStatsBean;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.dao.mysql.CDCBmiStatsDAO;
+import edu.ncsu.csc.itrust.dao.mysql.CDCHeadCircStatsDAO;
+import edu.ncsu.csc.itrust.dao.mysql.CDCHeightStatsDAO;
+import edu.ncsu.csc.itrust.dao.mysql.CDCStatsDAO;
+import edu.ncsu.csc.itrust.dao.mysql.CDCWeightStatsDAO;
+import edu.ncsu.csc.itrust.exception.DBException;
+
+/**
+ * UploadReferenceTablesAction is an action class that is used for uploading reference tables. It reads 
+ * in csv files and parses and loads them to a specified reference table. Contains methods for storing 
+ * csv files for weight, height, bmi, and head circumference statistics. Each store method also verifies 
+ * whether the passed in file is correctly formatted.
+ *
+ */
+public class UploadReferenceTablesAction {
+	/**
+	 * Regex pattern to match the header format of a CDC health stats csv. Checks that header contains 
+	 * at least sex, age, L, M, and S fields
+	 */
+	private static final String headerFormat = &quot;Sex,Agemos,L,M,S.*&quot;;
+	/**
+	 * Regex pattern to match each row of data in a CDC health stats csv. Checks that header contains at 
+	 * least sex, age, L, M, and S fields
+	 */
+	private static final String statsDataFormat = &quot;\\d,\\d+\\.?\\d?(,-?\\d+\\.\\d+){3}(,-?\\d+\\.\\d+)*&quot;;
+	
+	private CDCWeightStatsDAO weightStatsDAO;
+	private CDCHeightStatsDAO heightStatsDAO;
+	private CDCHeadCircStatsDAO headCircStatsDAO;
+	private CDCBmiStatsDAO bmiStatsDAO;
+	
+	/**
+	 * Constructor for UploadReferenceTablesAction. Reads in DAOFactory and initializes 
+	 * CDCStatsDAO fields with the factory.
+	 * @param factory the DAOfactory to use for database transactions
+	 */
+<span class="fc" id="L46">	public UploadReferenceTablesAction(DAOFactory factory) {</span>
+<span class="fc" id="L47">		weightStatsDAO = new CDCWeightStatsDAO(factory);</span>
+<span class="fc" id="L48">		heightStatsDAO = new CDCHeightStatsDAO(factory);</span>
+<span class="fc" id="L49">		headCircStatsDAO = new CDCHeadCircStatsDAO(factory);</span>
+<span class="fc" id="L50">		bmiStatsDAO = new CDCBmiStatsDAO(factory);</span>
+<span class="fc" id="L51">	}</span>
+	
+	/**
+	 * Parses a CSV file and stores the statistics for average patient weights
+	 * @param weightCSV InputStream object with weight statistics csv file
+	 * @return true if data is stored correctly in the database.
+	 * 		   false if csv file is of the incorrect format and cannot be stored
+	 */
+	public boolean storeWeightStats(InputStream weightCSV) {
+<span class="fc" id="L60">		return storeCDCStats(weightCSV, weightStatsDAO);</span>
+	}
+	
+	/**
+	 * Parses a CSV file and stores the statistics for average patient heights/lengths
+	 * @param heightCSV InputStream object with height statistics csv file
+	 * @return true if data is stored correctly in the database.
+	 * 		   false if csv file is of the incorrect format and cannot be stored
+	 */
+	public boolean storeHeightStats(InputStream heightCSV) {
+<span class="fc" id="L70">		return storeCDCStats(heightCSV, heightStatsDAO);</span>
+	}
+	
+	/**
+	 * Parses a CSV file and stores the statistics for average patient head circumferences
+	 * @param  @param headCircCSV InputStream object with head circumference statistics csv file
+	 * @return true if data is stored correctly in the database.
+	 * 		   false if csv file is of the incorrect format and cannot be stored
+	 */
+	public boolean storeHeadCircStats(InputStream headCircCSV) {
+<span class="fc" id="L80">		return storeCDCStats(headCircCSV, headCircStatsDAO);</span>
+	}
+	
+	/**
+	 * Parses a CSV file and stores the statistics for average patient BMIs
+	 * @param bmiCSV InputStream object with bmi statistics csv file
+	 * @return true if data is stored correctly in the database.
+	 * 		   false if csv file is of the incorrect format and cannot be stored
+	 */
+	public boolean storeBMIStats(InputStream bmiCSV) {
+<span class="fc" id="L90">		return storeCDCStats(bmiCSV, bmiStatsDAO);</span>
+	}
+	
+	/**
+	 * Parses a csv file and sends it to the CDCStatsDAO that is passed in to store the data. 
+	 * First verifies whether the csv file is formatted correctly. If the file is of the correct
+	 * format then the file is parsed and passed into the specified CDCStatsDAO for storing.
+	 * @param healthStatsCSV InputStream with the csv file containing the health statistics to 
+	 * store in the database
+	 * @param dao the CDCStatsDAO to use to store the data from the csv file
+	 * @return true if data is stored correctly in the database.
+	 * 		   false if csv file is of the incorrect format and cannot be stored
+	 */
+	@SuppressWarnings(&quot;resource&quot;)
+	private boolean storeCDCStats(InputStream healthStatsCSV, CDCStatsDAO dao) {
+<span class="fc" id="L105">		BufferedInputStream csvFile = new BufferedInputStream(healthStatsCSV);</span>
+		try {
+<span class="fc" id="L107">			csvFile.mark(csvFile.available() + 1);</span>
+			//If the csv file cannot be verified, close the InputStream and return false
+<span class="pc bpc" id="L109" title="1 of 2 branches missed.">			if (!verifyCDCStatsCSV(csvFile)) {</span>
+<span class="nc" id="L110">				csvFile.close();</span>
+<span class="nc" id="L111">				return false;</span>
+			}
+<span class="fc" id="L113">			csvFile.reset();</span>
+<span class="nc" id="L114">		} catch (IOException e) {</span>
+<span class="nc" id="L115">			return false;</span>
+<span class="fc" id="L116">		}</span>
+		
+		//Create scanner to read each line of data in the csv
+<span class="fc" id="L119">		Scanner csvScanner = new Scanner(csvFile, &quot;UTF-8&quot;);</span>
+		//Scanner to parse through each row of data
+<span class="fc" id="L121">		Scanner rowScanner = null;</span>
+		//String for saving a row of data
+<span class="fc" id="L123">		String row = &quot;&quot;;</span>
+		
+		//Scan and throw away the header line.
+<span class="fc" id="L126">		csvScanner.nextLine();</span>
+		
+		//CDCStatsBean for storing health metric statistics taken from the csv file
+<span class="fc" id="L129">		CDCStatsBean statsBean = null;</span>
+		
+		try {
+<span class="fc bfc" id="L132" title="All 2 branches covered.">			while (csvScanner.hasNextLine()) {</span>
+				//Create new CDCStatsBean for storing a new row of data
+<span class="fc" id="L134">				statsBean = new CDCStatsBean();</span>
+				
+				//Read a row of data
+<span class="fc" id="L137">				row = csvScanner.nextLine();</span>
+				
+				//Read the next row if row is a header
+<span class="pc bpc" id="L140" title="1 of 2 branches missed.">				if (row.matches(headerFormat))</span>
+<span class="nc" id="L141">					continue;</span>
+				
+				//Create scanner to parse each row by using commas as the delimiter
+<span class="fc" id="L144">				rowScanner = new Scanner(row).useDelimiter(&quot;,&quot;);</span>
+				//Get the sex field
+<span class="fc" id="L146">				statsBean.setSex(rowScanner.nextInt());</span>
+				//Get the age field
+<span class="fc" id="L148">				statsBean.setAge(rowScanner.nextFloat());</span>
+				//Get the L field
+<span class="fc" id="L150">				statsBean.setL(rowScanner.nextDouble());</span>
+				//Get the M field
+<span class="fc" id="L152">				statsBean.setM(rowScanner.nextDouble());</span>
+				//Get the S field
+<span class="fc" id="L154">				statsBean.setS(rowScanner.nextDouble());</span>
+				
+				//Insert CDCStatsBean into the database
+<span class="fc" id="L157">				dao.storeStats(statsBean);</span>
+			}
+<span class="fc" id="L159">		} catch (DBException e) {</span>
+			//If there is a DBException close the InputStream and 
+			//return false since not all the data has been added correctly
+			try {
+<span class="fc" id="L163">				healthStatsCSV.close();</span>
+<span class="nc" id="L164">			} catch (IOException e1) {</span>
+				//Still return false if I/O error occurs
+<span class="fc" id="L166">			}</span>
+<span class="fc" id="L167">			return false;</span>
+<span class="fc" id="L168">		}</span>
+		
+<span class="fc" id="L170">		return true;	</span>
+	}
+	
+	/**
+	 * Verifies that a health stats csv file is of the correct format. Checks that the header is formatted
+	 * correctly, and then checks that each data row contains only integers, doubles, and commas
+	 * @param healthStatsCSV InputStream with the csv file whose format needs to be checked
+	 * @return true if the csv file is correctly formatted. false otherwise.
+	 */
+	@SuppressWarnings(&quot;resource&quot;)
+	private boolean verifyCDCStatsCSV(InputStream healthStatsCSV) {
+		//Create scanner to read each line of data in the csv
+<span class="fc" id="L182">		Scanner csvScanner = new Scanner(healthStatsCSV, &quot;UTF-8&quot;);</span>
+		//String for holding a line of data from the CSV file
+<span class="fc" id="L184">		String line = &quot;&quot;;</span>
+		
+		//Read the header line
+<span class="pc bpc" id="L187" title="1 of 2 branches missed.">		if (csvScanner.hasNextLine()) {</span>
+<span class="fc" id="L188">			line = csvScanner.nextLine();</span>
+		} else {
+<span class="nc" id="L190">			csvScanner.close();</span>
+			//If the csv file does not contain a line, the csv file is incorrect
+<span class="nc" id="L192">			return false;</span>
+		}
+		//If the header line is incorrectly formatted then the csv file is incorrect
+<span class="pc bpc" id="L195" title="1 of 2 branches missed.">		if (!line.matches(headerFormat)) {</span>
+<span class="nc" id="L196">			csvScanner.close();</span>
+<span class="nc" id="L197">			return false;</span>
+		}
+		
+		//Verify that each consecutive line follows correct formatting
+<span class="fc bfc" id="L201" title="All 2 branches covered.">		while (csvScanner.hasNextLine()) {</span>
+<span class="fc" id="L202">			line = csvScanner.nextLine();</span>
+			//If none of the lines match a data line format nor a header line
+			//format then the csv file is incorrect
+<span class="pc bpc" id="L205" title="3 of 4 branches missed.">			if (!line.matches(statsDataFormat) &amp;&amp; !line.matches(headerFormat)) {</span>
+<span class="nc" id="L206">				csvScanner.close();</span>
+<span class="nc" id="L207">				return false;</span>
+			}
+		}
+		
+		//The csv file passes the verification process it is deemed correct
+<span class="fc" id="L212">		return true;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

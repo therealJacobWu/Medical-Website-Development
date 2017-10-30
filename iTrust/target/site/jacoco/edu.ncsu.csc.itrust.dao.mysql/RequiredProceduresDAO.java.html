@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>RequiredProceduresDAO.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.dao.mysql</a> &gt; <span class="el_source">RequiredProceduresDAO.java</span></div><h1>RequiredProceduresDAO.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.dao.mysql;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import edu.ncsu.csc.itrust.DBUtil;
+import edu.ncsu.csc.itrust.beans.loaders.OfficeVisitLoader;
+import edu.ncsu.csc.itrust.beans.loaders.ProcedureBeanLoader;
+import edu.ncsu.csc.itrust.beans.loaders.RequiredProceduresBeanLoader;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.exception.DBException;
+import edu.ncsu.csc.itrust.beans.DiagnosisBean;
+import edu.ncsu.csc.itrust.beans.OfficeVisitBean;
+import edu.ncsu.csc.itrust.beans.ProcedureBean;
+import edu.ncsu.csc.itrust.beans.RequiredProceduresBean;
+
+/**
+ * DAO object that interacts with the requiredprocedures database table.
+ * The requiredprocedures table contains information about each of the procedures
+ * that is required in order for a patient to enroll in public school, etc.
+ */
+public class RequiredProceduresDAO {
+
+	/** Factory to create DAO objects */
+	private DAOFactory factory;
+	/** Bean loaders for all beans used */
+<span class="fc" id="L31">	private ProcedureBeanLoader procLoader = new ProcedureBeanLoader();</span>
+<span class="fc" id="L32">	private RequiredProceduresBeanLoader reqLoader = new RequiredProceduresBeanLoader();</span>
+<span class="fc" id="L33">	private OfficeVisitLoader visitLoader = new OfficeVisitLoader();</span>
+	/** DAO for interacting with diagnoses databases */
+	private DiagnosesDAO diagnosisDAO;
+	
+	/**
+	 * Creates a new DAO to interact with the requredprocedures database table.
+	 * 
+	 * @param factory DAOFactory that creates database objects.
+	 */
+<span class="fc" id="L42">	public RequiredProceduresDAO(DAOFactory factory) {</span>
+<span class="fc" id="L43">		this.factory = factory;</span>
+<span class="fc" id="L44">		this.diagnosisDAO = factory.getDiagnosesDAO();</span>
+<span class="fc" id="L45">	}</span>
+	
+	/**
+	 * Returns a list of all procedures that a specified patient has had.
+	 * @param pid PID of the patient
+	 * @return list of all procedures performed
+	 * @throws DBException if the database is not valid
+	 */
+	public List&lt;ProcedureBean&gt; getAllImmunizations(long pid) throws DBException {
+<span class="fc" id="L54">		Connection conn = null;</span>
+<span class="fc" id="L55">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L57">			conn = factory.getConnection();</span>
+<span class="fc" id="L58">			ps = conn.prepareStatement(&quot;SELECT * FROM ovprocedure INNER JOIN cptcodes &quot; +</span>
+										&quot;ON ovprocedure.CPTCode = cptcodes.Code &quot; +
+										&quot;INNER JOIN officevisits &quot; +
+										&quot;ON ovprocedure.VisitID = officevisits.ID &quot; +
+										&quot;WHERE Attribute = 'immunization' &quot; +
+										&quot;AND PatientID = ?&quot;);
+<span class="fc" id="L64">			ps.setLong(1, pid);</span>
+<span class="fc" id="L65">			ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L66">			List&lt;ProcedureBean&gt; loadlist = procLoader.loadAll(rs);</span>
+<span class="fc" id="L67">			rs.close();</span>
+<span class="fc" id="L68">			return loadlist;</span>
+<span class="nc" id="L69">		} catch (SQLException e) {</span>
+			
+<span class="nc" id="L71">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L73">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+	/**
+	 * Returns a list of all required procedures for the specified age group
+	 * (0 for kindergarten, 1 for sixth grade, and 2 for college aged patients).
+	 * @param pid PID of the patient
+	 * @param ageGroup numeric value that represents the age group of the patient
+	 * @return list of all required procedures
+	 * @throws DBException if the database is not valid
+	 */
+	public List&lt;RequiredProceduresBean&gt; getRequiredImmunizations(long pid, int ageGroup) throws DBException {
+<span class="fc" id="L86">		Connection conn = null;</span>
+<span class="fc" id="L87">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L89">			conn = factory.getConnection();</span>
+<span class="fc" id="L90">			ps = conn.prepareStatement(&quot;SELECT * FROM requiredprocedures &quot;</span>
+									+ &quot;WHERE ageGroup = ?&quot;);
+<span class="fc" id="L92">			ps.setInt(1, ageGroup);</span>
+<span class="fc" id="L93">			ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L94">			List&lt;RequiredProceduresBean&gt; loadlist = reqLoader.loadList(rs);</span>
+<span class="fc" id="L95">			rs.close();</span>
+<span class="fc" id="L96">			return loadlist;</span>
+			
+<span class="nc" id="L98">		} catch (SQLException e) {</span>
+<span class="nc" id="L99">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L101">			DBUtil.closeConnection(conn, ps);</span>
+		}
+		
+	}
+	
+	/**
+	 * Returns a list of all required procedures for the specified age group that
+	 * the specified patient has not yet received.
+	 * @param pid PID of the patient
+	 * @param ageGroup 0 if the patient is in kindergarten, 1 if sixth grade, 2 if college aged
+	 * @return list of all needed procedures
+	 * @throws DBException if the database is not valid
+	 */
+	public List&lt;RequiredProceduresBean&gt; getNeededImmunizations(long pid, int ageGroup) throws DBException {
+		
+		//Get a list of all required immunizations that the patient does not yet have.
+<span class="fc" id="L117">		List&lt;ProcedureBean&gt; patientImmunizations = getAllImmunizations(pid);</span>
+<span class="fc" id="L118">		List&lt;RequiredProceduresBean&gt; reqImmunizations = getRequiredImmunizations(pid, ageGroup);</span>
+<span class="fc" id="L119">		ArrayList&lt;RequiredProceduresBean&gt; neededImmunizations = new ArrayList&lt;RequiredProceduresBean&gt;();</span>
+		
+<span class="fc bfc" id="L121" title="All 2 branches covered.">		for(RequiredProceduresBean reqProc : reqImmunizations) {</span>
+<span class="fc" id="L122">			boolean needsProc = true;</span>
+<span class="fc bfc" id="L123" title="All 2 branches covered.">			for(ProcedureBean patientProc : patientImmunizations) {</span>
+<span class="fc bfc" id="L124" title="All 2 branches covered.">				if(patientProc.getCPTCode().equals(reqProc.getCptCode())) {</span>
+<span class="fc" id="L125">					needsProc = false;</span>
+				}
+<span class="fc" id="L127">			}</span>
+<span class="fc bfc" id="L128" title="All 2 branches covered.">			if(needsProc) {</span>
+<span class="fc" id="L129">				neededImmunizations.add(reqProc);</span>
+			}
+<span class="fc" id="L131">		}</span>
+		
+		//Get a list of all appropriate diagnoses
+<span class="fc" id="L134">		Connection conn = null;</span>
+<span class="fc" id="L135">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L137">			conn = factory.getConnection();</span>
+<span class="fc" id="L138">			ps = conn.prepareStatement(&quot;SELECT * FROM officevisits &quot;</span>
+									+ &quot;WHERE PatientID = ?&quot;);
+<span class="fc" id="L140">			ps.setLong(1, pid);</span>
+<span class="fc" id="L141">			ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L142">			List&lt;OfficeVisitBean&gt; visits = visitLoader.loadList(rs);</span>
+<span class="fc" id="L143">			List&lt;DiagnosisBean&gt; diagnoses = new ArrayList&lt;DiagnosisBean&gt;();</span>
+<span class="pc bpc" id="L144" title="1 of 2 branches missed.">			if(diagnoses != null) {</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">				for(OfficeVisitBean visit : visits) {</span>
+<span class="fc" id="L146">					diagnoses.addAll(diagnosisDAO.getList(visit.getVisitID()));</span>
+<span class="fc" id="L147">				}</span>
+			}
+			
+<span class="fc" id="L150">			ArrayList&lt;RequiredProceduresBean&gt; returnList = new ArrayList&lt;RequiredProceduresBean&gt;();</span>
+			
+<span class="fc bfc" id="L152" title="All 2 branches covered.">			for(RequiredProceduresBean needed : neededImmunizations) {</span>
+<span class="fc" id="L153">				boolean needsVaccine = true;</span>
+<span class="fc bfc" id="L154" title="All 2 branches covered.">				for(DiagnosisBean diagnosis : diagnoses) {</span>
+<span class="pc bpc" id="L155" title="2 of 4 branches missed.">					if(diagnosis.getICDCode().equals(&quot;35.00&quot;) &amp;&amp; needed.getCptCode().equals(&quot;90396&quot;)) {</span>
+<span class="fc" id="L156">						needsVaccine = false;</span>
+					}
+<span class="fc" id="L158">				}</span>
+<span class="fc bfc" id="L159" title="All 2 branches covered.">				if(needsVaccine) {</span>
+<span class="fc" id="L160">					returnList.add(needed);</span>
+				}
+<span class="fc" id="L162">			}</span>
+			
+<span class="fc" id="L164">			rs.close();</span>
+<span class="fc" id="L165">			return returnList;</span>
+<span class="nc" id="L166">		} catch(SQLException e) {</span>
+<span class="nc" id="L167">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L169">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

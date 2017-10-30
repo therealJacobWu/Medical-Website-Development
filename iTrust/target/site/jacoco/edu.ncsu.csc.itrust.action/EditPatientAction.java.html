@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>EditPatientAction.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.action</a> &gt; <span class="el_source">EditPatientAction.java</span></div><h1>EditPatientAction.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.action;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import edu.ncsu.csc.itrust.action.base.PatientBaseAction;
+import edu.ncsu.csc.itrust.beans.Email;
+import edu.ncsu.csc.itrust.beans.PatientBean;
+import edu.ncsu.csc.itrust.beans.PatientHistoryBean;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.dao.mysql.AuthDAO;
+import edu.ncsu.csc.itrust.dao.mysql.PatientDAO;
+import edu.ncsu.csc.itrust.dao.mysql.PersonnelDAO;
+import edu.ncsu.csc.itrust.exception.DBException;
+import edu.ncsu.csc.itrust.exception.FormValidationException;
+import edu.ncsu.csc.itrust.exception.ITrustException;
+import edu.ncsu.csc.itrust.validate.PatientValidator;
+import edu.ncsu.csc.itrust.EmailUtil;
+
+
+/**
+ * Edits a patient Used by editPatient.jsp
+ * 
+ * 
+ */
+public class EditPatientAction extends PatientBaseAction {
+<span class="fc" id="L28">	private PatientValidator validator = new PatientValidator();</span>
+	private PatientDAO patientDAO;
+	private PersonnelDAO personnelDAO;
+	private AuthDAO authDAO;
+	private long loggedInMID;
+	private EmailUtil emailutil;
+
+	/**
+	 * The super class validates the patient id
+	 * 
+	 * @param factory The DAOFactory used to create the DAOs for this action.
+	 * @param loggedInMID The MID of the user who is authorizing this action.
+	 * @param pidString The MID of the patient being edited.
+	 * @throws ITrustException
+	 */
+	public EditPatientAction(DAOFactory factory, long loggedInMID, String pidString) throws ITrustException {
+<span class="fc" id="L44">		super(factory, pidString);</span>
+<span class="fc" id="L45">		this.patientDAO = factory.getPatientDAO();</span>
+<span class="fc" id="L46">		this.personnelDAO = factory.getPersonnelDAO();</span>
+<span class="fc" id="L47">		this.authDAO = factory.getAuthDAO();</span>
+<span class="fc" id="L48">		this.loggedInMID = loggedInMID;</span>
+<span class="fc" id="L49">		emailutil = new EmailUtil(factory);</span>
+<span class="fc" id="L50">	}</span>
+
+	/**
+	 * Takes the information out of the PatientBean param and updates the patient's information
+	 * 
+	 * @param p
+	 *            the new patient information
+	 * @throws ITrustException
+	 * @throws FormValidationException
+	 */
+	public void updateInformation(PatientBean p) throws ITrustException, FormValidationException {
+<span class="fc" id="L61">		p.setMID(pid); // for security reasons</span>
+<span class="fc" id="L62">		validator.validate(p);</span>
+<span class="fc" id="L63">		patientDAO.editPatient(p, loggedInMID);</span>
+<span class="fc" id="L64">		emailutil.sendEmail(makeEmail());</span>
+<span class="fc" id="L65">	}</span>
+
+	/**
+	 * Returns a PatientBean for the patient
+	 * 
+	 * @return the PatientBean
+	 * @throws DBException
+	 */
+	public PatientBean getPatient() throws DBException {
+<span class="fc" id="L74">		return patientDAO.getPatient(this.getPid());</span>
+	}
+
+	/**
+	 *  Creates and e-mail to inform the patient that their information has been updated.
+	 *  
+	 * @return the email with the notice
+	 * @throws DBException
+	 */
+	private Email makeEmail() throws DBException{
+
+<span class="fc" id="L85">		Email email = new Email();</span>
+<span class="fc" id="L86">		List&lt;PatientBean&gt; reps = patientDAO.getRepresenting(pid);</span>
+<span class="fc" id="L87">		PatientBean pb = patientDAO.getPatient(pid);</span>
+		
+<span class="fc" id="L89">		List&lt;String&gt; toAddrs = new ArrayList&lt;String&gt;();</span>
+<span class="fc" id="L90">		toAddrs.add(pb.getEmail());</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">		for (PatientBean r: reps) {</span>
+<span class="fc" id="L92">			toAddrs.add(r.getEmail());</span>
+<span class="fc" id="L93">		}</span>
+		
+<span class="fc" id="L95">		email.setFrom(&quot;no-reply@itrust.com&quot;);</span>
+<span class="fc" id="L96">    	email.setToList(toAddrs); // patient and personal representative</span>
+<span class="fc" id="L97">    	email.setSubject(String.format(&quot;Patient Information Updated&quot;));</span>
+<span class="fc" id="L98">    	email.setBody(&quot;Dear &quot; + pb.getFullName() + &quot;,\n\tYour patient record information has been updated. &quot; + </span>
+    			&quot;Please login to iTrust to see who has viewed your records.&quot;);
+<span class="fc" id="L100">		return email;</span>
+	}
+	
+	/**
+	 * The DateOfDeactivationStr of the PatientBean when not null indicates that the user has been deactivated.  
+	 * @throws DBException
+	 */
+	public void deactivate() throws DBException{
+<span class="fc" id="L108">		PatientBean p=patientDAO.getPatient(this.getPid());</span>
+<span class="fc" id="L109">		p.setMID(pid);</span>
+<span class="fc" id="L110">		p.setDateOfDeactivationStr(new SimpleDateFormat(&quot;MM/dd/yyyy&quot;).format(Calendar.getInstance().getTime()));</span>
+<span class="fc" id="L111">		patientDAO.editPatient(p, loggedInMID);</span>
+<span class="fc" id="L112">		patientDAO.removeAllRepresented(pid);</span>
+<span class="fc" id="L113">		patientDAO.removeAllRepresentee(pid);</span>
+<span class="fc" id="L114">	}</span>
+	
+	/**
+	 * The DateOfDeactivationStr of the PatientBean is null when the patient is activated
+	 * @throws DBException
+	 */
+	public void activate() throws DBException{
+<span class="fc" id="L121">		PatientBean p=patientDAO.getPatient(this.getPid());</span>
+<span class="fc" id="L122">		p.setMID(pid);</span>
+<span class="fc" id="L123">		p.setDateOfDeactivationStr(null);</span>
+<span class="fc" id="L124">		patientDAO.editPatient(p, loggedInMID);</span>
+<span class="fc" id="L125">	}</span>
+	
+	public boolean hasHistory() throws DBException {
+<span class="nc" id="L128">		return patientDAO.hasHistory(this.getPid());</span>
+	} 
+	
+	public List&lt;PatientHistoryBean&gt; getHistory() throws DBException {
+<span class="nc" id="L132">		return patientDAO.getPatientHistory(this.getPid());</span>
+	}
+	
+	public String getEmployeeName(long mid) throws DBException, ITrustException {
+<span class="nc" id="L136">		return personnelDAO.getName(mid);</span>
+	}
+	
+	public boolean isDependent() {
+<span class="fc" id="L140">		boolean isDependent = false;</span>
+		try {
+<span class="fc" id="L142">			return authDAO.isDependent(pid);</span>
+<span class="nc" id="L143">		} catch (DBException e) {</span>
+			//If a DBException occurs print a stack trace and return false
+<span class="nc" id="L145">			e.printStackTrace();</span>
+		}
+		
+<span class="nc" id="L148">		return isDependent;	</span>
+	}
+	
+	public boolean setDependent(boolean dependency) {
+		try {
+<span class="fc" id="L153">			authDAO.setDependent(pid, dependency);</span>
+<span class="fc bfc" id="L154" title="All 2 branches covered.">			if (dependency)</span>
+<span class="fc" id="L155">				patientDAO.removeAllRepresented(pid);</span>
+<span class="nc" id="L156">		} catch (DBException e) {</span>
+			//If a DBException occurs print a stack trace and return false
+<span class="nc" id="L158">			e.printStackTrace();</span>
+<span class="nc" id="L159">			return false;</span>
+<span class="fc" id="L160">		}</span>
+		
+<span class="fc" id="L162">		return true;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

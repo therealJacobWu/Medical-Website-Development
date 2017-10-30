@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>EditHealthHistoryAction.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.action</a> &gt; <span class="el_source">EditHealthHistoryAction.java</span></div><h1>EditHealthHistoryAction.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.action;
+
+import java.util.Calendar;
+import java.util.List;
+import edu.ncsu.csc.itrust.action.base.EditOfficeVisitBaseAction;
+import edu.ncsu.csc.itrust.beans.HealthRecord;
+import edu.ncsu.csc.itrust.beans.OfficeVisitBean;
+import edu.ncsu.csc.itrust.beans.PatientBean;
+import edu.ncsu.csc.itrust.beans.forms.HealthRecordForm;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.dao.mysql.AuthDAO;
+import edu.ncsu.csc.itrust.dao.mysql.HealthRecordsDAO;
+import edu.ncsu.csc.itrust.dao.mysql.OfficeVisitDAO;
+import edu.ncsu.csc.itrust.dao.mysql.PatientDAO;
+import edu.ncsu.csc.itrust.enums.TransactionType;
+import edu.ncsu.csc.itrust.exception.DBException;
+import edu.ncsu.csc.itrust.exception.FormValidationException;
+import edu.ncsu.csc.itrust.exception.ITrustException;
+import edu.ncsu.csc.itrust.validate.HealthRecordFormValidator;
+
+/**
+ * Edits the health history of a patient, used by viewBasicHealth.jsp
+ * 
+ * 
+ */
+public class EditHealthHistoryAction extends EditOfficeVisitBaseAction {
+	
+	/** The number of months in a year */
+	public static final int MONTHS_IN_YEAR = 12;
+	/** The number of months in 3 years */
+	public static final int MONTHS_IN_THREE_YEARS = 36;
+	/** The number of months in 12 years */
+	public static final int MONTHS_IN_TWELVE_YEARS = 144;
+	
+	private HealthRecordsDAO hrDAO;
+	private AuthDAO authDAO;
+	private PatientDAO patDAO;
+	private OfficeVisitDAO ovDAO;
+	private int patientAge;
+<span class="fc" id="L40">	private HealthRecordFormValidator validator = new HealthRecordFormValidator();</span>
+	
+	private EventLoggingAction loggingAction;
+
+	/**
+	 * The patient ID is validated by the superclass
+	 * 
+	 * @param factory The DAOFactory which will be used to generate the DAOs used for this action.
+	 * @param loggedInMID The user authorizing this action.
+	 * @param pidString The patient (or other user) who is being edited.
+	 * @throws ITrustException
+	 */
+	public EditHealthHistoryAction(DAOFactory factory, long loggedInMID, String pidString)
+			throws ITrustException {
+<span class="fc" id="L54">		super(factory, loggedInMID, pidString);</span>
+		
+<span class="fc" id="L56">		init(factory);</span>
+<span class="fc" id="L57">	}</span>
+	
+	/**
+	 * 
+	 * @param factory
+	 * @param hcpid
+	 * @param pidString
+	 * @param ovIDString
+	 * @throws ITrustException
+	 */	
+	public EditHealthHistoryAction(DAOFactory factory, long loggedInMID, String pidString, String ovIDString) throws ITrustException {
+<span class="fc" id="L68">		super(factory, loggedInMID, pidString, ovIDString);</span>
+		
+<span class="fc" id="L70">		init(factory);</span>
+<span class="fc" id="L71">	}</span>
+	
+	private void init(DAOFactory factory){
+<span class="fc" id="L74">		hrDAO = factory.getHealthRecordsDAO();</span>
+<span class="fc" id="L75">		authDAO = factory.getAuthDAO();</span>
+<span class="fc" id="L76">		patDAO = factory.getPatientDAO();</span>
+<span class="fc" id="L77">		ovDAO = factory.getOfficeVisitDAO();</span>
+		
+<span class="fc" id="L79">		loggingAction = new EventLoggingAction(factory);		</span>
+<span class="fc" id="L80">	}</span>
+	
+	/**
+	 * returns the patient name
+	 * 
+	 * @return patient name
+	 * @throws DBException
+	 * @throws ITrustException
+	 */
+	public String getPatientName() throws DBException, ITrustException {
+<span class="fc" id="L90">		return authDAO.getUserName(pid);</span>
+	}
+	
+	/**
+	 * Sets patient age for form validation when adding a new health record
+	 * 
+	 * @param patientAge Age passed in from the EditOVBasicHealth.jsp
+	 */
+	public void setPatientAge(int patientAge){
+<span class="fc" id="L99">		this.patientAge = patientAge;</span>
+<span class="fc" id="L100">	}</span>
+
+	/**
+	 * Adds a health record for the given patient
+	 * 
+	 * @param pid  The patient record who is being edited.
+	 * @param hr  The filled out health record form to be added.
+	 * @param ovID  The office visit id of the office visit from where the health record is added from
+	 * @return message - &quot;Information Recorded&quot; or exception's message
+	 * @throws FormValidationException
+	 */
+	public String addHealthRecord(long pid, HealthRecordForm hr, long ovID) throws FormValidationException,
+			ITrustException {	
+		
+		HealthRecord record;
+		
+<span class="fc bfc" id="L116" title="All 2 branches covered.">		if(patientAge &lt; MONTHS_IN_THREE_YEARS){</span>
+<span class="fc" id="L117">			validator.validateBaby(hr);</span>
+<span class="fc" id="L118">			record = transferFormBaby(pid, hr);</span>
+		}
+<span class="fc bfc" id="L120" title="All 2 branches covered.">		else if(patientAge &lt; MONTHS_IN_TWELVE_YEARS){</span>
+<span class="fc" id="L121">			validator.validateYouth(hr);</span>
+<span class="fc" id="L122">			record = transferFormYouth(pid, hr);</span>
+		}
+		else{
+<span class="fc" id="L125">			validator.validate(hr);</span>
+<span class="fc" id="L126">			record = transferForm(pid, hr);</span>
+		}
+		
+<span class="fc" id="L129">		record.setOfficeVisitID(ovID);</span>
+		
+<span class="fc" id="L131">		OfficeVisitBean ov = ovDAO.getOfficeVisit(ovID);</span>
+<span class="fc" id="L132">		record.setOfficeVisitDateStr(ov.getVisitDateStr());</span>
+		
+		//If there is already an existing health record with the specified office visit ID
+<span class="fc bfc" id="L135" title="All 2 branches covered.">		if (getHealthRecordByOfficeVisit(ovID) != null) {</span>
+			//Remove the health record before adding a new one
+<span class="fc" id="L137">			hrDAO.remove(record);</span>
+<span class="fc" id="L138">			loggingAction.logEvent(TransactionType.EDIT_BASIC_HEALTH_METRICS, super.getHcpid(), pid, &quot;&quot;);</span>
+		} else {
+<span class="fc" id="L140">			loggingAction.logEvent(TransactionType.CREATE_BASIC_HEALTH_METRICS, super.getHcpid(), pid, &quot;&quot;);</span>
+		}
+<span class="fc" id="L142">		hrDAO.add(record);</span>
+<span class="fc" id="L143">		return &quot;Information Recorded&quot;;</span>
+	}
+	
+	
+	/**
+	 * Moves the information from the form to a HealthRecord for a baby
+	 * 
+	 * @param pid Patient of interest
+	 * @param form Form to be translated
+	 * @return A HealthRecord containing all the information in the form
+	 * @throws FormValidationException
+	 */
+	private HealthRecord transferFormBaby(long pid, HealthRecordForm form) throws FormValidationException{
+<span class="fc" id="L156">		HealthRecord record = new HealthRecord();</span>
+<span class="fc" id="L157">		record.setPatientID(pid);</span>
+<span class="fc" id="L158">		record.setPersonnelID(super.getHcpid());</span>
+<span class="fc" id="L159">		record.setHeight(Double.valueOf(form.getHeight()));</span>
+<span class="fc" id="L160">		record.setWeight(Double.valueOf(form.getWeight()));</span>
+<span class="fc" id="L161">		record.setHeadCircumference(Double.valueOf(form.getHeadCircumference()));</span>
+<span class="fc" id="L162">		record.setHouseholdSmokingStatus(Integer.valueOf(form.getHouseholdSmokingStatus()));</span>
+		
+<span class="fc" id="L164">		return record;</span>
+	}
+	
+	/**
+	 * Moves the information from the form to a HealthRecord for a youth
+	 * 
+	 * @param pid Patient of interest
+	 * @param form Form to be translated
+	 * @return A HealthRecord containing all the information in the form
+	 * @throws FormValidationException
+	 */
+	private HealthRecord transferFormYouth(long pid, HealthRecordForm form) throws FormValidationException{
+<span class="fc" id="L176">		HealthRecord record = new HealthRecord();</span>
+<span class="fc" id="L177">		record.setPatientID(pid);</span>
+<span class="fc" id="L178">		record.setPersonnelID(super.getHcpid());</span>
+<span class="fc" id="L179">		record.setBloodPressureD(Integer.valueOf(form.getBloodPressureD()));</span>
+<span class="fc" id="L180">		record.setBloodPressureN(Integer.valueOf(form.getBloodPressureN()));</span>
+<span class="fc" id="L181">		record.setHeight(Double.valueOf(form.getHeight()));</span>
+<span class="fc" id="L182">		record.setWeight(Double.valueOf(form.getWeight()));</span>
+<span class="fc" id="L183">		record.setHouseholdSmokingStatus(Integer.valueOf(form.getHouseholdSmokingStatus()));</span>
+		
+<span class="fc" id="L185">		return record;</span>
+	}
+
+	
+	/**
+	 * Moves the information from the form to a HealthRecord for an adult
+	 * 
+	 * @param pid Patient of interest
+	 * @param form Form to be translated
+	 * @return A HealthRecord containing all the information in the form
+	 * @throws FormValidationException
+	 */
+	private HealthRecord transferForm(long pid, HealthRecordForm form) throws FormValidationException {
+<span class="fc" id="L198">		HealthRecord record = new HealthRecord();</span>
+<span class="fc" id="L199">		record.setPatientID(pid);</span>
+<span class="fc" id="L200">		record.setPersonnelID(super.getHcpid());</span>
+<span class="fc" id="L201">		record.setBloodPressureD(Integer.valueOf(form.getBloodPressureD()));</span>
+<span class="fc" id="L202">		record.setBloodPressureN(Integer.valueOf(form.getBloodPressureN()));</span>
+<span class="fc" id="L203">		record.setCholesterolHDL(Integer.valueOf(form.getCholesterolHDL()));</span>
+<span class="fc" id="L204">		record.setCholesterolLDL(Integer.valueOf(form.getCholesterolLDL()));</span>
+<span class="fc" id="L205">		record.setCholesterolTri(Integer.valueOf(form.getCholesterolTri()));</span>
+<span class="pc bpc" id="L206" title="1 of 4 branches missed.">		if (record.getTotalCholesterol() &lt; 100 || record.getTotalCholesterol() &gt; 600)</span>
+<span class="fc" id="L207">			throw new FormValidationException(&quot;Total cholesterol must be in [100,600]&quot;);</span>
+<span class="fc" id="L208">		record.setHeight(Double.valueOf(form.getHeight()));</span>
+<span class="fc" id="L209">		record.setWeight(Double.valueOf(form.getWeight()));</span>
+<span class="fc" id="L210">		record.setSmoker(Integer.valueOf(form.getIsSmoker()));</span>
+<span class="fc" id="L211">		record.setHouseholdSmokingStatus(Integer.valueOf(form.getHouseholdSmokingStatus()));</span>
+<span class="fc" id="L212">		return record;</span>
+	}
+
+	/**
+	 * Returns a list of all HealthRecords for the given patient
+	 * 
+	 * @param pid  The ID of the patient to look up
+	 * @return list of HealthRecords
+	 * @throws ITrustException
+	 */
+	public List&lt;HealthRecord&gt; getAllHealthRecords(long pid) throws ITrustException {
+<span class="fc" id="L223">		loggingAction.logEvent(TransactionType.VIEW_BASIC_HEALTH_METRICS, super.getHcpid(), pid, &quot;&quot;);</span>
+<span class="fc" id="L224">		return hrDAO.getAllHealthRecords(pid);</span>
+	}
+	
+	
+	/**
+	 * Returns a HealthRecord related to a specific office visit ID
+	 * 
+	 * @param ovID The office visit ID containing the health record of interest
+	 * @return Health record specific to office visit ID
+	 * @throws DBException
+	 */
+	public HealthRecord getHealthRecordByOfficeVisit(long ovID) throws DBException {
+<span class="fc" id="L236">		return hrDAO.getHealthRecordByOfficeVisit(ovID);</span>
+	}
+	
+	/**
+	 * 
+	 * Removes a specific HealthRecord by office visit ID
+	 * 
+	 * @param hr The HealthRecord to be removed
+	 * @return A boolean indicating whether the removal was successful (true) or unsuccessful (false)
+	 * @throws DBException
+	 */
+	public boolean removeHealthRecord(HealthRecord hr) throws DBException {
+<span class="fc" id="L248">		loggingAction.logEvent(TransactionType.REMOVE_BASIC_HEALTH_METRICS, super.getHcpid(), pid, &quot;&quot;);</span>
+<span class="fc" id="L249">		return hrDAO.remove(hr);</span>
+	}
+	
+	/**
+	 * Get patient's age in months by taking an office visit date and comparing it with the patient's
+	 * date of birth. 
+	 * 
+	 * @param officeVisitDate The date of the office visit
+	 * @return the patient's age in months
+	 * @throws DBException
+	 */
+	public int getPatientAgeInMonths(Calendar officeVisitDate) throws DBException {
+		//Create int for patient's age in months
+<span class="fc" id="L262">		int ageInMonths = 0;</span>
+		
+		//Get the patient's birthdate
+<span class="fc" id="L265">		Calendar birthDate = Calendar.getInstance();</span>
+<span class="fc" id="L266">		PatientBean patient = patDAO.getPatient(pid);</span>
+<span class="fc" id="L267">		birthDate.setTime(patient.getDateOfBirth());</span>
+		
+		//Split the patient's birthdate into day, month, and year
+<span class="fc" id="L270">		int birthDay = birthDate.get(Calendar.DAY_OF_MONTH);</span>
+<span class="fc" id="L271">		int birthMonth = birthDate.get(Calendar.MONTH) + 1;</span>
+<span class="fc" id="L272">		int birthYear = birthDate.get(Calendar.YEAR);</span>
+		//Split the office visit date into day month and year
+<span class="fc" id="L274">		int visitDay = officeVisitDate.get(Calendar.DAY_OF_MONTH);</span>
+<span class="fc" id="L275">		int visitMonth = officeVisitDate.get(Calendar.MONTH) + 1;</span>
+<span class="fc" id="L276">		int visitYear = officeVisitDate.get(Calendar.YEAR);</span>
+		
+		//Calculate the year, month, and day differences
+<span class="fc" id="L279">		int yearDiff = visitYear - birthYear;</span>
+<span class="fc" id="L280">		int monthDiff = visitMonth - birthMonth;</span>
+<span class="fc" id="L281">		int dayDiff = visitDay - birthDay;</span>
+		
+		//Get the patient's age in months by multiplying the year difference by 12
+		//and adding the month difference
+<span class="fc" id="L285">		ageInMonths = yearDiff * MONTHS_IN_YEAR + monthDiff;</span>
+		
+		//If the day difference is negative, subtract a month from the age
+<span class="pc bpc" id="L288" title="1 of 2 branches missed.">		if (dayDiff &lt; 0) {</span>
+<span class="nc" id="L289">			ageInMonths -= 1;</span>
+		}
+		
+		//Return the age in months
+<span class="fc" id="L293">		return ageInMonths;</span>
+	}
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

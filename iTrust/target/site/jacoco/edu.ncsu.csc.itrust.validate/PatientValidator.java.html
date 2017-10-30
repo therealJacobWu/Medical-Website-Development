@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>PatientValidator.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.validate</a> &gt; <span class="el_source">PatientValidator.java</span></div><h1>PatientValidator.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.validate;
+
+import edu.ncsu.csc.itrust.action.EditPatientAction;
+import edu.ncsu.csc.itrust.beans.PatientBean;
+import edu.ncsu.csc.itrust.exception.ErrorList;
+import edu.ncsu.csc.itrust.exception.FormValidationException;
+import org.apache.commons.validator.CreditCardValidator;
+import java.util.Date;
+
+/**
+ * Validates a patient bean, from {@link EditPatientAction}
+ * 
+ *  
+ * 
+ */
+public class PatientValidator extends BeanValidator&lt;PatientBean&gt; {
+	/**
+	 * The default constructor.
+	 */
+<span class="fc" id="L20">	public PatientValidator() {</span>
+<span class="fc" id="L21">	}</span>
+
+	@Override
+	public void validate(PatientBean p) throws FormValidationException{
+<span class="fc" id="L25">		ErrorList errorList = new ErrorList();</span>
+		
+		//First name, last name, and email are all required
+<span class="fc" id="L28">		errorList.addIfNotNull(checkFormat(&quot;First name&quot;, p.getFirstName(), ValidationFormat.NAME, false));</span>
+<span class="fc" id="L29">		errorList.addIfNotNull(checkFormat(&quot;Last name&quot;, p.getLastName(), ValidationFormat.NAME, false));</span>
+<span class="fc" id="L30">		errorList.addIfNotNull(checkFormat(&quot;Email&quot;, p.getEmail(), ValidationFormat.EMAIL, false));</span>
+
+<span class="pc bpc" id="L32" title="1 of 2 branches missed.">		if(!p.getDateOfBirthStr().isEmpty()){</span>
+<span class="fc" id="L33">			errorList.addIfNotNull(checkFormat(&quot;Date of Birth&quot;, p.getDateOfBirthStr(), ValidationFormat.DATE, false));</span>
+		}
+		
+<span class="fc bfc" id="L36" title="All 2 branches covered.">		if(!p.getDateOfDeathStr().isEmpty()){</span>
+<span class="fc" id="L37">			errorList.addIfNotNull(checkFormat(&quot;Date of Death&quot;, p.getDateOfDeathStr(), ValidationFormat.DATE, true));</span>
+		}
+		
+		try {
+<span class="fc bfc" id="L41" title="All 4 branches covered.">			if (&quot;&quot;.equals(p.getDateOfDeathStr()) || p.getDateOfDeath() == null) {</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">				if (!p.getCauseOfDeath().equals(&quot;&quot;)){</span>
+<span class="fc" id="L43">					errorList.addIfNotNull(&quot;Cause of Death cannot be specified without Date of Death!&quot;);</span>
+				}
+			} else {
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">				if (p.getDateOfDeath().before(p.getDateOfBirth()))</span>
+<span class="nc" id="L47">					errorList.addIfNotNull(&quot;Death date cannot be before birth date!&quot;);</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">				if( p.getDateOfDeath().after(new Date())){</span>
+<span class="fc" id="L49">					errorList.addIfNotNull(&quot;Death date cannot be in the future!&quot;);</span>
+				}
+			}
+		
+<span class="fc bfc" id="L53" title="All 2 branches covered.">			if( p.getDateOfBirth().after(new Date())){</span>
+<span class="fc" id="L54">				errorList.addIfNotNull(&quot;Birth date cannot be in the future!&quot;);</span>
+			}
+<span class="nc" id="L56">		} catch (NullPointerException e) {</span>
+			// ignore this
+<span class="fc" id="L58">		}</span>
+
+		
+<span class="fc bfc" id="L61" title="All 2 branches covered.">		if(!p.getCauseOfDeath().isEmpty()){</span>
+<span class="pc bpc" id="L62" title="1 of 4 branches missed.">			boolean deathCauseNull = (null == p.getDateOfDeathStr() || p.getDateOfDeathStr().equals(&quot;&quot;));</span>
+<span class="fc" id="L63">			errorList.addIfNotNull(checkFormat(&quot;Cause of Death&quot;, p.getCauseOfDeath(), ValidationFormat.ICD9CM, deathCauseNull));</span>
+		}
+		
+<span class="fc bfc" id="L66" title="All 2 branches covered.">		if(!p.getStreetAddress1().isEmpty()){</span>
+<span class="fc" id="L67">			errorList.addIfNotNull(checkFormat(&quot;Street Address 1&quot;, p.getStreetAddress1(), ValidationFormat.ADDRESS, false));</span>
+		}
+		
+<span class="fc bfc" id="L70" title="All 2 branches covered.">		if(!p.getStreetAddress2().isEmpty()){</span>
+<span class="fc" id="L71">			errorList.addIfNotNull(checkFormat(&quot;Street Address 2&quot;, p.getStreetAddress2(), ValidationFormat.ADDRESS, true));</span>
+		}
+		
+<span class="fc bfc" id="L74" title="All 2 branches covered.">		if(!p.getCity().isEmpty()){</span>
+<span class="fc" id="L75">			errorList.addIfNotNull(checkFormat(&quot;City&quot;, p.getCity(), ValidationFormat.CITY, false));</span>
+		}
+		
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">		if(!p.getState().isEmpty()){</span>
+<span class="fc" id="L79">			errorList.addIfNotNull(checkFormat(&quot;State&quot;, p.getState(), ValidationFormat.STATE, false));</span>
+		}
+		
+<span class="fc bfc" id="L82" title="All 2 branches covered.">		if(!p.getZip().isEmpty()){</span>
+<span class="fc" id="L83">			errorList.addIfNotNull(checkFormat(&quot;Zip Code&quot;, p.getZip(), ValidationFormat.ZIPCODE, false));</span>
+		}
+		
+<span class="fc bfc" id="L86" title="All 2 branches covered.">		if(!p.getPhone().isEmpty()){</span>
+<span class="fc" id="L87">			errorList.addIfNotNull(checkFormat(&quot;Phone Number&quot;, p.getPhone(), ValidationFormat.PHONE_NUMBER, false));</span>
+		}
+		
+<span class="fc bfc" id="L90" title="All 2 branches covered.">		if(!p.getEmergencyName().isEmpty()){</span>
+<span class="fc" id="L91">			errorList.addIfNotNull(checkFormat(&quot;Emergency Contact Name&quot;, p.getEmergencyName(), ValidationFormat.NAME, false));</span>
+		}
+		
+<span class="fc bfc" id="L94" title="All 2 branches covered.">		if(!p.getEmergencyPhone().isEmpty()){</span>
+<span class="fc" id="L95">			errorList.addIfNotNull(checkFormat(&quot;Emergency Contact Phone&quot;, p.getEmergencyPhone(), ValidationFormat.PHONE_NUMBER, false));</span>
+		}
+		
+<span class="fc bfc" id="L98" title="All 2 branches covered.">		if(!p.getIcName().isEmpty()){</span>
+<span class="fc" id="L99">			errorList.addIfNotNull(checkFormat(&quot;Insurance Company Name&quot;, p.getIcName(), ValidationFormat.NAME, false));</span>
+		}
+		
+<span class="fc bfc" id="L102" title="All 2 branches covered.">		if(!p.getIcAddress1().isEmpty()){</span>
+<span class="fc" id="L103">			errorList.addIfNotNull(checkFormat(&quot;Insurance Company Address 1&quot;, p.getIcAddress1(), ValidationFormat.ADDRESS, false));</span>
+		}
+		
+<span class="fc bfc" id="L106" title="All 2 branches covered.">		if(!p.getIcAddress2().isEmpty()){</span>
+<span class="fc" id="L107">			errorList.addIfNotNull(checkFormat(&quot;Insurance Company Address 2&quot;, p.getIcAddress2(), ValidationFormat.ADDRESS, true));</span>
+		}
+		
+<span class="fc bfc" id="L110" title="All 2 branches covered.">		if(!p.getIcCity().isEmpty()){</span>
+<span class="fc" id="L111">			errorList.addIfNotNull(checkFormat(&quot;Insurance Company City&quot;, p.getIcCity(), ValidationFormat.CITY, false));</span>
+		}
+		
+<span class="pc bpc" id="L114" title="1 of 2 branches missed.">		if(!p.getIcState().isEmpty()){</span>
+<span class="fc" id="L115">			errorList.addIfNotNull(checkFormat(&quot;Insurance Company State&quot;, p.getIcState(), ValidationFormat.STATE, false));</span>
+		}
+		
+<span class="fc bfc" id="L118" title="All 2 branches covered.">		if(!p.getIcZip().isEmpty()){</span>
+<span class="fc" id="L119">			errorList.addIfNotNull(checkFormat(&quot;Insurance Company Zip&quot;, p.getIcZip(), ValidationFormat.ZIPCODE, false));</span>
+		}
+		
+<span class="fc bfc" id="L122" title="All 2 branches covered.">		if(!p.getIcPhone().isEmpty()){</span>
+<span class="fc" id="L123">			errorList.addIfNotNull(checkFormat(&quot;Insurance Company Phone&quot;, p.getIcPhone(), ValidationFormat.PHONE_NUMBER, false));</span>
+		}
+		
+<span class="fc bfc" id="L126" title="All 2 branches covered.">		if(!p.getIcID().isEmpty()){</span>
+<span class="fc" id="L127">			errorList.addIfNotNull(checkFormat(&quot;Insurance Company ID&quot;, p.getIcID(), ValidationFormat.INSURANCE_ID, false));</span>
+		}
+		
+<span class="pc bpc" id="L130" title="1 of 2 branches missed.">		if(!p.getMotherMID().isEmpty()){</span>
+<span class="fc" id="L131">			errorList.addIfNotNull(checkFormat(&quot;Mother MID&quot;, p.getMotherMID(), ValidationFormat.NPMID, true));</span>
+		}
+		
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">		if(!p.getFatherMID().isEmpty()){</span>
+<span class="fc" id="L135">			errorList.addIfNotNull(checkFormat(&quot;Father MID&quot;, p.getFatherMID(), ValidationFormat.NPMID, true));</span>
+		}
+		
+<span class="fc bfc" id="L138" title="All 2 branches covered.">		if(!p.getTopicalNotes().isEmpty()){</span>
+<span class="fc" id="L139">			errorList.addIfNotNull(checkFormat(&quot;Topical Notes&quot;, p.getTopicalNotes(), ValidationFormat.NOTES, true));</span>
+		}
+		
+		
+		/* This block was added for Theme 5 by Tyler Arehart */
+		
+<span class="fc bfc" id="L145" title="All 2 branches covered.">		if(!p.getCreditCardNumber().isEmpty()){</span>
+<span class="pc bpc" id="L146" title="3 of 4 branches missed.">			if (!(p.getCreditCardNumber().equals(&quot;&quot;) &amp;&amp; p.getCreditCardType().equals(&quot;&quot;))) {</span>
+		
+<span class="fc" id="L148">				String s = null;</span>
+				CreditCardValidator c;
+<span class="fc" id="L150">				int type = -1;</span>
+<span class="fc bfc" id="L151" title="All 2 branches covered.">				if (p.getCreditCardType().equals(&quot;VISA&quot;)) type = CreditCardValidator.VISA;</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">				if (p.getCreditCardType().equals(&quot;MASTERCARD&quot;)) type = CreditCardValidator.MASTERCARD;</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">				if (p.getCreditCardType().equals(&quot;DISCOVER&quot;)) type = CreditCardValidator.DISCOVER;</span>
+<span class="fc bfc" id="L154" title="All 2 branches covered.">				if (p.getCreditCardType().equals(&quot;AMEX&quot;)) type = CreditCardValidator.AMEX;</span>
+			
+<span class="pc bpc" id="L156" title="1 of 2 branches missed.">				if (type != -1) {	</span>
+<span class="fc" id="L157">					c = new CreditCardValidator(type);</span>
+<span class="fc bfc" id="L158" title="All 2 branches covered.">					if (!c.isValid(p.getCreditCardNumber())) {</span>
+<span class="fc" id="L159">						s = &quot;Credit Card Number&quot;;</span>
+					}
+				}
+				else {
+<span class="nc" id="L163">					s = &quot;Credit Card Type&quot;;</span>
+				}
+<span class="fc" id="L165">				errorList.addIfNotNull(s);</span>
+			}
+		}
+		
+<span class="pc bpc" id="L169" title="1 of 2 branches missed.">		if(!p.getDirectionsToHome().isEmpty()){</span>
+<span class="nc" id="L170">			errorList.addIfNotNull(checkFormat(&quot;Directions to Home&quot;, p.getDirectionsToHome(), ValidationFormat.COMMENTS, true));</span>
+		}
+		
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">		if(!p.getReligion().isEmpty()){</span>
+<span class="nc" id="L174">			errorList.addIfNotNull(checkFormat(&quot;Religion&quot;, p.getReligion(), ValidationFormat.NAME, true));</span>
+		}
+		
+<span class="pc bpc" id="L177" title="1 of 2 branches missed.">		if(!p.getLanguage().isEmpty()){</span>
+<span class="nc" id="L178">			errorList.addIfNotNull(checkFormat(&quot;Language&quot;, p.getLanguage(), ValidationFormat.NAME, true));</span>
+		}
+		
+<span class="pc bpc" id="L181" title="1 of 2 branches missed.">		if(!p.getSpiritualPractices().isEmpty()){</span>
+<span class="nc" id="L182">			errorList.addIfNotNull(checkFormat(&quot;Spiritual Practices&quot;, p.getSpiritualPractices(), ValidationFormat.COMMENTS, true));</span>
+		}
+		
+<span class="pc bpc" id="L185" title="1 of 2 branches missed.">		if(!p.getAlternateName().isEmpty()){</span>
+<span class="nc" id="L186">			errorList.addIfNotNull(checkFormat(&quot;Alternate Name&quot;, p.getAlternateName(), ValidationFormat.NAME, true));</span>
+		}
+		
+<span class="fc bfc" id="L189" title="All 2 branches covered.">		if (errorList.hasErrors())</span>
+<span class="fc" id="L190">			throw new FormValidationException(errorList);</span>
+<span class="fc" id="L191">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

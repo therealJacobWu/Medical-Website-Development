@@ -1,0 +1,531 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>OphthalmologySurgeryRecordBean.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.beans</a> &gt; <span class="el_source">OphthalmologySurgeryRecordBean.java</span></div><h1>OphthalmologySurgeryRecordBean.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.beans;
+
+import java.util.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
+/**
+ * Bean for Ophthalmology Office Visits.
+ * Holds all of the data needed for an Ophthalmology Office Visit.
+ */
+<span class="fc" id="L11">public class OphthalmologySurgeryRecordBean {</span>
+	
+	/**The mid of the user.*/
+	private long mid;
+	/**The Ophthalmology office visit id.*/
+	private long oid;
+	/**The date of the Ophthalmology office visit.*/
+	private String visitDate;
+	/**The last name of the optometrist.*/
+	private String docLastName;
+	/**The first name of the optometrist.*/
+	private String docFirstName;
+	/**The visual acuity numerator for the OD.*/
+	private Integer vaNumOD;
+	/**The visual acuity denumerator for the OS.*/
+	private Integer vaDenOD;
+	/**The visual acuity numerator for the OD.*/
+	private Integer vaNumOS;
+	/**The visual acuity denumerator for the OS.*/
+	private Integer vaDenOS;
+	/**The sphere value for the OD.*/
+	private Double sphereOD;
+	/**The sphere value for the OS.*/
+	private Double sphereOS;
+	/**The cylinder value for the OD.*/
+	private Double cylinderOD;
+	/**The cylinder value for the OS.*/
+	private Double cylinderOS;
+	/**The axis value for the OD.*/
+	private Integer axisOD;
+	/**The axis value for the OS.*/
+	private Integer axisOS;
+	/**The add value for the OD.*/
+	private Double addOD;
+	/**The add value for the OS.*/
+	private Double addOS;
+	/**Surgery*/
+	private String surgery;
+	/**Surgery notes*/
+	private String surgeryNotes;
+	
+	/**
+	 * Getter for the mid value.
+	 * @return the mid.
+	 */
+	public long getMid() {
+<span class="fc" id="L57">		return mid;</span>
+	}
+	
+	/**
+	 * Set the mid value.
+	 * @param mid the new value.
+	 */
+	public void setMid(long mid) {
+<span class="fc" id="L65">		this.mid = mid;</span>
+<span class="fc" id="L66">	}</span>
+	
+	/**
+	 * Getter for the oid value.
+	 * @return the oid.
+	 */
+	public long getOid() {
+<span class="fc" id="L73">		return oid;</span>
+	}
+	
+	/**
+	 * Set the oid value.
+	 * @param oid the new value.
+	 */
+	public void setOid(long oid) {
+<span class="fc" id="L81">		this.oid = oid;</span>
+<span class="fc" id="L82">	}</span>
+	
+	/**
+	 * Getter for the visitDate as a Date object.
+	 * @return the visit date.
+	 */
+	public Date getVisitDate(){
+<span class="fc bfc" id="L89" title="All 2 branches covered.">		if (visitDate == null)</span>
+<span class="fc" id="L90">			return null;</span>
+<span class="fc" id="L91">		Date date = null; </span>
+		try {
+<span class="fc" id="L93">			date = new SimpleDateFormat(&quot;MM/dd/yyyy&quot;).parse(visitDate);</span>
+<span class="fc" id="L94">		} catch (ParseException e) {</span>
+			//If it can't be parsed, return null.
+<span class="fc" id="L96">			return null;</span>
+<span class="fc" id="L97">		}</span>
+<span class="fc" id="L98">		return date;</span>
+	}
+	
+	/**
+	 * Getter for the visitDate as a string.
+	 * @return the visitDate.
+	 */
+	public String getVisitDateString() {
+<span class="fc" id="L106">		return visitDate;</span>
+	}
+	
+	/**
+	 * Set the visitDate value
+	 * @param visitDate the new value.
+	 */
+	public void setVisitDate(String visitDate) {
+<span class="fc" id="L114">		this.visitDate = visitDate;</span>
+<span class="fc" id="L115">	}</span>
+	
+	/**
+	 * Getter for the last name of the optometrist.
+	 * @return the optometrist last name.
+	 */
+	public String getLastName(){
+<span class="fc" id="L122">		return this.docLastName;</span>
+	}
+	
+	/**
+	 * Set the last name of the optometrist.
+	 * @param docLastName the new value.
+	 */
+	public void setLastName(String docLastName){
+<span class="fc" id="L130">		this.docLastName = docLastName;</span>
+<span class="fc" id="L131">	}</span>
+
+	/**
+	 * Getter for the first name of the optometrist.
+	 * @return the doctors first name.
+	 */
+	public String getFirstName(){
+<span class="fc" id="L138">		return this.docFirstName;</span>
+	}
+	
+	/**
+	 * Set the first name of the optometrist.
+	 * @param docFirstName the new value.
+	 */
+	public void setFirstName(String docFirstName){
+<span class="fc" id="L146">		this.docFirstName = docFirstName;</span>
+<span class="fc" id="L147">	}</span>
+	
+	/**
+	 * Getter for the visual acuity numerator value for the OD.
+	 * @return the vaNum.
+	 */
+	public Integer getVaNumOD() {
+<span class="fc" id="L154">		return vaNumOD;</span>
+	}
+	
+	/**
+	 * Set the visual acuity numerator value for the OD.
+	 * @param vaNum the new value.
+	 */
+	public void setVaNumOD(Integer vaNumOD) {
+<span class="fc" id="L162">		this.vaNumOD = vaNumOD;</span>
+<span class="fc" id="L163">	}</span>
+	
+	/**
+	 * Getter for the visual acuity denumerator value for the OD.
+	 * @return the vaDen.
+	 */
+	public Integer getVaDenOD() {
+<span class="fc" id="L170">		return vaDenOD;</span>
+	}
+	
+	/**
+	 * Set the visual acuity denumerator value for the OD.
+	 * @param vaDen the new value.
+	 */
+	public void setVaDenOD(Integer vaDenOD) {
+<span class="fc" id="L178">		this.vaDenOD = vaDenOD;</span>
+<span class="fc" id="L179">	}</span>
+	
+	/**
+	 * Getter for the visual acuity numerator value for the OS.
+	 * @return the vaNum.
+	 */
+	public Integer getVaNumOS() {
+<span class="fc" id="L186">		return vaNumOS;</span>
+	}
+	
+	/**
+	 * Set the visual acuity numerator value for the OS.
+	 * @param vaNum the new value.
+	 */
+	public void setVaNumOS(Integer vaNumOS) {
+<span class="fc" id="L194">		this.vaNumOS = vaNumOS;</span>
+<span class="fc" id="L195">	}</span>
+	
+	/**
+	 * Getter for the visual acuity denumerator value for the OS.
+	 * @return the vaDen.
+	 */
+	public Integer getVaDenOS() {
+<span class="fc" id="L202">		return vaDenOS;</span>
+	}
+	
+	/**
+	 * Set the visual acuity denumerator value for the OS.
+	 * @param vaDen the new value.
+	 */
+	public void setVaDenOS(Integer vaDenOS) {
+<span class="fc" id="L210">		this.vaDenOS = vaDenOS;</span>
+<span class="fc" id="L211">	}</span>
+	
+	/**
+	 * Getter for the sphere OD value.
+	 * @return the sphereOD.
+	 */
+	public Double getSphereOD() {
+<span class="fc" id="L218">		return sphereOD;</span>
+	}
+	
+	/**
+	 * Set the sphere OD value.
+	 * @param sphereOD the new value.
+	 */
+	public void setSphereOD(Double sphereOD) {
+<span class="fc" id="L226">		this.sphereOD = sphereOD;</span>
+<span class="fc" id="L227">	}</span>
+	
+	/**
+	 * Getter for the sphere OS value.
+	 * @return the sphereOS.
+	 */
+	public Double getSphereOS() {
+<span class="fc" id="L234">		return sphereOS;</span>
+	}
+	
+	/**
+	 * Set the sphere OS value.
+	 * @param sphereOS the new value.
+	 */
+	public void setSphereOS(Double sphereOS) {
+<span class="fc" id="L242">		this.sphereOS = sphereOS;</span>
+<span class="fc" id="L243">	}</span>
+	
+	/**
+	 * Getter for the cylinder OD value.
+	 * @return the cylinderOD.
+	 */
+	public Double getCylinderOD() {
+<span class="fc" id="L250">		return cylinderOD;</span>
+	}
+	
+	/**
+	 * Set the cylinder OD value.
+	 * @param cylinderOD the new value.
+	 */
+	public void setCylinderOD(Double cylinderOD) {
+<span class="fc" id="L258">		this.cylinderOD = cylinderOD;</span>
+<span class="fc" id="L259">	}</span>
+	
+	/**
+	 * Getter for the cylinder OS value.
+	 * @return the cylinderOS.
+	 */
+	public Double getCylinderOS() {
+<span class="fc" id="L266">		return cylinderOS;</span>
+	}
+	
+	/**
+	 * Set the cylinder OS value.
+	 * @param cylinderOS the new value.
+	 */
+	public void setCylinderOS(Double cylinderOS) {
+<span class="fc" id="L274">		this.cylinderOS = cylinderOS;</span>
+<span class="fc" id="L275">	}</span>
+	
+	/**
+	 * Getter for the axis OD value.
+	 * @return the axisOD.
+	 */
+	public Integer getAxisOD() {
+<span class="fc" id="L282">		return axisOD;</span>
+	}
+	
+	/**
+	 * Set the axis OD value.
+	 * @param axisOD the new value.
+	 */
+	public void setAxisOD(Integer axisOD) {
+<span class="fc" id="L290">		this.axisOD = axisOD;</span>
+<span class="fc" id="L291">	}</span>
+	
+	/**
+	 * Getter for the axis OS value.
+	 * @return the axisOS.
+	 */
+	public Integer getAxisOS() {
+<span class="fc" id="L298">		return axisOS;</span>
+	}
+	
+	/**
+	 * Set the axis OS value.
+	 * @param axisOS the new value.
+	 */
+	public void setAxisOS(Integer axisOS) {
+<span class="fc" id="L306">		this.axisOS = axisOS;</span>
+<span class="fc" id="L307">	}</span>
+	
+	/**
+	 * Getter for the add OD value.
+	 * @return the addOD.
+	 */
+	public Double getAddOD() {
+<span class="fc" id="L314">		return addOD;</span>
+	}
+	
+	/**
+	 * Set the add OD value.
+	 * @param addOD the new value.
+	 */
+	public void setAddOD(Double addOD) {
+<span class="fc" id="L322">		this.addOD = addOD;</span>
+<span class="fc" id="L323">	}</span>
+	
+	/**
+	 * Getter for the add OS value.
+	 * @return the addOS.
+	 */
+	public Double getAddOS() {
+<span class="fc" id="L330">		return addOS;</span>
+	}
+	
+	/**
+	 * Set the add OS value.
+	 * @param addOS the new value.
+	 */
+	public void setAddOS(Double addOS) {
+<span class="fc" id="L338">		this.addOS = addOS;</span>
+<span class="fc" id="L339">	}</span>
+	
+	/**
+	 * @return the surgery
+	 */
+	public String getSurgery() {
+<span class="fc" id="L345">		return surgery;</span>
+	}
+
+	/**
+	 * @param surgery the surgery to set
+	 */
+	public void setSurgery(String surgery) {
+<span class="fc" id="L352">		this.surgery = surgery;</span>
+<span class="fc" id="L353">	}</span>
+
+	/**
+	 * @return the surgeryNotes
+	 */
+	public String getSurgeryNotes() {
+<span class="fc" id="L359">		return surgeryNotes;</span>
+	}
+
+	/**
+	 * @param surgeryNotes the surgeryNotes to set
+	 */
+	public void setSurgeryNotes(String surgeryNotes) {
+<span class="fc" id="L366">		this.surgeryNotes = surgeryNotes;</span>
+<span class="fc" id="L367">	}</span>
+
+	/**
+	 * Method used to compute the hashcode for a OphthalmologySurgeryRecordBean. 
+	 * @return true if the OphthalmologySurgeryRecordBeans are equal, false otherwise.
+	 */
+	@Override
+	public int hashCode() {
+<span class="fc" id="L375">		final int prime = 31;</span>
+<span class="fc" id="L376">		int result = 1;</span>
+<span class="pc bpc" id="L377" title="1 of 2 branches missed.">		result = prime * result + ((addOD == null) ? 0 : addOD.hashCode());</span>
+<span class="pc bpc" id="L378" title="1 of 2 branches missed.">		result = prime * result + ((addOS == null) ? 0 : addOS.hashCode());</span>
+<span class="pc bpc" id="L379" title="1 of 2 branches missed.">		result = prime * result + ((axisOD == null) ? 0 : axisOD.hashCode());</span>
+<span class="pc bpc" id="L380" title="1 of 2 branches missed.">		result = prime * result + ((axisOS == null) ? 0 : axisOS.hashCode());</span>
+<span class="pc bpc" id="L381" title="1 of 2 branches missed.">		result = prime * result</span>
+<span class="fc" id="L382">				+ ((cylinderOD == null) ? 0 : cylinderOD.hashCode());</span>
+<span class="pc bpc" id="L383" title="1 of 2 branches missed.">		result = prime * result</span>
+<span class="fc" id="L384">				+ ((cylinderOS == null) ? 0 : cylinderOS.hashCode());</span>
+<span class="pc bpc" id="L385" title="1 of 2 branches missed.">		result = prime * result</span>
+<span class="fc" id="L386">				+ ((docFirstName == null) ? 0 : docFirstName.hashCode());</span>
+<span class="pc bpc" id="L387" title="1 of 2 branches missed.">		result = prime * result</span>
+<span class="fc" id="L388">				+ ((docLastName == null) ? 0 : docLastName.hashCode());</span>
+<span class="fc" id="L389">		result = prime * result + (int) (mid ^ (mid &gt;&gt;&gt; 32));</span>
+<span class="fc" id="L390">		result = prime * result + (int) (oid ^ (oid &gt;&gt;&gt; 32));</span>
+<span class="pc bpc" id="L391" title="1 of 2 branches missed.">		result = prime * result</span>
+<span class="fc" id="L392">				+ ((sphereOD == null) ? 0 : sphereOD.hashCode());</span>
+<span class="pc bpc" id="L393" title="1 of 2 branches missed.">		result = prime * result</span>
+<span class="fc" id="L394">				+ ((sphereOS == null) ? 0 : sphereOS.hashCode());</span>
+<span class="pc bpc" id="L395" title="1 of 2 branches missed.">		result = prime * result + ((vaDenOD == null) ? 0 : vaDenOD.hashCode());</span>
+<span class="pc bpc" id="L396" title="1 of 2 branches missed.">		result = prime * result + ((vaDenOS == null) ? 0 : vaDenOS.hashCode());</span>
+<span class="pc bpc" id="L397" title="1 of 2 branches missed.">		result = prime * result + ((vaNumOD == null) ? 0 : vaNumOD.hashCode());</span>
+<span class="pc bpc" id="L398" title="1 of 2 branches missed.">		result = prime * result + ((vaNumOS == null) ? 0 : vaNumOS.hashCode());</span>
+<span class="pc bpc" id="L399" title="1 of 2 branches missed.">		result = prime * result</span>
+<span class="fc" id="L400">				+ ((visitDate == null) ? 0 : visitDate.hashCode());</span>
+<span class="pc bpc" id="L401" title="1 of 2 branches missed.">		result = prime * result</span>
+<span class="fc" id="L402">				+ ((surgery == null) ? 0 : surgery.hashCode());</span>
+<span class="pc bpc" id="L403" title="1 of 2 branches missed.">		result = prime * result</span>
+<span class="fc" id="L404">				+ ((surgeryNotes == null) ? 0 : surgeryNotes.hashCode());</span>
+<span class="fc" id="L405">		return result;</span>
+	}
+
+	/**
+	 * Method used to determine if OphthalmologySurgeryRecordBeans are equal. 
+	 * @return true if the OphthalmologySurgeryRecordBeans are equal, false otherwise.
+	 */
+	@Override
+	public boolean equals(Object obj) {
+<span class="pc bpc" id="L414" title="1 of 2 branches missed.">		if (this == obj)</span>
+<span class="nc" id="L415">			return true;</span>
+<span class="pc bpc" id="L416" title="1 of 2 branches missed.">		if (obj == null)</span>
+<span class="nc" id="L417">			return false;</span>
+<span class="pc bpc" id="L418" title="1 of 2 branches missed.">		if (getClass() != obj.getClass())</span>
+<span class="nc" id="L419">			return false;</span>
+<span class="fc" id="L420">		OphthalmologySurgeryRecordBean other = (OphthalmologySurgeryRecordBean) obj;</span>
+<span class="fc bfc" id="L421" title="All 2 branches covered.">		if (addOD == null) {</span>
+<span class="pc bpc" id="L422" title="1 of 2 branches missed.">			if (other.addOD != null)</span>
+<span class="fc" id="L423">				return false;</span>
+<span class="pc bpc" id="L424" title="1 of 2 branches missed.">		} else if (!addOD.equals(other.addOD))</span>
+<span class="nc" id="L425">			return false;</span>
+<span class="fc bfc" id="L426" title="All 2 branches covered.">		if (addOS == null) {</span>
+<span class="pc bpc" id="L427" title="1 of 2 branches missed.">			if (other.addOS != null)</span>
+<span class="fc" id="L428">				return false;</span>
+<span class="pc bpc" id="L429" title="1 of 2 branches missed.">		} else if (!addOS.equals(other.addOS))</span>
+<span class="nc" id="L430">			return false;</span>
+<span class="fc bfc" id="L431" title="All 2 branches covered.">		if (axisOD == null) {</span>
+<span class="fc bfc" id="L432" title="All 2 branches covered.">			if (other.axisOD != null)</span>
+<span class="fc" id="L433">				return false;</span>
+<span class="pc bpc" id="L434" title="1 of 2 branches missed.">		} else if (!axisOD.equals(other.axisOD))</span>
+<span class="nc" id="L435">			return false;</span>
+<span class="fc bfc" id="L436" title="All 2 branches covered.">		if (axisOS == null) {</span>
+<span class="fc bfc" id="L437" title="All 2 branches covered.">			if (other.axisOS != null)</span>
+<span class="fc" id="L438">				return false;</span>
+<span class="pc bpc" id="L439" title="1 of 2 branches missed.">		} else if (!axisOS.equals(other.axisOS))</span>
+<span class="nc" id="L440">			return false;</span>
+<span class="fc bfc" id="L441" title="All 2 branches covered.">		if (cylinderOD == null) {</span>
+<span class="fc bfc" id="L442" title="All 2 branches covered.">			if (other.cylinderOD != null)</span>
+<span class="fc" id="L443">				return false;</span>
+<span class="pc bpc" id="L444" title="1 of 2 branches missed.">		} else if (!cylinderOD.equals(other.cylinderOD))</span>
+<span class="nc" id="L445">			return false;</span>
+<span class="fc bfc" id="L446" title="All 2 branches covered.">		if (cylinderOS == null) {</span>
+<span class="fc bfc" id="L447" title="All 2 branches covered.">			if (other.cylinderOS != null)</span>
+<span class="fc" id="L448">				return false;</span>
+<span class="fc bfc" id="L449" title="All 2 branches covered.">		} else if (!cylinderOS.equals(other.cylinderOS))</span>
+<span class="fc" id="L450">			return false;</span>
+<span class="pc bpc" id="L451" title="1 of 2 branches missed.">		if (docFirstName == null) {</span>
+<span class="nc bnc" id="L452" title="All 2 branches missed.">			if (other.docFirstName != null)</span>
+<span class="nc" id="L453">				return false;</span>
+<span class="pc bpc" id="L454" title="1 of 2 branches missed.">		} else if (!docFirstName.equals(other.docFirstName))</span>
+<span class="nc" id="L455">			return false;</span>
+<span class="pc bpc" id="L456" title="1 of 2 branches missed.">		if (docLastName == null) {</span>
+<span class="nc bnc" id="L457" title="All 2 branches missed.">			if (other.docLastName != null)</span>
+<span class="nc" id="L458">				return false;</span>
+<span class="pc bpc" id="L459" title="1 of 2 branches missed.">		} else if (!docLastName.equals(other.docLastName))</span>
+<span class="nc" id="L460">			return false;</span>
+<span class="pc bpc" id="L461" title="1 of 2 branches missed.">		if (mid != other.mid)</span>
+<span class="nc" id="L462">			return false;</span>
+<span class="pc bpc" id="L463" title="1 of 2 branches missed.">		if (oid != other.oid)</span>
+<span class="nc" id="L464">			return false;</span>
+<span class="fc bfc" id="L465" title="All 2 branches covered.">		if (sphereOD == null) {</span>
+<span class="pc bpc" id="L466" title="1 of 2 branches missed.">			if (other.sphereOD != null)</span>
+<span class="fc" id="L467">				return false;</span>
+<span class="pc bpc" id="L468" title="1 of 2 branches missed.">		} else if (!sphereOD.equals(other.sphereOD))</span>
+<span class="nc" id="L469">			return false;</span>
+<span class="fc bfc" id="L470" title="All 2 branches covered.">		if (sphereOS == null) {</span>
+<span class="pc bpc" id="L471" title="1 of 2 branches missed.">			if (other.sphereOS != null)</span>
+<span class="fc" id="L472">				return false;</span>
+<span class="pc bpc" id="L473" title="1 of 2 branches missed.">		} else if (!sphereOS.equals(other.sphereOS))</span>
+<span class="nc" id="L474">			return false;</span>
+<span class="fc bfc" id="L475" title="All 2 branches covered.">		if (vaDenOD == null) {</span>
+<span class="pc bpc" id="L476" title="1 of 2 branches missed.">			if (other.vaDenOD != null)</span>
+<span class="fc" id="L477">				return false;</span>
+<span class="pc bpc" id="L478" title="1 of 2 branches missed.">		} else if (!vaDenOD.equals(other.vaDenOD))</span>
+<span class="nc" id="L479">			return false;</span>
+<span class="fc bfc" id="L480" title="All 2 branches covered.">		if (vaDenOS == null) {</span>
+<span class="pc bpc" id="L481" title="1 of 2 branches missed.">			if (other.vaDenOS != null)</span>
+<span class="fc" id="L482">				return false;</span>
+<span class="pc bpc" id="L483" title="1 of 2 branches missed.">		} else if (!vaDenOS.equals(other.vaDenOS))</span>
+<span class="nc" id="L484">			return false;</span>
+<span class="fc bfc" id="L485" title="All 2 branches covered.">		if (vaNumOD == null) {</span>
+<span class="pc bpc" id="L486" title="1 of 2 branches missed.">			if (other.vaNumOD != null)</span>
+<span class="fc" id="L487">				return false;</span>
+<span class="pc bpc" id="L488" title="1 of 2 branches missed.">		} else if (!vaNumOD.equals(other.vaNumOD))</span>
+<span class="nc" id="L489">			return false;</span>
+<span class="fc bfc" id="L490" title="All 2 branches covered.">		if (vaNumOS == null) {</span>
+<span class="pc bpc" id="L491" title="1 of 2 branches missed.">			if (other.vaNumOS != null)</span>
+<span class="fc" id="L492">				return false;</span>
+<span class="pc bpc" id="L493" title="1 of 2 branches missed.">		} else if (!vaNumOS.equals(other.vaNumOS))</span>
+<span class="nc" id="L494">			return false;</span>
+<span class="fc bfc" id="L495" title="All 2 branches covered.">		if (visitDate == null) {</span>
+<span class="pc bpc" id="L496" title="1 of 2 branches missed.">			if (other.visitDate != null)</span>
+<span class="fc" id="L497">				return false;</span>
+<span class="pc bpc" id="L498" title="1 of 2 branches missed.">		} else if (!visitDate.equals(other.visitDate))</span>
+<span class="nc" id="L499">			return false;</span>
+<span class="fc bfc" id="L500" title="All 2 branches covered.">		if (surgery == null) {</span>
+<span class="pc bpc" id="L501" title="1 of 2 branches missed.">			if (other.surgery != null)</span>
+<span class="nc" id="L502">				return false;</span>
+<span class="pc bpc" id="L503" title="1 of 2 branches missed.">		} else if (!surgery.equals(other.surgery))</span>
+<span class="nc" id="L504">			return false;</span>
+<span class="fc bfc" id="L505" title="All 2 branches covered.">		if (surgeryNotes == null) {</span>
+<span class="pc bpc" id="L506" title="1 of 2 branches missed.">			if (other.surgeryNotes != null)</span>
+<span class="nc" id="L507">				return false;</span>
+<span class="pc bpc" id="L508" title="1 of 2 branches missed.">		} else if (!surgeryNotes.equals(other.surgeryNotes))</span>
+<span class="nc" id="L509">			return false;</span>
+<span class="fc" id="L510">		return true;</span>
+	}
+
+	/**
+	 * Creates a string representation of this object.
+	 * @return The string representation.
+	 */
+	@Override
+	public String toString() {
+<span class="fc" id="L519">		return &quot;OphthalmologySurgeryRecordBean [mid=&quot; + mid + &quot;, oid=&quot; + oid</span>
+				+ &quot;, visitDate=&quot; + visitDate + &quot;, docLastName=&quot; + docLastName
+				+ &quot;, docFirstName=&quot; + docFirstName + &quot;, vaNumOD=&quot; + vaNumOD
+				+ &quot;, vaDenOD=&quot; + vaDenOD + &quot;, vaNumOS=&quot; + vaNumOS
+				+ &quot;, vaDenOS=&quot; + vaDenOS + &quot;, sphereOD=&quot; + sphereOD
+				+ &quot;, sphereOS=&quot; + sphereOS + &quot;, cylinderOD=&quot; + cylinderOD
+				+ &quot;, cylinderOS=&quot; + cylinderOS + &quot;, axisOD=&quot; + axisOD
+				+ &quot;, axisOS=&quot; + axisOS + &quot;, addOD=&quot; + addOD + &quot;, addOS=&quot;
+				+ addOS + &quot;, surgery=&quot; + surgery + &quot;,surgeryNotes=&quot; 
+				+ surgeryNotes + &quot;]&quot;;
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ApptRequestDAO.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.dao.mysql</a> &gt; <span class="el_source">ApptRequestDAO.java</span></div><h1>ApptRequestDAO.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.dao.mysql;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import edu.ncsu.csc.itrust.DBUtil;
+import edu.ncsu.csc.itrust.beans.ApptRequestBean;
+import edu.ncsu.csc.itrust.beans.loaders.ApptRequestBeanLoader;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.exception.DBException;
+
+/**
+ * 
+ *
+ */
+@SuppressWarnings({})
+public class ApptRequestDAO {
+
+	private transient final DAOFactory factory;
+	private transient final ApptRequestBeanLoader loader;
+
+<span class="fc" id="L24">	public ApptRequestDAO(final DAOFactory factory) {</span>
+<span class="fc" id="L25">		this.factory = factory;</span>
+<span class="fc" id="L26">		loader = new ApptRequestBeanLoader();</span>
+<span class="fc" id="L27">	}</span>
+
+	/**
+	 * 
+	 * @param hcpid
+	 * @return
+	 * @throws DBException 
+	 */
+	public List&lt;ApptRequestBean&gt; getApptRequestsFor(final long hcpid) throws SQLException, DBException {
+<span class="fc" id="L36">		Connection conn = null;</span>
+<span class="fc" id="L37">		PreparedStatement stmt = null;</span>
+		try{
+<span class="fc" id="L39">		conn = factory.getConnection();</span>
+
+<span class="fc" id="L41">		stmt = conn</span>
+<span class="fc" id="L42">				.prepareStatement(&quot;SELECT * FROM appointmentrequests WHERE doctor_id=? ORDER BY sched_date&quot;);</span>
+
+<span class="fc" id="L44">		stmt.setLong(1, hcpid);</span>
+
+<span class="fc" id="L46">		final ResultSet results = stmt.executeQuery();</span>
+<span class="fc" id="L47">		final List&lt;ApptRequestBean&gt; list = loader.loadList(results);</span>
+<span class="fc" id="L48">		results.close();</span>
+<span class="fc" id="L49">		stmt.close();</span>
+<span class="fc" id="L50">		return list;</span>
+<span class="fc" id="L51">		}catch(SQLException e){</span>
+<span class="fc" id="L52">			throw new DBException(e);</span>
+		}finally{
+<span class="fc" id="L54">			DBUtil.closeConnection(conn, stmt);</span>
+		}
+		
+	}
+
+	/**
+	 * 
+	 * @param req
+	 * @throws SQLException
+	 * @throws DBException 
+	 */
+	public void addApptRequest(final ApptRequestBean req) throws SQLException, DBException {
+<span class="fc" id="L66">		Connection conn = null;</span>
+<span class="fc" id="L67">		PreparedStatement stmt = null;</span>
+		try{
+<span class="fc" id="L69">		conn = factory.getConnection();</span>
+
+<span class="fc" id="L71">		stmt = conn</span>
+<span class="fc" id="L72">				.prepareStatement(&quot;INSERT INTO appointmentrequests (appt_type, patient_id, doctor_id, sched_date, comment, pending, accepted) VALUES (?, ?, ?, ?, ?, ?, ?)&quot;);</span>
+<span class="fc" id="L73">		loader.loadParameters(stmt, req);</span>
+
+<span class="fc" id="L75">		stmt.executeUpdate();</span>
+<span class="fc" id="L76">		stmt.close();</span>
+<span class="fc" id="L77">		}catch(SQLException e){</span>
+<span class="fc" id="L78">			throw new DBException(e);</span>
+		}finally{
+<span class="fc" id="L80">			DBUtil.closeConnection(conn, stmt);</span>
+<span class="fc" id="L81">		}</span>
+		
+<span class="fc" id="L83">	}</span>
+
+	/**
+	 * 
+	 * @param req
+	 * @throws SQLException
+	 * @throws DBException 
+	 */
+	public void updateApptRequest(final ApptRequestBean req) throws SQLException, DBException {
+<span class="fc" id="L92">		Connection conn = null;</span>
+<span class="fc" id="L93">		PreparedStatement stmt = null;</span>
+		try{
+<span class="fc" id="L95">			conn = factory.getConnection();</span>
+
+<span class="fc" id="L97">			stmt = conn.prepareStatement(&quot;UPDATE appointmentrequests SET pending=?, accepted=? WHERE appt_id=?&quot;);</span>
+
+<span class="fc" id="L99">			stmt.setBoolean(1, req.isPending());</span>
+<span class="fc" id="L100">			stmt.setBoolean(2, req.isAccepted());</span>
+<span class="fc" id="L101">			stmt.setInt(3, req.getRequestedAppt().getApptID());</span>
+
+<span class="fc" id="L103">			stmt.executeUpdate();</span>
+<span class="fc" id="L104">			stmt.close();</span>
+<span class="fc" id="L105">		}catch(SQLException e){</span>
+<span class="fc" id="L106">			throw new DBException(e);</span>
+		}finally{
+<span class="fc" id="L108">			DBUtil.closeConnection(conn, stmt);</span>
+<span class="fc" id="L109">		}</span>
+<span class="fc" id="L110">	}</span>
+	
+	public ApptRequestBean getApptRequest(final int reqID) throws SQLException, DBException {
+<span class="fc" id="L113">		Connection conn = null;</span>
+<span class="fc" id="L114">		PreparedStatement stmt = null;</span>
+		ApptRequestBean bean;
+		try{
+<span class="fc" id="L117">			conn = factory.getConnection();</span>
+
+<span class="fc" id="L119">			stmt = conn.prepareStatement(&quot;SELECT * FROM appointmentrequests WHERE appt_id=?&quot;);</span>
+
+<span class="fc" id="L121">			stmt.setInt(1, reqID);</span>
+<span class="fc" id="L122">			final ResultSet results = stmt.executeQuery();</span>
+<span class="pc bpc" id="L123" title="1 of 2 branches missed.">			if(results.next()) {</span>
+<span class="fc" id="L124">				bean = loader.loadSingle(results);</span>
+<span class="fc" id="L125">				results.close();</span>
+<span class="fc" id="L126">				stmt.close();</span>
+			} else {
+<span class="nc" id="L128">				bean = null;</span>
+<span class="nc" id="L129">				results.close();</span>
+<span class="nc" id="L130">				stmt.close();</span>
+			}
+<span class="nc" id="L132">		}catch(SQLException e){</span>
+<span class="nc" id="L133">			throw new DBException(e);</span>
+		}finally{
+<span class="pc" id="L135">			DBUtil.closeConnection(conn, stmt);</span>
+<span class="fc" id="L136">		}</span>
+<span class="fc" id="L137">		return bean;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

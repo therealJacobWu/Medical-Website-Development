@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AddOphthalmologyOVAction.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.action</a> &gt; <span class="el_source">AddOphthalmologyOVAction.java</span></div><h1>AddOphthalmologyOVAction.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.action;
+
+import edu.ncsu.csc.itrust.beans.OphthalmologyOVRecordBean;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.dao.mysql.OphthalmologyOVRecordDAO;
+import edu.ncsu.csc.itrust.enums.TransactionType;
+import edu.ncsu.csc.itrust.exception.FormValidationException;
+import edu.ncsu.csc.itrust.exception.ITrustException;
+import edu.ncsu.csc.itrust.validate.OphthalmologyOVValidator;
+
+/**
+ * Used for add ophthalmology office visit page (addOphalmologyOVRecord.jsp). 
+ * 
+ * Very similar to {@link AddObstetricsAction}
+ */
+public class AddOphthalmologyOVAction {
+	/**ophthalmologyOVDAO is the DAO that retrieves the ophthalmology office
+	 *  visit records from the database*/
+	private OphthalmologyOVRecordDAO ophthalmologyOVDAO;
+	/**loggedInMID is the HCP that is logged in.*/
+    private long loggedInMID;
+    /**loggingAction is used to write to the log.*/
+    private EventLoggingAction loggingAction;
+
+    /**
+     * AddOphthalmologyOVAction is the constructor for this action class. It simply initializes the
+     * instance variables.
+     * @param factory The factory used to get the obstetricsDAO.
+     * @param loggedInMID The MID of the logged in user.
+     */
+<span class="fc" id="L31">	public AddOphthalmologyOVAction(DAOFactory factory, long loggedInMID) {</span>
+<span class="fc" id="L32">		this.ophthalmologyOVDAO = factory.getOphthalmologyOVRecordDAO();</span>
+<span class="fc" id="L33">		this.loggedInMID = loggedInMID;</span>
+<span class="fc" id="L34">		this.loggingAction = new EventLoggingAction(factory);</span>
+<span class="fc" id="L35">	}</span>
+	
+	/**
+	 * Adds a new ophthalmology office visit record.
+	 * @param p OphthalmologyOVRecordBean containing the info for the record to be created.
+	 * @throws FormValidationException if the patient is not successfully validated.
+	 * @throws ITrustException thrown if the database encounters an issue.
+	 */
+	public void addOphthalmologyOV(OphthalmologyOVRecordBean p) 
+			throws FormValidationException, ITrustException {
+<span class="fc bfc" id="L45" title="All 2 branches covered.">		if(p != null){</span>
+			//Validate the bean
+<span class="fc" id="L47">			new OphthalmologyOVValidator().validate(p);</span>
+			
+			//Add the ophthalmology office visit record to the database
+<span class="fc" id="L50">			ophthalmologyOVDAO.addOphthalmologyOVRecord(p);</span>
+			
+			//Log the transaction
+<span class="fc" id="L53">			loggingAction.logEvent(TransactionType.parse(8300), loggedInMID, </span>
+<span class="fc" id="L54">					p.getMid(), &quot;Ophthalmology Office Visit &quot; +  p.getOid() + &quot; added&quot;);</span>
+		} else {
+<span class="fc" id="L56">			throw new ITrustException(&quot;Cannot add a null Ophthalmology Office Visit.&quot;);</span>
+		}
+<span class="fc" id="L58">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: edu.ncsu.csc.itrust.unit.validate.regex.ICD9CMValidatorTest
+-------------------------------------------------------------------------------
+Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.001 sec - in edu.ncsu.csc.itrust.unit.validate.regex.ICD9CMValidatorTest

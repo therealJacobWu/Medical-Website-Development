@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>OphthalmologyDiagnosisBean.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.beans</a> &gt; <span class="el_source">OphthalmologyDiagnosisBean.java</span></div><h1>OphthalmologyDiagnosisBean.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.beans;
+
+/**
+ * A bean for storing data about Diagnosis.
+ * 
+ * A bean's purpose is to store data. Period. Little or no functionality is to be added to a bean 
+ * (with the exception of minor formatting such as concatenating phone numbers together). 
+ * A bean must only have Getters and Setters (Eclipse Hint: Use Source &gt; Generate Getters and Setters� 
+ * to create these easily)
+ */
+public class OphthalmologyDiagnosisBean {
+<span class="fc" id="L12">	private long ovDiagnosisID = 0L; // optional</span>
+	private String icdCode;
+	private String description;
+	private String classification;
+<span class="fc" id="L16">	private String URL = &quot;&quot;;</span>
+	private long visitID;
+
+	/**
+	 * diagnosisBean
+	 */
+<span class="fc" id="L22">	public OphthalmologyDiagnosisBean() {</span>
+<span class="fc" id="L23">	}</span>
+
+	
+	/**
+	 * OphthalmologyDiagnosisBean
+	 * @param code code
+	 * @param description description
+	 * @param classification classification
+	 * @param URL URL
+	 */
+<span class="fc" id="L33">	public OphthalmologyDiagnosisBean(String code, String description, String classification, String URL) {</span>
+<span class="fc" id="L34">		this.icdCode = code;</span>
+<span class="fc" id="L35">		this.description = description;</span>
+<span class="fc" id="L36">		this.URL = URL;</span>
+		
+<span class="pc bpc" id="L38" title="1 of 4 branches missed.">		if (null != classification &amp;&amp; classification.equals(&quot;yes&quot;)) {</span>
+<span class="fc" id="L39">			this.classification = classification;</span>
+		}
+		else {
+<span class="fc" id="L42">			this.classification = &quot;no&quot;;</span>
+		}
+<span class="fc" id="L44">	}</span>
+
+
+	/**
+	 * Gets the ICD Code for this procedure
+	 * 
+	 * @return The ICD Code for this procedure
+	 */
+	public String getICDCode() {
+<span class="fc" id="L53">		return icdCode;</span>
+	}
+
+	/**
+	 * setICDCode
+	 * @param code code
+	 */
+	public void setICDCode(String code) {
+<span class="fc" id="L61">		icdCode = code;</span>
+<span class="fc" id="L62">	}</span>
+	
+	/**
+	 * getClassification
+	 * @return classification
+	 */
+	public String getClassification() {
+<span class="fc" id="L69">		return classification;</span>
+	}
+
+	/**
+	 * Gets the ICD Description for this procedure
+	 * 
+	 * @return The ICD Description for this procedure
+	 */
+	public String getDescription() {
+<span class="fc" id="L78">		return description;</span>
+	}
+
+	/**
+	 * setDescription
+	 * @param description
+	 */
+	public void setDescription(String description) {
+<span class="fc" id="L86">		this.description = description;</span>
+<span class="fc" id="L87">	}</span>
+
+	/**
+	 * getFormattedDescription
+	 * @return description
+	 */
+	public String getFormattedDescription() {
+<span class="nc" id="L94">		return description + &quot;(&quot; + icdCode + &quot;)&quot;;</span>
+	}
+
+	/**
+	 * Optional - for use with editing an office visit
+	 * 
+	 * @return opDiagnosisID
+	 */
+	public long getOpDiagnosisID() {
+<span class="fc" id="L103">		return ovDiagnosisID;</span>
+	}
+
+	/**
+	 * setOpDiagnosisID
+	 * @param opDiagnosisID
+	 */
+	public void setOpDiagnosisID(long ovDiagnosisID) {
+<span class="fc" id="L111">		this.ovDiagnosisID = ovDiagnosisID;</span>
+<span class="fc" id="L112">	}</span>
+
+	/**
+	 * setVisitID
+	 * @param vid
+	 */
+	public void setVisitID(long vid) {
+<span class="fc" id="L119">		visitID = vid;</span>
+<span class="fc" id="L120">	}</span>
+	
+	/**
+	 * getVisitID
+	 * @return visitID
+	 */
+	public long getVisitID() {
+<span class="fc" id="L127">		return visitID;</span>
+	}
+	
+	/**
+	 * setURL
+	 * @param newURL
+	 */
+	public void setURL(String newURL){
+<span class="fc" id="L135">		URL = newURL;</span>
+<span class="fc" id="L136">	}</span>
+	
+	/**
+	 * getURL
+	 * @return URL
+	 */
+	public String getURL(){
+<span class="nc" id="L143">		return URL;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

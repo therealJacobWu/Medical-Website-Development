@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ChronicDiseaseRiskAction.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.action</a> &gt; <span class="el_source">ChronicDiseaseRiskAction.java</span></div><h1>ChronicDiseaseRiskAction.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.action;
+
+import java.util.List;
+import edu.ncsu.csc.itrust.action.base.PatientBaseAction;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.dao.mysql.AuthDAO;
+import edu.ncsu.csc.itrust.exception.DBException;
+import edu.ncsu.csc.itrust.exception.NoHealthRecordsException;
+import edu.ncsu.csc.itrust.exception.ITrustException;
+import edu.ncsu.csc.itrust.risk.ChronicDiseaseMediator;
+import edu.ncsu.csc.itrust.risk.RiskChecker;
+
+/**
+ * 
+ * Used for chronicDiseaseRisks.jsp. Passes most of the logic off to {@link ChronicDiseaseMediator}, and the
+ * various subclasses of {@link RiskChecker}.
+ * 
+ * 
+ */
+public class ChronicDiseaseRiskAction extends PatientBaseAction {
+	private AuthDAO authDAO;
+	private ChronicDiseaseMediator diseaseMediator;
+
+	/**
+	 * 
+	 * @param factory
+	 * @param loggedInMID
+	 * @param pidString
+	 *            The patient ID to be validated and used
+	 * @throws ITrustException
+	 * @throws DBException
+	 * @throws NoHealthRecordsException
+	 *             This is thrown if a patient is added without any health records to be checked. Try to avoid
+	 *             having this exception be thrown in a normal flow of events.
+	 */
+	public ChronicDiseaseRiskAction(DAOFactory factory, long loggedInMID, String pidString)
+			throws ITrustException, DBException, NoHealthRecordsException {
+<span class="fc" id="L38">		super(factory, pidString);</span>
+<span class="fc" id="L39">		this.authDAO = factory.getAuthDAO();</span>
+<span class="fc" id="L40">		this.diseaseMediator = new ChronicDiseaseMediator(factory, pid);</span>
+<span class="fc" id="L41">	}</span>
+
+	/**
+	 * Returns the ID of the patient to be checked.
+	 * 
+	 * @return patient ID whose risk we are checking
+	 */
+	public long getPatientID() {
+<span class="fc" id="L49">		return pid;</span>
+	}
+
+	/**
+	 * Gives the full name of the patient
+	 * 
+	 * @return Full name of the patient who we are checking
+	 * @throws DBException
+	 * @throws ITrustException
+	 */
+	public String getUserName() throws DBException, ITrustException {
+<span class="fc" id="L60">		return authDAO.getUserName(pid);</span>
+	}
+
+	/**
+	 * Returns the risks for which this patient is at risk for. All logic has been passed to
+	 * {@link ChronicDiseaseMediator} and the subclasses of {@link RiskChecker}.
+	 * 
+	 * @return List of risks
+	 * @throws ITrustException
+	 * @throws DBException
+	 */
+	public List&lt;RiskChecker&gt; getDiseasesAtRisk() throws ITrustException, DBException {
+<span class="fc" id="L72">		return diseaseMediator.getDiseaseAtRisk();</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

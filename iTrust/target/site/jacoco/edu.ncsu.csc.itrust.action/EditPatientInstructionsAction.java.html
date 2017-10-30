@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>EditPatientInstructionsAction.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.action</a> &gt; <span class="el_source">EditPatientInstructionsAction.java</span></div><h1>EditPatientInstructionsAction.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.action;
+
+import java.util.ArrayList;
+import java.util.List;
+import edu.ncsu.csc.itrust.action.base.EditOfficeVisitBaseAction;
+import edu.ncsu.csc.itrust.beans.PatientInstructionsBean;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.dao.mysql.PatientInstructionsDAO;
+import edu.ncsu.csc.itrust.exception.DBException;
+import edu.ncsu.csc.itrust.exception.FormValidationException;
+import edu.ncsu.csc.itrust.exception.ITrustException;
+import edu.ncsu.csc.itrust.validate.PatientInstructionsBeanValidator;
+
+/**
+ * Allows an HCP to add/edit/delete patient instructions for an office visit.
+ */
+public class EditPatientInstructionsAction extends EditOfficeVisitBaseAction {
+	
+	private PatientInstructionsDAO instructionsDAO; 
+
+	/**
+	 * Creates an EditPatientInstructionsAction for an existing office visit.
+	 * @param factory The DAO Factory.
+	 * @param hcpid The HCP id.
+	 * @param pidString The patient id as a string.
+	 * @param ovIDString The office visit as a string.
+	 * @throws ITrustException
+	 */
+	public EditPatientInstructionsAction(DAOFactory factory, long hcpid, String pidString, String ovIDString)
+			throws ITrustException {
+<span class="fc" id="L31">		super(factory, hcpid, pidString, ovIDString);</span>
+<span class="fc" id="L32">		instructionsDAO = factory.getPatientInstructionsDAO();</span>
+<span class="fc" id="L33">	}</span>
+
+	/**
+	 * Creates an EditPatientInstructionsAction for an non-existent office 
+	 * visit.  Most methods will throw exceptions if built with this 
+	 * constructor.
+	 * @param factory  
+	 * @param hcpid  The HCP id.
+	 * @param pidString The patient ID as a string.
+	 * @throws ITrustException
+	 */
+	public EditPatientInstructionsAction(DAOFactory factory, long hcpid, String pidString)
+			throws ITrustException {
+<span class="fc" id="L46">		super(factory, hcpid, pidString);</span>
+<span class="fc" id="L47">		instructionsDAO = factory.getPatientInstructionsDAO();</span>
+<span class="fc" id="L48">	}</span>
+
+	/**
+	 * Get the list of patient instructions associated with the office visit.
+	 * @return A list of patient instructions.
+	 * @throws DBException
+	 */
+	public List&lt;PatientInstructionsBean&gt; getPatientInstructions() throws DBException {
+<span class="fc bfc" id="L56" title="All 2 branches covered.">		if (isUnsaved()) {</span>
+<span class="fc" id="L57">			return new ArrayList&lt;PatientInstructionsBean&gt;();</span>
+		} else {
+<span class="fc" id="L59">			return instructionsDAO.getList(getOvID());</span>
+		}
+	}
+	
+	/**
+	 * Add patient instructions to the office visit.
+	 * @param bean The instructions to add.
+	 * @throws ITrustException
+	 */
+	public void addPatientInstructions(PatientInstructionsBean bean) throws ITrustException {
+<span class="fc" id="L69">		verifySaved();</span>
+<span class="fc" id="L70">		instructionsDAO.add(bean);</span>
+<span class="fc" id="L71">	}</span>
+	
+	/**
+	 * Modify patient instruction in this office visit.
+	 * @param bean The instructions to modify
+	 * @throws ITrustException
+	 */
+	public void editPatientInstructions(PatientInstructionsBean bean) throws ITrustException {
+<span class="fc" id="L79">		verifySaved();</span>
+<span class="fc" id="L80">		instructionsDAO.edit(bean);</span>
+<span class="fc" id="L81">	}</span>
+	
+	/**
+	 * Delete patient instructions from this office visit.
+	 * @param bean The instructions to delete.
+	 * @throws ITrustException
+	 */
+	public void deletePatientInstructions(PatientInstructionsBean bean) throws ITrustException {
+<span class="fc" id="L89">		verifySaved();</span>
+<span class="fc" id="L90">		instructionsDAO.remove(bean.getId());</span>
+<span class="fc" id="L91">	}</span>
+	
+	/**
+	 * Verify the contents of the given instruction bean.
+	 * @param bean The instructions to check.
+	 * @throws ITrustException
+	 * @throws FormValidationException
+	 */
+	public void validate(PatientInstructionsBean bean) throws ITrustException, FormValidationException {
+<span class="fc" id="L100">		verifySaved();</span>
+<span class="fc" id="L101">		PatientInstructionsBeanValidator validator = new PatientInstructionsBeanValidator();</span>
+<span class="fc" id="L102">		validator.validate(bean);</span>
+<span class="fc" id="L103">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

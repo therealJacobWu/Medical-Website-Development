@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ProceduresDAO.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.dao.mysql</a> &gt; <span class="el_source">ProceduresDAO.java</span></div><h1>ProceduresDAO.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.dao.mysql;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import edu.ncsu.csc.itrust.DBUtil;
+import edu.ncsu.csc.itrust.beans.ProcedureBean;
+import edu.ncsu.csc.itrust.beans.loaders.ProcedureBeanLoader;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.exception.DBException;
+
+/**
+ * Used for managing medical procedures given during a particular office visit.
+ * 
+ * DAO stands for Database Access Object. All DAOs are intended to be reflections of the database, that is,
+ * one DAO per table in the database (most of the time). For more complex sets of queries, extra DAOs are
+ * added. DAOs can assume that all data has been validated and is correct.
+ * 
+ * DAOs should never have setters or any other parameter to the constructor than a factory. All DAOs should be
+ * accessed by DAOFactory (@see {@link DAOFactory}) and every DAO should have a factory - for obtaining JDBC
+ * connections and/or accessing other DAOs.
+ * 
+ *  
+ *  
+ */
+public class ProceduresDAO {
+	private DAOFactory factory;
+<span class="fc" id="L30">	private ProcedureBeanLoader loader = new ProcedureBeanLoader(true);</span>
+	
+	/**
+	 * @param factory
+	 */
+<span class="fc" id="L35">	public ProceduresDAO(DAOFactory factory) {</span>
+<span class="fc" id="L36">		this.factory = factory;</span>
+<span class="fc" id="L37">	}</span>
+	
+
+	/**
+	 * List procedure bean in database
+	 * @param visitID
+	 * @return procedure
+	 * @throws DBException
+	 */
+	public List&lt;ProcedureBean&gt; getList(long visitID) throws DBException {
+<span class="fc" id="L47">		Connection conn = null;</span>
+<span class="fc" id="L48">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L50">			conn = factory.getConnection();</span>
+<span class="fc" id="L51">			ps = conn.prepareStatement(&quot;Select * From ovprocedure,cptcodes,officevisits Where ovprocedure.VisitID = ? &quot;</span>
+					+ &quot;AND officevisits.ID=ovprocedure.VisitID AND cptcodes.Code=ovprocedure.CPTCode&quot;);
+<span class="fc" id="L53">			ps.setLong(1, visitID);</span>
+<span class="fc" id="L54">			ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L55">			List&lt;ProcedureBean&gt; loadlist = loader.loadList(rs);</span>
+<span class="fc" id="L56">			rs.close();</span>
+<span class="fc" id="L57">			return loadlist;</span>
+<span class="nc" id="L58">		} catch (SQLException e) {</span>
+			
+<span class="nc" id="L60">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L62">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+	
+	/**
+	 * @param visitID
+	 * @return list of inmmunization
+	 * @throws DBException
+	 */
+	public List&lt;ProcedureBean&gt; getImmunizationList(long visitID) throws DBException {
+<span class="fc" id="L73">		Connection conn = null;</span>
+<span class="fc" id="L74">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L76">			conn = factory.getConnection();</span>
+<span class="fc" id="L77">			ps = conn.prepareStatement(&quot;Select * From ovprocedure,cptcodes,officevisits Where ovprocedure.VisitID = ? &quot;</span>
+					+ &quot;AND officevisits.ID=ovprocedure.VisitID AND cptcodes.Code=ovprocedure.CPTCode AND cptcodes.attribute='immunization'&quot;);
+<span class="fc" id="L79">			ps.setLong(1, visitID);</span>
+<span class="fc" id="L80">			ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L81">			List&lt;ProcedureBean&gt; loadlist = loader.loadList(rs);</span>
+<span class="fc" id="L82">			rs.close();</span>
+<span class="fc" id="L83">			return loadlist;</span>
+<span class="nc" id="L84">		} catch (SQLException e) {</span>
+			
+<span class="nc" id="L86">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L88">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+	
+	public List&lt;ProcedureBean&gt; getMedProceduresList(long visitID) throws DBException {
+<span class="fc" id="L94">		Connection conn = null;</span>
+<span class="fc" id="L95">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L97">			conn = factory.getConnection();</span>
+<span class="fc" id="L98">			ps = conn.prepareStatement(&quot;Select * From ovprocedure,cptcodes,officevisits Where ovprocedure.VisitID = ? &quot;</span>
+					+ &quot;AND officevisits.ID=ovprocedure.VisitID AND cptcodes.Code=ovprocedure.CPTCode AND cptcodes.attribute is NULL&quot;);
+<span class="fc" id="L100">			ps.setLong(1, visitID);</span>
+<span class="fc" id="L101">			ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L102">			List&lt;ProcedureBean&gt; loadlist = loader.loadList(rs);</span>
+<span class="fc" id="L103">			rs.close();</span>
+<span class="fc" id="L104">			return loadlist;</span>
+<span class="nc" id="L105">		} catch (SQLException e) {</span>
+			
+<span class="nc" id="L107">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L109">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+	
+	
+	/**
+	 * Adds a diagnosis bean to the database.
+	 * @param pres The prescription bean to be added.
+	 * @return The unique ID of the newly added bean.
+	 * @throws DBException
+	 */
+	public long add(ProcedureBean bean) throws DBException {
+<span class="fc" id="L122">		Connection conn = null;</span>
+<span class="fc" id="L123">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L125">			conn = factory.getConnection();</span>
+<span class="fc" id="L126">			String statement = &quot;INSERT INTO ovprocedure &quot; +</span>
+				&quot;(VisitID,CPTCode) VALUES (?,?)&quot;;
+<span class="fc" id="L128">			ps = conn.prepareStatement(statement);</span>
+<span class="fc" id="L129">			ps.setLong(1, bean.getVisitID());</span>
+<span class="fc" id="L130">			ps.setString(2, bean.getCPTCode());</span>
+<span class="fc" id="L131">			ps.executeUpdate();</span>
+<span class="fc" id="L132">			return DBUtil.getLastInsert(conn);</span>
+<span class="fc" id="L133">		} catch (SQLException e) {</span>
+			
+<span class="fc" id="L135">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L137">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+	
+	/**
+	 * Edits an existing procedure bean.
+	 * 
+	 * @param pres The newly updated prescription bean.
+	 * @return A long indicating the ID of the newly updated prescription bean.
+	 * @throws DBException
+	 */
+	public long edit(ProcedureBean bean) throws DBException {
+<span class="fc" id="L150">		Connection conn = null;</span>
+<span class="fc" id="L151">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L153">			conn = factory.getConnection();</span>
+<span class="fc" id="L154">			String statement = &quot;UPDATE ovprocedure &quot; +</span>
+				&quot;SET VisitID=?, CPTCode=?&quot; +
+				&quot;WHERE ID=?&quot;;
+<span class="fc" id="L157">			ps = conn.prepareStatement(statement);</span>
+<span class="fc" id="L158">			ps.setLong(1, bean.getVisitID());</span>
+<span class="fc" id="L159">			ps.setString(2, bean.getCPTCode());</span>
+<span class="fc" id="L160">			ps.setLong(3, bean.getOvProcedureID());</span>
+<span class="fc" id="L161">			ps.executeUpdate();</span>
+<span class="fc" id="L162">			return DBUtil.getLastInsert(conn);</span>
+<span class="fc" id="L163">		} catch (SQLException e) {</span>
+			
+<span class="fc" id="L165">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L167">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+
+	/**
+	 * Removes the given medication from its office visit
+	 * 
+	 * @param ovMedicationID The unique ID of the medication to be removed.
+	 * @throws DBException
+	 */
+	public void remove(long ovProcedureID) throws DBException {
+<span class="fc" id="L178">		Connection conn = null;</span>
+<span class="fc" id="L179">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L181">			conn = factory.getConnection();</span>
+<span class="fc" id="L182">			ps = conn.prepareStatement(&quot;DELETE FROM ovprocedure WHERE ID=? &quot;);</span>
+<span class="fc" id="L183">			ps.setLong(1, ovProcedureID);</span>
+<span class="fc" id="L184">			ps.executeUpdate();</span>
+<span class="nc" id="L185">		} catch (SQLException e) {</span>
+			
+<span class="nc" id="L187">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L189">			DBUtil.closeConnection(conn, ps);</span>
+<span class="fc" id="L190">		}</span>
+<span class="fc" id="L191">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

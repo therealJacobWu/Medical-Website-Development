@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>MedicalReportFilter.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.report</a> &gt; <span class="el_source">MedicalReportFilter.java</span></div><h1>MedicalReportFilter.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.report;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import edu.ncsu.csc.itrust.beans.AllergyBean;
+import edu.ncsu.csc.itrust.beans.DiagnosisBean;
+import edu.ncsu.csc.itrust.beans.OfficeVisitBean;
+import edu.ncsu.csc.itrust.beans.PatientBean;
+import edu.ncsu.csc.itrust.beans.PrescriptionBean;
+import edu.ncsu.csc.itrust.beans.ProcedureBean;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.dao.mysql.AllergyDAO;
+import edu.ncsu.csc.itrust.dao.mysql.OfficeVisitDAO;
+import edu.ncsu.csc.itrust.dao.mysql.PatientDAO;
+
+/**
+ * 
+ *
+ */
+public class MedicalReportFilter extends ReportFilter {
+
+	/**
+	 * 
+	 * 
+	 */
+<span class="pc" id="L28">	public enum MedicalReportFilterType {</span>
+<span class="fc" id="L29">		PROCEDURE(&quot;PROCEDURE&quot;),</span>
+<span class="fc" id="L30">		ALLERGY(&quot;ALLERGY&quot;),</span>
+<span class="fc" id="L31">		CURRENT_PRESCRIPTIONS(&quot;CURRENT PRESCRIPTIONS&quot;),</span>
+<span class="fc" id="L32">		PASTCURRENT_PRESCRIPTIONS(&quot;PAST AND CURRENT PRESCRIPTIONS&quot;),</span>
+<span class="fc" id="L33">		DIAGNOSIS_ICD_CODE(&quot;DIAGNOSIS&quot;),</span>
+<span class="fc" id="L34">		MISSING_DIAGNOSIS_ICD_CODE(&quot;MISSING DIAGNOSIS&quot;),</span>
+<span class="fc" id="L35">		LOWER_OFFICE_VISIT_DATE(&quot;LOWER OFFICE VISIT DATE LIMIT&quot;),</span>
+<span class="fc" id="L36">		UPPER_OFFICE_VISIT_DATE(&quot;UPPER OFFICE VISIT DATE LIMIT&quot;);</span>
+
+		private final String name;
+
+		/**
+		 * 
+		 * @param name
+		 */
+<span class="fc" id="L44">		private MedicalReportFilterType(String name) {</span>
+<span class="fc" id="L45">			this.name = name;</span>
+<span class="fc" id="L46">		}</span>
+
+		/**
+		 * 
+		 */
+		@Override
+		public String toString() {
+<span class="fc" id="L53">			return this.name;</span>
+		}
+	}
+
+	private MedicalReportFilterType filterType;
+	private String filterValue;
+	private PatientDAO pDAO;
+	private AllergyDAO aDAO;
+	private OfficeVisitDAO oDAO;
+
+	/**
+	 * 
+	 * @param filterType
+	 * @param filterValue
+	 */
+<span class="fc" id="L68">	public MedicalReportFilter(MedicalReportFilterType filterType, String filterValue, DAOFactory factory) {</span>
+<span class="fc" id="L69">		this.filterType = filterType;</span>
+<span class="fc" id="L70">		this.filterValue = filterValue;</span>
+<span class="fc" id="L71">		pDAO = factory.getPatientDAO();</span>
+<span class="fc" id="L72">		aDAO = factory.getAllergyDAO();</span>
+<span class="fc" id="L73">		oDAO = factory.getOfficeVisitDAO();</span>
+<span class="fc" id="L74">	}</span>
+	
+	/**
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public static MedicalReportFilterType filterTypeFromString(String name) {
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">		for(MedicalReportFilterType type : MedicalReportFilterType.values()) {</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">			if(type.name().equalsIgnoreCase(name)) {</span>
+<span class="fc" id="L84">				return type;</span>
+			}
+		}
+<span class="nc" id="L87">		return null;</span>
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	public List&lt;PatientBean&gt; filter(List&lt;PatientBean&gt; patients) {
+<span class="fc" id="L95">		List&lt;PatientBean&gt; prunedList = new ArrayList&lt;PatientBean&gt;();</span>
+<span class="pc bpc" id="L96" title="2 of 4 branches missed.">		boolean add = filterValue != null &amp;&amp; !filterValue.isEmpty();</span>
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">		if (add) {</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">			for (PatientBean patient : patients) {</span>
+<span class="fc" id="L99">				add = false;</span>
+<span class="pc bpc" id="L100" title="1 of 9 branches missed.">				switch (filterType) {</span>
+				case ALLERGY:
+					try {
+<span class="fc" id="L103">						List&lt;AllergyBean&gt; allergies = aDAO.getAllergies(patient.getMID());</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">						for (AllergyBean allergy : allergies) {</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">							if (filterValue.equalsIgnoreCase(allergy.getNDCode())) {</span>
+<span class="fc" id="L106">								add = true;</span>
+<span class="fc" id="L107">								break;</span>
+							}
+<span class="fc" id="L109">						}</span>
+<span class="nc" id="L110">					} catch (Exception e) {</span>
+<span class="nc" id="L111">						break;</span>
+<span class="fc" id="L112">					}</span>
+					break;
+				case CURRENT_PRESCRIPTIONS:
+					try {
+<span class="fc" id="L116">						List&lt;PrescriptionBean&gt; prescriptions = pDAO.getCurrentPrescriptions(patient.getMID());</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">						for (PrescriptionBean prescription : prescriptions) {</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">							if (filterValue.equalsIgnoreCase(prescription.getMedication().getNDCode())</span>
+<span class="pc bpc" id="L119" title="1 of 2 branches missed.">									|| filterValue.equalsIgnoreCase(prescription.getMedication()</span>
+<span class="fc" id="L120">											.getNDCodeFormatted())) {</span>
+<span class="fc" id="L121">								add = true;</span>
+<span class="fc" id="L122">								break;</span>
+							}
+<span class="fc" id="L124">						}</span>
+<span class="nc" id="L125">					} catch (Exception e) {</span>
+<span class="nc" id="L126">						break;</span>
+<span class="fc" id="L127">					}</span>
+					break;
+				case DIAGNOSIS_ICD_CODE:
+					try {
+<span class="fc" id="L131">						List&lt;DiagnosisBean&gt; diagnoses = pDAO.getDiagnoses(patient.getMID());</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">						for (DiagnosisBean diagnosis : diagnoses) {</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">							if (filterValue.equalsIgnoreCase(diagnosis.getICDCode())) {</span>
+<span class="fc" id="L134">								add = true;</span>
+<span class="fc" id="L135">								break;</span>
+							}
+<span class="fc" id="L137">						}</span>
+<span class="nc" id="L138">					} catch (Exception e) {</span>
+<span class="nc" id="L139">						break;</span>
+<span class="fc" id="L140">					}</span>
+					break;
+				case PASTCURRENT_PRESCRIPTIONS:
+					try {
+<span class="fc" id="L144">						List&lt;PrescriptionBean&gt; prescriptions = pDAO.getPrescriptions(patient.getMID());</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">						for (PrescriptionBean prescription : prescriptions) {</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">							if (filterValue.equalsIgnoreCase(prescription.getMedication().getNDCode())</span>
+<span class="pc bpc" id="L147" title="1 of 2 branches missed.">									|| filterValue.equalsIgnoreCase(prescription.getMedication()</span>
+<span class="fc" id="L148">											.getNDCodeFormatted())) {</span>
+<span class="fc" id="L149">								add = true;</span>
+<span class="fc" id="L150">								break;</span>
+							}
+<span class="fc" id="L152">						}</span>
+<span class="nc" id="L153">					} catch (Exception e) {</span>
+<span class="nc" id="L154">						break;</span>
+<span class="fc" id="L155">					}</span>
+					break;
+				case PROCEDURE:
+					try {
+<span class="fc" id="L159">						List&lt;ProcedureBean&gt; procedures = pDAO.getProcedures(patient.getMID());</span>
+<span class="fc bfc" id="L160" title="All 2 branches covered.">						for (ProcedureBean procedure : procedures) {</span>
+<span class="fc bfc" id="L161" title="All 2 branches covered.">							if (filterValue.equalsIgnoreCase(procedure.getCPTCode())) {</span>
+<span class="fc" id="L162">								add = true;</span>
+<span class="fc" id="L163">								break;</span>
+							}
+<span class="fc" id="L165">						}</span>
+<span class="nc" id="L166">					} catch (Exception e) {</span>
+<span class="nc" id="L167">						break;</span>
+<span class="fc" id="L168">					}</span>
+					break;
+				case MISSING_DIAGNOSIS_ICD_CODE:
+					try {
+<span class="fc" id="L172">						List&lt;DiagnosisBean&gt; diagnoses = pDAO.getDiagnoses(patient.getMID());</span>
+<span class="fc" id="L173">						add = true;</span>
+<span class="fc bfc" id="L174" title="All 2 branches covered.">						for (DiagnosisBean diagnosis : diagnoses) {</span>
+<span class="pc bpc" id="L175" title="1 of 2 branches missed.">							if (filterValue.equalsIgnoreCase(diagnosis.getICDCode())) {</span>
+<span class="nc" id="L176">								add = false;</span>
+<span class="nc" id="L177">								break;</span>
+							}
+<span class="fc" id="L179">						}</span>
+<span class="nc" id="L180">					} catch (Exception e) {</span>
+<span class="nc" id="L181">						break;</span>
+<span class="fc" id="L182">					}</span>
+					break;
+				case LOWER_OFFICE_VISIT_DATE:
+					try {
+<span class="fc" id="L186">						SimpleDateFormat frmt = new SimpleDateFormat(&quot;MM/dd/yyyy&quot;);</span>
+<span class="fc" id="L187">						Date d = frmt.parse(filterValue);</span>
+<span class="fc" id="L188">						List&lt;OfficeVisitBean&gt; visits = oDAO.getAllOfficeVisits(patient.getMID());</span>
+<span class="fc bfc" id="L189" title="All 2 branches covered.">						for (OfficeVisitBean visit : visits) {</span>
+<span class="fc bfc" id="L190" title="All 2 branches covered.">							if (d.compareTo(visit.getVisitDate()) &lt;= 0) {</span>
+<span class="fc" id="L191">								add = true;</span>
+<span class="fc" id="L192">								break;</span>
+							}
+<span class="fc" id="L194">						}</span>
+<span class="nc" id="L195">					}catch(RuntimeException e){</span>
+<span class="nc" id="L196">						break;</span>
+<span class="fc" id="L197">					}catch (Exception e) {</span>
+<span class="fc" id="L198">						break;</span>
+<span class="fc" id="L199">					}</span>
+					break;
+				case UPPER_OFFICE_VISIT_DATE:
+					try {
+<span class="fc" id="L203">						SimpleDateFormat frmt = new SimpleDateFormat(&quot;MM/dd/yyyy&quot;);</span>
+<span class="fc" id="L204">						Date d = frmt.parse(filterValue);</span>
+<span class="fc" id="L205">						List&lt;OfficeVisitBean&gt; visits = oDAO.getAllOfficeVisits(patient.getMID());</span>
+<span class="fc bfc" id="L206" title="All 2 branches covered.">						for (OfficeVisitBean visit : visits) {</span>
+<span class="fc bfc" id="L207" title="All 2 branches covered.">							if (d.compareTo(visit.getVisitDate()) &gt;= 0) {</span>
+<span class="fc" id="L208">								add = true;</span>
+<span class="fc" id="L209">								break;</span>
+							}
+<span class="fc" id="L211">						}</span>
+<span class="nc" id="L212">					}catch (RuntimeException e) {</span>
+<span class="nc" id="L213">						break;</span>
+<span class="fc" id="L214">					} catch (Exception e) {</span>
+<span class="fc" id="L215">						break;</span>
+<span class="fc" id="L216">					}</span>
+					break;
+				default:
+					break;
+				}
+<span class="fc bfc" id="L221" title="All 2 branches covered.">				if(add)</span>
+<span class="fc" id="L222">					prunedList.add(patient);</span>
+<span class="fc" id="L223">			}</span>
+		}
+<span class="fc" id="L225">		return prunedList;</span>
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public MedicalReportFilterType getFilterType() {
+<span class="fc" id="L233">		return filterType;</span>
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getFilterTypeString() {
+<span class="fc" id="L241">		return filterType.toString();</span>
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public String getFilterValue() {
+<span class="fc" id="L249">		return filterValue;</span>
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	public String toString() {
+<span class="fc" id="L257">		String out = &quot;Filter by &quot; + filterType.toString() + &quot; with value &quot; + filterValue;</span>
+<span class="fc" id="L258">		return out;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

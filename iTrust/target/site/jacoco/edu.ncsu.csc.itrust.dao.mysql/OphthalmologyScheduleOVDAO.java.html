@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>OphthalmologyScheduleOVDAO.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.dao.mysql</a> &gt; <span class="el_source">OphthalmologyScheduleOVDAO.java</span></div><h1>OphthalmologyScheduleOVDAO.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.dao.mysql;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+
+import edu.ncsu.csc.itrust.DBUtil;
+import edu.ncsu.csc.itrust.beans.OphthalmologyScheduleOVRecordBean;
+import edu.ncsu.csc.itrust.beans.loaders.OphthalmologyScheduleOVRecordLoader;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.exception.DBException;
+
+/**
+ * Used for managing all static information related to a scheduled ophthalmology office
+ * visit record. For other information related to all aspects of patient care,
+ * see the other DAOs.
+ * 
+ * DAO stands for Database Access Object. All DAOs are intended to be 
+ * reflections of the database, that is, one DAO per table in the database 
+ * (most of the time). For more complex sets of queries, extra DAOs are
+ * added. DAOs can assume that all data has been validated and is correct.
+ * 
+ * DAOs should never have setters or any other parameter to the constructor
+ * than a factory. All DAOs should be accessed by DAOFactory 
+ * (@see {@link DAOFactory}) and every DAO should have a factory - for 
+ * obtaining JDBC connections and/or accessing other DAOs.
+ */
+public class OphthalmologyScheduleOVDAO {
+	/** Used to get database connections*/
+	private DAOFactory factory;
+	/** Used to load data from ResultSets, and into PreparedStatements.*/
+	private OphthalmologyScheduleOVRecordLoader ophthalmologyScheduleOVLoader;
+	
+	/**
+	 * The typical constructor.
+	 * @param factory The {@link DAOFactory} associated with this DAO, which
+	 * is used for obtaining SQL connections, etc.
+	 */
+<span class="fc" id="L41">	public OphthalmologyScheduleOVDAO(DAOFactory factory) {</span>
+<span class="fc" id="L42">		this.factory = factory;</span>
+<span class="fc" id="L43">		this.ophthalmologyScheduleOVLoader = new OphthalmologyScheduleOVRecordLoader();</span>
+<span class="fc" id="L44">	}</span>
+	
+
+	/**
+	 * Adds a scheduled Ophthalmology office visit record to the table.
+	 * @param p The scheduled Ophthalmology office visit record to be added to the database.
+	 * @throws DBException thrown when the database throws a SQLException.
+	 */
+	public void addOphthalmologyScheduleOVRecord(OphthalmologyScheduleOVRecordBean p) throws DBException {
+<span class="fc" id="L53">		Connection conn = null;</span>
+<span class="fc" id="L54">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L56">			conn = factory.getConnection();</span>
+			//first, insert the record
+<span class="fc" id="L58">			ps = conn.prepareStatement(&quot;INSERT INTO ophthalmologySchedule(PATIENTMID,DOCTORMID,&quot;</span>
+					+ &quot;dateTime,docLastName,docFirstName,comments,pending,accepted)&quot;
+					+ &quot; VALUES(?,?,?,?,?,?,?,?)&quot;);
+<span class="fc" id="L61">			ps = ophthalmologyScheduleOVLoader.loadParameters(ps, p);</span>
+<span class="fc" id="L62">			ps.executeUpdate();</span>
+<span class="fc" id="L63">			ps.close();</span>
+			
+			//then, set the OID of the original bean to the one the database generates
+<span class="fc" id="L66">			ps = conn.prepareStatement(&quot;SELECT * FROM ophthalmologySchedule ORDER BY oid DESC limit 1&quot;);</span>
+<span class="fc" id="L67">			ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L68">			rs.first();</span>
+<span class="fc" id="L69">			p.setOid(rs.getLong(&quot;oid&quot;));</span>
+<span class="nc" id="L70">		} catch (SQLException e) {</span>
+<span class="nc" id="L71">			e.printStackTrace();</span>
+<span class="nc" id="L72">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L74">			DBUtil.closeConnection(conn, ps);</span>
+<span class="fc" id="L75">		}</span>
+<span class="fc" id="L76">	}</span>
+	
+	/**
+	 * Returns a scheduled ophthalmology office visit record correlating to the given 
+	 * OID.
+	 * @param oid The scheduled Ophthalmology office visit id.
+	 * @return OphthalmologyScheduleOVRecordBean containing the information from the 
+	 * scheduled Ophthalmology office visit record.
+	 * @throws DBException thrown when the database throws a SQLException.
+	 */
+	public OphthalmologyScheduleOVRecordBean getOphthalmologyScheduleOVRecord(long oid) 
+			throws DBException {
+<span class="fc" id="L88">		Connection conn = null;</span>
+<span class="fc" id="L89">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L91">			conn = factory.getConnection();</span>
+<span class="fc" id="L92">			ps = conn.prepareStatement(&quot;SELECT * FROM ophthalmologySchedule WHERE OID&quot; + &quot; = ?&quot;);</span>
+<span class="fc" id="L93">			ps.setLong(1, oid);</span>
+<span class="fc" id="L94">			ResultSet rs = ps.executeQuery();</span>
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">			if (rs.next()) {</span>
+<span class="fc" id="L96">				OphthalmologyScheduleOVRecordBean pat = ophthalmologyScheduleOVLoader.loadSingle(rs);</span>
+<span class="fc" id="L97">				rs.close();</span>
+<span class="fc" id="L98">				ps.close();</span>
+<span class="fc" id="L99">				return pat;</span>
+			} else{
+<span class="nc" id="L101">				rs.close();</span>
+<span class="nc" id="L102">				ps.close();</span>
+<span class="nc" id="L103">				return null;</span>
+			}
+<span class="fc" id="L105">		} catch (SQLException e) {</span>
+<span class="fc" id="L106">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L108">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+	/**
+	 * Returns a list of scheduled ophthalmology office visit records correlating to the
+	 * given PATIENTMID.
+	 * @param mid the patient's id.
+	 * @return a list of OphthalmologyScheduleOVRecordBean's with the information from all
+	 * the scheduled ophthalmology office visit records correlating to the given PATIENTMID.
+	 * @throws DBException thrown when the database throws a SQLException.
+	 */
+	public List&lt;OphthalmologyScheduleOVRecordBean&gt; 
+			getOphthalmologyScheduleOVRecordsByPATIENTMID(long mid)throws DBException {
+<span class="fc" id="L122">		Connection conn = null;</span>
+<span class="fc" id="L123">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L125">			conn = factory.getConnection();</span>
+<span class="fc" id="L126">			ps = conn.prepareStatement(&quot;SELECT * FROM ophthalmologySchedule WHERE PATIENTMID=? ORDER BY dateTime DESC&quot;);</span>
+<span class="fc" id="L127">			ps.setLong(1, mid);</span>
+<span class="fc" id="L128">			ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L129">			List&lt;OphthalmologyScheduleOVRecordBean&gt; list = ophthalmologyScheduleOVLoader.loadList(rs);</span>
+<span class="fc" id="L130">			rs.close();</span>
+<span class="fc" id="L131">			ps.close();</span>
+<span class="fc" id="L132">			return list;</span>
+<span class="fc" id="L133">		} catch (SQLException e) {</span>
+<span class="fc" id="L134">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L136">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+	/**
+	 * Returns a list of scheduled ophthalmology office visit records correlating to the
+	 * given DOCTORMID.
+	 * @param mid the patient's id.
+	 * @return a list of OphthalmologyScheduleOVRecordBean's with the information from all
+	 * the scheduled ophthalmology office visit records correlating to the given DOCTORMID.
+	 * @throws DBException thrown when the database throws a SQLException.
+	 */
+	public List&lt;OphthalmologyScheduleOVRecordBean&gt; 
+			getOphthalmologyScheduleOVRecordsByDOCTORMID(long mid)throws DBException {
+<span class="fc" id="L150">		Connection conn = null;</span>
+<span class="fc" id="L151">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L153">			conn = factory.getConnection();</span>
+<span class="fc" id="L154">			ps = conn.prepareStatement(&quot;SELECT * FROM ophthalmologySchedule WHERE DOCTORMID=? ORDER BY dateTime DESC&quot;);</span>
+<span class="fc" id="L155">			ps.setLong(1, mid);</span>
+<span class="fc" id="L156">			ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L157">			List&lt;OphthalmologyScheduleOVRecordBean&gt; list = ophthalmologyScheduleOVLoader.loadList(rs);</span>
+<span class="fc" id="L158">			rs.close();</span>
+<span class="fc" id="L159">			ps.close();</span>
+<span class="fc" id="L160">			return list;</span>
+<span class="fc" id="L161">		} catch (SQLException e) {</span>
+<span class="fc" id="L162">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L164">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+	/**
+	 * Updates a scheduled ophthalmology office visit record for the given OID.
+	 * @param oid the scheduled ophthalmology office visit id.
+	 * @param p The OphthalmologyScheduleOVRecordBean representing the new information for
+	 * the scheduled ophthalmology office visit record.
+	 * @throws DBException thrown when the database throws a SQLException.
+	 */
+	public void editOphthalmologyScheduledOVRecordsRecord(long oid, OphthalmologyScheduleOVRecordBean p) throws DBException {
+<span class="fc" id="L176">		Connection conn = null;</span>
+<span class="fc" id="L177">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L179">			conn = factory.getConnection();</span>
+<span class="fc" id="L180">			ps = conn.prepareStatement(&quot;UPDATE ophthalmologySchedule SET PATIENTMID=?,DOCTORMID=?,dateTime=?,&quot;</span>
+					+ &quot;docLastName=?,docFirstName=?,comments=?,pending=?,accepted=? &quot;
+					+ &quot;WHERE OID=?&quot;);
+<span class="fc" id="L183">			ophthalmologyScheduleOVLoader.loadParameters(ps, p);</span>
+<span class="fc" id="L184">			ps.setLong(9, oid);</span>
+<span class="fc" id="L185">			ps.executeUpdate();</span>
+<span class="fc" id="L186">			ps.close();</span>
+<span class="nc" id="L187">		} catch (SQLException e) {</span>
+<span class="nc" id="L188">			e.printStackTrace();</span>
+<span class="nc" id="L189">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L191">			DBUtil.closeConnection(conn, ps);</span>
+<span class="fc" id="L192">		}</span>
+<span class="fc" id="L193">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ViewRecordsReleaseAction.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.action</a> &gt; <span class="el_source">ViewRecordsReleaseAction.java</span></div><h1>ViewRecordsReleaseAction.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.action;
+
+import java.util.ArrayList;
+import java.util.List;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.dao.mysql.AuthDAO;
+import edu.ncsu.csc.itrust.dao.mysql.HealthRecordsDAO;
+import edu.ncsu.csc.itrust.dao.mysql.HospitalsDAO;
+import edu.ncsu.csc.itrust.dao.mysql.PatientDAO;
+import edu.ncsu.csc.itrust.dao.mysql.PersonnelDAO;
+import edu.ncsu.csc.itrust.dao.mysql.RecordsReleaseDAO;
+import edu.ncsu.csc.itrust.enums.Role;
+import edu.ncsu.csc.itrust.exception.DBException;
+import edu.ncsu.csc.itrust.exception.ITrustException;
+import edu.ncsu.csc.itrust.beans.HealthRecord;
+import edu.ncsu.csc.itrust.beans.HospitalBean;
+import edu.ncsu.csc.itrust.beans.RecordsReleaseBean;
+
+public class ViewRecordsReleaseAction {
+	
+	/** PersonnelDAO object for accessing the patients in the database*/
+	private PersonnelDAO personnelDAO;
+	/** RecordsReleaseDAO object for accessing record release requests in the database*/
+	private RecordsReleaseDAO releaseDAO;
+	/** AuthDAO for determining the type of user the user is */
+	private AuthDAO authDAO;
+	/** PatientDAO for working with patient objects in the database*/
+	private PatientDAO patDAO;
+	/** HospitalsDAO for getting hospital objects from the database*/
+	private HospitalsDAO hosDAO;
+	/** HealthRecordsDAO for getting health records from the database*/
+	private HealthRecordsDAO hrDAO;
+	
+	/** Long for storing the logged in hcp/uap's mid */
+	private long loggedInMID;
+	
+	/**
+	 * Constructor for RequestRecordsReleaseAction. Gets and initializes all necessary DAOs for
+	 * working with requesting a patient's records.
+	 */
+<span class="fc" id="L41">	public ViewRecordsReleaseAction(DAOFactory factory, long loggedInMID) {</span>
+<span class="fc" id="L42">		personnelDAO = factory.getPersonnelDAO();</span>
+<span class="fc" id="L43">		releaseDAO = new RecordsReleaseDAO(factory);</span>
+<span class="fc" id="L44">		authDAO = factory.getAuthDAO();</span>
+<span class="fc" id="L45">		patDAO = factory.getPatientDAO();</span>
+<span class="fc" id="L46">		hosDAO = factory.getHospitalsDAO();</span>
+<span class="fc" id="L47">		hrDAO = factory.getHealthRecordsDAO();</span>
+<span class="fc" id="L48">		this.loggedInMID = loggedInMID;</span>
+<span class="fc" id="L49">	}</span>
+	
+	public String getPatientName(long pid) {
+<span class="fc" id="L52">		String name = &quot;&quot;;</span>
+		try {
+<span class="fc" id="L54">			name = patDAO.getName(pid);</span>
+<span class="fc" id="L55">		} catch (DBException e1) {</span>
+<span class="fc" id="L56">			e1.printStackTrace();</span>
+<span class="fc" id="L57">		} catch (ITrustException e2) {</span>
+<span class="fc" id="L58">			e2.printStackTrace();</span>
+<span class="fc" id="L59">		}</span>
+		
+<span class="fc" id="L61">		return name;</span>
+	}
+	
+	public String getHospitalName(String hospitalID) {
+<span class="fc" id="L65">		String name = &quot;&quot;;</span>
+		try {
+<span class="fc" id="L67">			HospitalBean hospital = hosDAO.getHospital(hospitalID);</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">			if (hospital != null)</span>
+<span class="fc" id="L69">				name = hospital.getHospitalName();</span>
+<span class="fc" id="L70">		} catch (DBException e1) {</span>
+<span class="fc" id="L71">			e1.printStackTrace();</span>
+<span class="fc" id="L72">		}</span>
+		
+<span class="fc" id="L74">		return name;</span>
+	}
+	
+	
+	public String getDoctorName(long mid) throws ITrustException {
+<span class="fc" id="L79">		String name = &quot;&quot;;</span>
+		try {
+			//Try to get the doctor's name with the specified mid
+<span class="fc" id="L82">			name = personnelDAO.getName(mid);</span>
+<span class="fc" id="L83">		} catch (DBException e) {</span>
+			//If a DBException is thrown, print a stack trace and return a blank name
+<span class="fc" id="L85">			e.printStackTrace();</span>
+<span class="fc" id="L86">		}</span>
+		
+<span class="fc" id="L88">		return name;</span>
+	}
+	
+	public List&lt;RecordsReleaseBean&gt; getHospitalReleaseRequests() throws ITrustException {
+		//List for holding records release requests
+<span class="fc" id="L93">		List&lt;RecordsReleaseBean&gt; releases = new ArrayList&lt;RecordsReleaseBean&gt;();</span>
+		//List of hospitals that the hcp/uap is associated with
+		List&lt;HospitalBean&gt; hospitals;
+		//Get the logged in user's role
+		Role userRole;
+		
+		try {
+			//Check the user's role and get a list of hospitals depending on that
+<span class="fc" id="L101">			userRole = authDAO.getUserRole(loggedInMID);</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">			if (userRole.getUserRolesString().equals(&quot;hcp&quot;)) {</span>
+<span class="fc" id="L103">				hospitals = personnelDAO.getHospitals(loggedInMID);</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">			} else if (userRole.getUserRolesString().equals(&quot;uap&quot;)) {</span>
+<span class="fc" id="L105">				hospitals = personnelDAO.getUAPHospitals(loggedInMID);</span>
+			} else {
+<span class="fc" id="L107">				return new ArrayList&lt;RecordsReleaseBean&gt;();</span>
+			}
+			
+			//Add to the list of records release requests from each associated hospital
+<span class="fc bfc" id="L111" title="All 2 branches covered.">			for (int i = 0; i &lt; hospitals.size(); i++) {</span>
+				//Get each hospital's id
+<span class="fc" id="L113">				String hospitalID = hospitals.get(i).getHospitalID();</span>
+<span class="fc" id="L114">				releases.addAll(releaseDAO.getAllRecordsReleasesByHospital(hospitalID));</span>
+			}
+<span class="fc" id="L116">		} catch (DBException e) {</span>
+			//If there is a DBException return an empty list
+<span class="fc" id="L118">			return new ArrayList&lt;RecordsReleaseBean&gt;();</span>
+<span class="fc" id="L119">		}</span>
+		
+<span class="fc" id="L121">		return releases;</span>
+	}
+	
+	public List&lt;RecordsReleaseBean&gt; filterPendingRequests(List&lt;RecordsReleaseBean&gt; requests) {
+<span class="fc" id="L125">		List&lt;RecordsReleaseBean&gt; pendingRequests = new ArrayList&lt;RecordsReleaseBean&gt;();</span>
+<span class="fc bfc" id="L126" title="All 2 branches covered.">		for (int i = 0; i &lt; requests.size(); i++) {</span>
+<span class="fc bfc" id="L127" title="All 2 branches covered.">			if (requests.get(i).getStatus() == 0)</span>
+<span class="fc" id="L128">				pendingRequests.add(requests.get(i));</span>
+		}
+		
+<span class="fc" id="L131">		return pendingRequests;</span>
+	}
+	
+	public int getNumPendingRequests(List&lt;RecordsReleaseBean&gt; requests) {
+<span class="fc" id="L135">		int numOfPendingRequests = 0;</span>
+<span class="fc bfc" id="L136" title="All 2 branches covered.">		for(int i = 0; i &lt; requests.size(); i++){</span>
+<span class="fc bfc" id="L137" title="All 2 branches covered.">			if(requests.get(i).getStatus() == 0) {</span>
+<span class="fc" id="L138">				numOfPendingRequests++;</span>
+			}
+		}
+		
+<span class="fc" id="L142">		return numOfPendingRequests;</span>
+	}
+	
+	public boolean approveRequest(RecordsReleaseBean request) {
+		//If the request status is not pending, don't update
+<span class="fc bfc" id="L147" title="All 2 branches covered.">		if (request.getStatus() != 0)</span>
+<span class="fc" id="L148">			return false;</span>
+		
+		//Set the request to approved status
+<span class="fc" id="L151">		request.setStatus(1);</span>
+		try {
+			//Update the records release object
+<span class="fc" id="L154">			releaseDAO.updateRecordsRelease(request);</span>
+<span class="fc" id="L155">		} catch (DBException e) {</span>
+			//If a DBException is caught reset the status and return false
+<span class="fc" id="L157">			request.setStatus(0);</span>
+<span class="fc" id="L158">			return false;</span>
+<span class="fc" id="L159">		}</span>
+		
+<span class="fc" id="L161">		return true;</span>
+	}
+	
+	public boolean denyRequest(RecordsReleaseBean request) {
+		//If the request status is not pending, don't update
+<span class="fc bfc" id="L166" title="All 2 branches covered.">		if (request.getStatus() != 0)</span>
+<span class="fc" id="L167">			return false;</span>
+		
+		//Set the request to denied status
+<span class="fc" id="L170">		request.setStatus(2);</span>
+		
+		try {
+			//Update the records release object
+<span class="fc" id="L174">			releaseDAO.updateRecordsRelease(request);</span>
+<span class="fc" id="L175">		} catch (DBException e) {</span>
+			//If a DBException is caught reset the status and return false
+<span class="fc" id="L177">			request.setStatus(0);</span>
+<span class="fc" id="L178">			return false;</span>
+<span class="fc" id="L179">		}</span>
+		
+<span class="fc" id="L181">		return true;</span>
+	}
+	
+	public List&lt;HealthRecord&gt; getRequestedHealthRecords(RecordsReleaseBean request) {
+		//Get the patient's mid
+<span class="fc" id="L186">		long pid = request.getPid();</span>
+		//Get the hospital id of the request
+<span class="fc" id="L188">		String hospitalID = request.getReleaseHospitalID();</span>
+		
+		//List of health records from the requested hospital
+<span class="fc" id="L191">		List&lt;HealthRecord&gt; records = new ArrayList&lt;HealthRecord&gt;();</span>
+		
+		try {
+			//Get all of the patient's health records from the specified hospital
+<span class="fc" id="L195">			records = hrDAO.getAllPatientHealthRecordsByHospital(pid, hospitalID);</span>
+<span class="fc" id="L196">		} catch (DBException e) {</span>
+			// If a DBException is thrown print a stack trace and return an empty list
+<span class="fc" id="L198">			e.printStackTrace();</span>
+<span class="fc" id="L199">		}</span>
+		
+<span class="fc" id="L201">		return records;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

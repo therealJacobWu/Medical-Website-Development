@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ViewFoodEntryAction.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.action</a> &gt; <span class="el_source">ViewFoodEntryAction.java</span></div><h1>ViewFoodEntryAction.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.action;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import edu.ncsu.csc.itrust.action.base.ViewEntryAction;
+import edu.ncsu.csc.itrust.beans.FoodEntryBean;
+import edu.ncsu.csc.itrust.beans.PersonnelBean;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.dao.mysql.FoodEntryDAO;
+import edu.ncsu.csc.itrust.dao.mysql.PatientDAO;
+import edu.ncsu.csc.itrust.dao.mysql.PersonnelDAO;
+import edu.ncsu.csc.itrust.exception.DBException;
+import edu.ncsu.csc.itrust.exception.FormValidationException;
+import edu.ncsu.csc.itrust.exception.ITrustException;
+
+/**
+ * We need to decide how we want to do this. We can include a check here in
+ * getting a food diary to ensure that the person viewing it is either a patient
+ * or an HCP with the specialty of 'nutritionist' before letting them get the
+ * food diary, or we could break this up into separate classes and separate jsp
+ * pages. ViewFoodEntryAction.java Version 1 2/21/2015 Copyright notice: none
+ */
+public class ViewFoodEntryAction implements ViewEntryAction {
+
+	private FoodEntryDAO foodEntryDAO;
+	private PatientDAO patientDAO;
+	private long loggedInMID;
+	private PersonnelDAO personnelDAO;
+
+	/**
+	 * Uses the factory to construct foodentrydao and patientdao
+	 * 
+	 * @param factory
+	 *            DAO factory to use
+	 * @param loggedInMID
+	 *            who is currently logged in
+	 */
+<span class="fc" id="L43">	public ViewFoodEntryAction(DAOFactory factory, long loggedInMID) {</span>
+<span class="fc" id="L44">		this.patientDAO = factory.getPatientDAO();</span>
+<span class="fc" id="L45">		this.personnelDAO = factory.getPersonnelDAO();</span>
+<span class="fc" id="L46">		this.foodEntryDAO = factory.getFoodEntryDAO();</span>
+<span class="fc" id="L47">		this.loggedInMID = loggedInMID;</span>
+<span class="fc" id="L48">	}</span>
+
+	/**
+	 * Takes in which patient you want to view the food diary for, and then
+	 * returns all of the food dairy entries for that patient. It first checks
+	 * to ensure that the person requesting the food diary is either a patient,
+	 * or is an HCP with a specialty of nutritionist.
+	 * 
+	 * @param patientMID
+	 *            the id of the patient whose food diary we want
+	 * @return a list of the patient's food diary entries
+	 */
+	public List&lt;FoodEntryBean&gt; getDiary(long patientMID)
+			throws ITrustException {
+
+		PersonnelBean personnel;
+		try {
+			/*
+			 * This nightmare if-statement just checks for two things. Either:
+			 * 1) The patient is viewing their own diary.
+			 * 2) A nutritionist designated for the provided PID is viewing the diary.
+			 * the Nutritionist must be the designated nutritionist
+			 */
+<span class="fc bfc" id="L71" title="All 4 branches covered.">			if ((patientDAO.checkPatientExists(loggedInMID) &amp;&amp; loggedInMID == patientMID)</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">					|| (((personnel = personnelDAO.getPersonnel(loggedInMID)) != null) &amp;&amp; personnel</span>
+<span class="pc bpc" id="L73" title="1 of 4 branches missed.">							.getSpecialty() != null &amp;&amp; personnel.getSpecialty().equalsIgnoreCase(&quot;Nutritionist&quot;) &amp;&amp; </span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">							(patientDAO.getDesignatedNutritionist(patientMID) == loggedInMID))) {</span>
+<span class="fc" id="L75">				return foodEntryDAO.getPatientFoodDiary(patientMID);</span>
+			} else {
+<span class="fc" id="L77">				throw new ITrustException(&quot;You do not have permission to &quot;</span>
+						+ &quot;view the Food Diary!&quot;);
+			}
+<span class="fc" id="L80">		} catch (DBException d) {</span>
+<span class="fc" id="L81">			throw new ITrustException(&quot;Error retrieving Food Diary&quot;);</span>
+		}
+	}
+
+	/**
+	 * Gets the totals of carbs, protein, sugar, calories, sodium, fat, and
+	 * fiber a user has eaten sorted by day.
+	 * 
+	 * @param patientMID
+	 *            the patient we are looking at
+	 * @return an entry that contains the totals for each day that a user has an
+	 *         entry in his food diary
+	 * @throws ITrustException
+	 */
+	public List&lt;FoodEntryBean&gt; getDiaryTotals(long patientMID)
+			throws ITrustException {
+
+		PersonnelBean personnel;
+		try {
+			/*
+			 * This nightmare if-statement just checks for two things. Either:
+			 * 1) The patient is viewing their own diary.
+			 * 2) A nutritionist designated for the provided PID is viewing the diary.
+			 */
+<span class="pc bpc" id="L105" title="1 of 4 branches missed.">			if ((patientDAO.checkPatientExists(loggedInMID) &amp;&amp; loggedInMID == patientMID)</span>
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">					|| (((personnel = personnelDAO.getPersonnel(loggedInMID)) != null) &amp;&amp; personnel</span>
+<span class="pc bpc" id="L107" title="2 of 4 branches missed.">							.getSpecialty() != null &amp;&amp; personnel.getSpecialty().equalsIgnoreCase(&quot;Nutritionist&quot;) &amp;&amp; </span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">							(patientDAO.getDesignatedNutritionist(patientMID) == loggedInMID))) {</span>
+<span class="fc" id="L109">				return foodEntryDAO.getPatientFoodDiaryTotals(patientMID);</span>
+			} else {
+<span class="fc" id="L111">				throw new ITrustException(&quot;You do not have permission to &quot;</span>
+						+ &quot;view the Food Diary!&quot;);
+			}
+<span class="fc" id="L114">		} catch (DBException d) {</span>
+<span class="fc" id="L115">			throw new ITrustException(&quot;Error retrieving Food Diary&quot;);</span>
+		}
+	}
+
+	/**
+	 * Returns a list of food diary entries between two dates.
+	 * 
+	 * @param lowerDate
+	 *            the first date
+	 * @param upperDate
+	 *            the second date
+	 * @return list of TransactionBeans
+	 * @throws DBException
+	 * @throws FormValidationException
+	 */
+	public List&lt;FoodEntryBean&gt; getBoundedDiary(String lowerDate,
+			String upperDate, long patientMID) throws ITrustException,
+			FormValidationException {
+		PersonnelBean personnel;
+		try {
+			/*
+			 * This nightmare if-statement just checks for two things. Either:
+			 * 1) The patient is viewing their own diary.
+			 * 2) A nutritionist designated for the provided PID is viewing the diary.
+			 */
+<span class="fc bfc" id="L140" title="All 4 branches covered.">			if ((patientDAO.checkPatientExists(loggedInMID) &amp;&amp; loggedInMID == patientMID)</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">					|| (((personnel = personnelDAO.getPersonnel(loggedInMID)) != null) &amp;&amp; personnel</span>
+<span class="pc bpc" id="L142" title="2 of 4 branches missed.">							.getSpecialty() != null &amp;&amp; personnel.getSpecialty().equalsIgnoreCase(&quot;Nutritionist&quot;) &amp;&amp; </span>
+<span class="pc bpc" id="L143" title="1 of 2 branches missed.">									(patientDAO.getDesignatedNutritionist(patientMID) == loggedInMID))) {</span>
+
+				/*
+				 * Month can have 1 or 2 digits, same with day, and year must
+				 * have 4.
+				 */
+<span class="fc" id="L149">				Pattern p = Pattern</span>
+<span class="fc" id="L150">						.compile(&quot;[0-9]{1,2}?/[0-9]{1,2}?/[0-9]{4}?&quot;);</span>
+<span class="fc" id="L151">				Matcher m = p.matcher(lowerDate);</span>
+<span class="fc" id="L152">				Matcher n = p.matcher(upperDate);</span>
+				/*
+				 * If it fails to match either of them, throw the form
+				 * validation exception
+				 */
+<span class="pc bpc" id="L157" title="1 of 4 branches missed.">				if (!m.matches() || !n.matches()) {</span>
+<span class="fc" id="L158">					throw new FormValidationException(</span>
+							&quot;Enter dates in MM/dd/yyyy&quot;);
+				}
+
+<span class="fc" id="L162">				Date lower = new SimpleDateFormat(&quot;MM/dd/yyyy&quot;)</span>
+<span class="fc" id="L163">						.parse(lowerDate);</span>
+<span class="fc" id="L164">				Date upper = new SimpleDateFormat(&quot;MM/dd/yyyy&quot;)</span>
+<span class="fc" id="L165">						.parse(upperDate);</span>
+
+<span class="fc bfc" id="L167" title="All 2 branches covered.">				if (lower.after(upper)) {</span>
+<span class="fc" id="L168">					throw new FormValidationException(</span>
+							&quot;Start date must be before end date!&quot;);
+				}
+
+<span class="fc" id="L172">				return foodEntryDAO.getBoundedFoodDiary(lower, upper,</span>
+						patientMID);
+			} else {
+<span class="fc" id="L175">				throw new ITrustException(&quot;You do not have permission to &quot;</span>
+						+ &quot;view the Food Diary!&quot;);
+			}
+<span class="fc" id="L178">		} catch (DBException e) {</span>
+<span class="fc" id="L179">			throw new ITrustException(&quot;Error retrieving Food Diary&quot;);</span>
+<span class="nc" id="L180">		} catch (ParseException d) {</span>
+<span class="nc" id="L181">			throw new ITrustException(&quot;Error parsing Dates&quot;);</span>
+		}
+	}
+
+	/**
+	 * Gets the totals of carbs, protein, sugar, calories, sodium, fat, and
+	 * fiber a user has eaten in a given date range, sorted by day.
+	 * 
+	 * @param lowerDate
+	 *            the first date
+	 * @param upperDate
+	 *            the second date
+	 * @param patientMID
+	 *            the patient we are looking at
+	 * @return an entry that contains the totals for each day in the given range
+	 *         for the patient
+	 * @throws ITrustException
+	 */
+	public List&lt;FoodEntryBean&gt; getBoundedDiaryTotals(String lowerDate,
+			String upperDate, long patientMID) throws ITrustException,
+			FormValidationException {
+		PersonnelBean personnel;
+		try {
+			/*
+			 * This nightmare if-statement just checks for two things. Either:
+			 * 1) The patient is viewing their own diary.
+			 * 2) A nutritionist designated for the provided PID is viewing the diary.
+			 */
+<span class="fc bfc" id="L209" title="All 4 branches covered.">			if ((patientDAO.checkPatientExists(loggedInMID) &amp;&amp; loggedInMID == patientMID)</span>
+<span class="fc bfc" id="L210" title="All 2 branches covered.">					|| (((personnel = personnelDAO.getPersonnel(loggedInMID)) != null) &amp;&amp; personnel</span>
+<span class="pc bpc" id="L211" title="2 of 4 branches missed.">							.getSpecialty() != null &amp;&amp; personnel.getSpecialty().equalsIgnoreCase(&quot;Nutritionist&quot;) &amp;&amp; </span>
+<span class="pc bpc" id="L212" title="1 of 2 branches missed.">									(patientDAO.getDesignatedNutritionist(patientMID) == loggedInMID))) {</span>
+
+				/*
+				 * Month can have 1 or 2 digits, same with day, and year must
+				 * have 4.
+				 */
+<span class="fc" id="L218">				Pattern p = Pattern</span>
+<span class="fc" id="L219">						.compile(&quot;[0-9]{1,2}?/[0-9]{1,2}?/[0-9]{4}?&quot;);</span>
+<span class="fc" id="L220">				Matcher m = p.matcher(lowerDate);</span>
+<span class="fc" id="L221">				Matcher n = p.matcher(upperDate);</span>
+				/*
+				 * If it fails to match either of them, throw the form
+				 * validation exception
+				 */
+<span class="pc bpc" id="L226" title="1 of 4 branches missed.">				if (!m.matches() || !n.matches()) {</span>
+<span class="fc" id="L227">					throw new FormValidationException(</span>
+							&quot;Enter dates in MM/dd/yyyy&quot;);
+				}
+
+<span class="fc" id="L231">				Date lower = new SimpleDateFormat(&quot;MM/dd/yyyy&quot;)</span>
+<span class="fc" id="L232">						.parse(lowerDate);</span>
+<span class="fc" id="L233">				Date upper = new SimpleDateFormat(&quot;MM/dd/yyyy&quot;)</span>
+<span class="fc" id="L234">						.parse(upperDate);</span>
+
+<span class="fc bfc" id="L236" title="All 2 branches covered.">				if (lower.after(upper)) {</span>
+<span class="fc" id="L237">					throw new FormValidationException(</span>
+							&quot;Start date must be before end date!&quot;);
+				}
+
+<span class="fc" id="L241">				return foodEntryDAO.getBoundedFoodDiaryTotals(lower, upper,</span>
+						patientMID);
+			} else {
+<span class="fc" id="L244">				throw new ITrustException(&quot;You do not have permission to &quot;</span>
+						+ &quot;view the Food Diary!&quot;);
+			}
+<span class="fc" id="L247">		} catch (DBException e) {</span>
+<span class="fc" id="L248">			throw new ITrustException(&quot;Error retrieving Food Diary&quot;);</span>
+<span class="nc" id="L249">		} catch (ParseException d) {</span>
+<span class="nc" id="L250">			throw new ITrustException(&quot;Error parsing Dates&quot;);</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

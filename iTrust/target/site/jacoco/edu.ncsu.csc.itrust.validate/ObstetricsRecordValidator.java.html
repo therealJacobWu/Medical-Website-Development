@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ObstetricsRecordValidator.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.validate</a> &gt; <span class="el_source">ObstetricsRecordValidator.java</span></div><h1>ObstetricsRecordValidator.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.validate;
+
+import edu.ncsu.csc.itrust.beans.ObstetricsRecordBean;
+import edu.ncsu.csc.itrust.enums.PregnancyStatus;
+import edu.ncsu.csc.itrust.exception.ErrorList;
+import edu.ncsu.csc.itrust.exception.FormValidationException;
+
+/**
+ * The validator used by {@link AddObstetricsAction}. 
+ */
+public class ObstetricsRecordValidator extends BeanValidator&lt;ObstetricsRecordBean&gt; {
+	/**
+	 * The default constructor.
+	 */
+<span class="fc" id="L15">	public ObstetricsRecordValidator() {</span>
+		
+<span class="fc" id="L17">	}</span>
+
+	/**
+	 * Performs the act of validating the bean in question, which varies depending on the
+	 * type of validator.  If the validation does not succeed, a {@link FormValidationException} is thrown.
+	 * 
+	 * @param p A bean of the type to be validated.
+	 */
+	@Override
+	public void validate(ObstetricsRecordBean p) throws FormValidationException {
+<span class="fc" id="L27">		ErrorList errorList = new ErrorList();</span>
+<span class="pc bpc" id="L28" title="1 of 2 branches missed.">		if (p != null) {</span>
+			//if Initial record
+<span class="fc bfc" id="L30" title="All 2 branches covered.">			if (p.getPregnancyStatus().equals(PregnancyStatus.Initial)) {</span>
+<span class="pc bpc" id="L31" title="3 of 6 branches missed.">				if (p.getLmp() != null &amp;&amp; p.getDateVisit() != null &amp;&amp; p.getLmp().after(p.getDateVisit())) {</span>
+<span class="nc" id="L32">					errorList.addIfNotNull(&quot;Last menstrual period cannot be after Date of visit&quot;);</span>
+				}
+<span class="fc" id="L34">				errorList.addIfNotNull(checkFormat(&quot;Weeks Pregnant&quot;, p.getWeeksPregnant(), ValidationFormat.WEEKS_PREGNANT, false));</span>
+			}
+			//else, if office visit
+<span class="fc bfc" id="L37" title="All 2 branches covered.">			else if (p.getPregnancyStatus().equals(PregnancyStatus.Office)){</span>
+<span class="pc bpc" id="L38" title="1 of 4 branches missed.">				if (p.getDateVisit() == null || p.getDateVisitString().equals(&quot;&quot;)) {</span>
+<span class="fc" id="L39">					errorList.addIfNotNull(&quot;Date Visit is a required field&quot;);</span>
+				}
+				//note that this weeks pregnant != the initial weeks pregnant b/c can be up to 49 weeks
+<span class="fc" id="L42">				errorList.addIfNotNull(checkFormat(&quot;Weeks Pregnant&quot;, p.getWeeksPregnant(), ValidationFormat.WEEKS_PREGNANT_OV, false));</span>
+<span class="fc" id="L43">				errorList.addIfNotNull(checkFormat(&quot;Weight&quot;, p.getWeight(), ValidationFormat.WEIGHT, false));</span>
+<span class="fc" id="L44">				errorList.addIfNotNull(checkFormat(&quot;Blood Pressure Systolic&quot;, p.getBloodPressureS(), ValidationFormat.SYSTOLIC_BLOOD_PRESSURE, false));</span>
+<span class="fc" id="L45">				errorList.addIfNotNull(checkFormat(&quot;Blood Pressure Diastolic&quot;, p.getBloodPressureD(), ValidationFormat.DIASTOLIC_BLOOD_PRESSURE, false));</span>
+<span class="fc" id="L46">				errorList.addIfNotNull(checkFormat(&quot;FHR&quot;, p.getFhr(), ValidationFormat.FHR, false));</span>
+<span class="fc" id="L47">				errorList.addIfNotNull(checkFormat(&quot;FHU&quot;, p.getFhu(), ValidationFormat.FHU, false));</span>
+			}
+			else {
+<span class="pc bpc" id="L50" title="1 of 4 branches missed.">				if (p.getDateVisit() == null || p.getDateVisitString().equals(&quot;&quot;)) {</span>
+<span class="fc" id="L51">					errorList.addIfNotNull(&quot;Date Visit is a required field&quot;);</span>
+				}
+<span class="fc" id="L53">				errorList.addIfNotNull(checkFormat(&quot;Year Conception&quot;, p.getYearConception(), ValidationFormat.YEAR, false));</span>
+<span class="fc" id="L54">				errorList.addIfNotNull(checkFormat(&quot;Weeks Pregnant&quot;, p.getWeeksPregnant(), ValidationFormat.WEEKS_PREGNANT, false));</span>
+<span class="fc" id="L55">				errorList.addIfNotNull(checkFormat(&quot;Hours in Labor&quot;, p.getHoursInLabor(), ValidationFormat.HOURS_LABOR, false));</span>
+			}
+			
+<span class="fc bfc" id="L58" title="All 2 branches covered.">			if (errorList.hasErrors())</span>
+<span class="fc" id="L59">				throw new FormValidationException(errorList);</span>
+		}
+<span class="fc" id="L61">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

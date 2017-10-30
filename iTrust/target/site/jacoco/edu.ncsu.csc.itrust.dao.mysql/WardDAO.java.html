@@ -1,0 +1,601 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>WardDAO.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.dao.mysql</a> &gt; <span class="el_source">WardDAO.java</span></div><h1>WardDAO.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.dao.mysql;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import edu.ncsu.csc.itrust.DBUtil;
+import edu.ncsu.csc.itrust.beans.HospitalBean;
+import edu.ncsu.csc.itrust.beans.PersonnelBean;
+import edu.ncsu.csc.itrust.beans.WardBean;
+import edu.ncsu.csc.itrust.beans.WardRoomBean;
+import edu.ncsu.csc.itrust.beans.loaders.HospitalBeanLoader;
+import edu.ncsu.csc.itrust.beans.loaders.PersonnelLoader;
+import edu.ncsu.csc.itrust.beans.loaders.WardBeanLoader;
+import edu.ncsu.csc.itrust.beans.loaders.WardRoomBeanLoader;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.exception.DBException;
+import edu.ncsu.csc.itrust.exception.ITrustException;
+
+/**
+ * Used for managing Wards
+ * 
+ * DAO stands for Database Access Object. All DAOs are intended to be reflections of the database, that is,
+ * one DAO per table in the database (most of the time). For more complex sets of queries, extra DAOs are
+ * added. DAOs can assume that all data has been validated and is correct.
+ * 
+ * DAOs should never have setters or any other parameter to the constructor than a factory. All DAOs should be
+ * accessed by DAOFactory (@see {@link DAOFactory}) and every DAO should have a factory - for obtaining JDBC
+ * connections and/or accessing other DAOs.
+ * 
+ * 
+ */
+public class WardDAO {
+	private DAOFactory factory;
+<span class="fc" id="L35">	private WardBeanLoader wardLoader = new WardBeanLoader();</span>
+<span class="fc" id="L36">	private WardRoomBeanLoader wardRoomLoader = new WardRoomBeanLoader();</span>
+<span class="fc" id="L37">	private PersonnelLoader personnelLoader = new PersonnelLoader();</span>
+<span class="fc" id="L38">	private HospitalBeanLoader hospitalLoader = new HospitalBeanLoader();</span>
+
+
+	
+	/**
+	 * The typical constructor.
+	 * @param factory The {@link DAOFactory} associated with this DAO, which is used for obtaining SQL connections, etc.
+	 */
+<span class="fc" id="L46">	public WardDAO(DAOFactory factory) {</span>
+<span class="fc" id="L47">		this.factory = factory;</span>
+<span class="fc" id="L48">	}</span>
+	
+
+	/**
+	 * Returns a list of all wards under a hospital sorted alphabetically
+	 * 
+	 * @param id The ID of the hospital to get wards from
+	 * @return A java.util.List of WardBeans.
+	 * @throws DBException
+	 */
+	public List&lt;WardBean&gt; getAllWardsByHospitalID(String id) throws DBException{
+<span class="fc" id="L59">		Connection conn = null;</span>
+<span class="fc" id="L60">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L62">			conn = factory.getConnection();</span>
+<span class="fc" id="L63">			ps = conn.prepareStatement(&quot;SELECT * FROM WARDS WHERE InHospital = ? ORDER BY RequiredSpecialty&quot;);</span>
+<span class="fc" id="L64">			ps.setString(1, id);</span>
+<span class="fc" id="L65">			ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L66">			List&lt;WardBean&gt; loadlist =wardLoader.loadList(rs);</span>
+<span class="fc" id="L67">			rs.close();</span>
+<span class="fc" id="L68">			ps.close();</span>
+<span class="fc" id="L69">			return loadlist;</span>
+<span class="fc" id="L70">		} catch (SQLException e) {</span>
+			
+<span class="fc" id="L72">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L74">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+	/**
+	 * Adds a Ward
+	 * 
+	 * @param ward The WardBean object to insert.
+	 * @return A boolean indicating whether the insertion was successful.
+	 * @throws DBException
+	 * @throws ITrustException
+	 */
+	public boolean addWard(WardBean ward) throws DBException, ITrustException {
+<span class="fc" id="L87">		Connection conn = null;</span>
+<span class="fc" id="L88">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L90">			conn = factory.getConnection();</span>
+<span class="fc" id="L91">			ps = conn.prepareStatement(&quot;INSERT INTO Wards (RequiredSpecialty, InHospital) &quot; + &quot;VALUES (?,?)&quot;);</span>
+<span class="fc" id="L92">			ps.setString(1, ward.getRequiredSpecialty());</span>
+<span class="fc" id="L93">			ps.setLong(2, ward.getInHospital());</span>
+<span class="pc bpc" id="L94" title="1 of 2 branches missed.">			boolean check = (1 == ps.executeUpdate());</span>
+<span class="fc" id="L95">			ps.close();</span>
+<span class="fc" id="L96">			return check;</span>
+<span class="fc" id="L97">		} catch (SQLException e) {</span>
+			
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">			if (1062 == e.getErrorCode())</span>
+<span class="nc" id="L100">				throw new ITrustException(&quot;Error: Ward already exists.&quot;);</span>
+<span class="fc" id="L101">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L103">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+	/**
+	 * Updates a particular ward's information. Returns the number of rows affected (should be 1)
+	 * 
+	 * @param ward The WardBean to update.
+	 * @return An int indicating the number of affected rows.
+	 * @throws DBException
+	 */
+	public int updateWard(WardBean ward) throws DBException {
+<span class="fc" id="L115">		Connection conn = null;</span>
+<span class="fc" id="L116">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L118">			conn = factory.getConnection();</span>
+<span class="fc" id="L119">			ps = conn.prepareStatement(&quot;UPDATE wards SET RequiredSpecialty=?, InHospital=? &quot; + &quot;WHERE WardID = ?&quot;);</span>
+<span class="fc" id="L120">			ps.setString(1, ward.getRequiredSpecialty());</span>
+<span class="fc" id="L121">			ps.setLong(2, ward.getInHospital());</span>
+<span class="fc" id="L122">			ps.setLong(3, ward.getWardID());</span>
+<span class="fc" id="L123">			int result = ps.executeUpdate();</span>
+<span class="fc" id="L124">			ps.close();</span>
+<span class="fc" id="L125">			return result;</span>
+<span class="fc" id="L126">		} catch (SQLException e) {</span>
+			
+<span class="fc" id="L128">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L130">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+	/**
+	 * Removes a ward from a hospital. Returns whether or not any changes were made
+	 * 
+	 * @param id The WardId of the Ward to remove.
+	 * @return A boolean indicating success.
+	 * @throws DBException
+	 */
+	public boolean removeWard(long id) throws DBException {
+<span class="fc" id="L142">		Connection conn = null;</span>
+<span class="fc" id="L143">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L145">			conn = factory.getConnection();</span>
+<span class="fc" id="L146">			ps = conn.prepareStatement(&quot;DELETE FROM Wards WHERE WardID = ?&quot;);</span>
+<span class="fc" id="L147">			ps.setLong(1, id);</span>
+<span class="pc bpc" id="L148" title="1 of 2 branches missed.">			boolean check = (1 == ps.executeUpdate());</span>
+<span class="fc" id="L149">			ps.close();</span>
+<span class="fc" id="L150">			return check;</span>
+<span class="fc" id="L151">		} catch (SQLException e) {</span>
+			
+<span class="fc" id="L153">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L155">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+
+	/**
+	 * Returns a list of all wardrooms under a ward sorted alphabetically
+	 * 
+	 * @param id The id of the ward to get all rooms for
+	 * @return A java.util.List of all WardRoomBeans in a ward.
+	 * @throws DBException
+	 */
+	public List&lt;WardRoomBean&gt; getAllWardRoomsByWardID(long id) throws DBException {
+<span class="fc" id="L168">		Connection conn = null;</span>
+<span class="fc" id="L169">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L171">			conn = factory.getConnection();</span>
+<span class="fc" id="L172">			ps = conn.prepareStatement(&quot;SELECT * FROM WARDROOMS WHERE InWard = ? ORDER BY RoomName&quot;);</span>
+<span class="fc" id="L173">			ps.setLong(1, id);</span>
+<span class="fc" id="L174">			ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L175">			List&lt;WardRoomBean&gt; loadlist = wardRoomLoader.loadList(rs);</span>
+<span class="fc" id="L176">			rs.close();</span>
+<span class="fc" id="L177">			ps.close();</span>
+<span class="fc" id="L178">			return loadlist;</span>
+<span class="fc" id="L179">		} catch (SQLException e) {</span>
+			
+<span class="fc" id="L181">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L183">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+	/**
+	 * Adds a WardRoom
+	 * 
+	 * @param wardRoom The WardRoomBean object to insert.
+	 * @return A boolean indicating whether the insertion was successful.
+	 * @throws DBException
+	 * @throws ITrustException
+	 */
+	public boolean addWardRoom(WardRoomBean wardRoom) throws DBException, ITrustException {
+<span class="fc" id="L196">		Connection conn = null;</span>
+<span class="fc" id="L197">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L199">			conn = factory.getConnection();</span>
+<span class="fc" id="L200">			ps = conn.prepareStatement(&quot;INSERT INTO WardRooms (InWard, RoomName, Status) &quot; + &quot;VALUES (?,?,?)&quot;);</span>
+<span class="fc" id="L201">			ps.setLong(1, wardRoom.getInWard());</span>
+<span class="fc" id="L202">			ps.setString(2, wardRoom.getRoomName());</span>
+<span class="fc" id="L203">			ps.setString(3, wardRoom.getStatus());</span>
+<span class="pc bpc" id="L204" title="1 of 2 branches missed.">			boolean check = (1 == ps.executeUpdate());</span>
+<span class="fc" id="L205">			ps.close();</span>
+<span class="fc" id="L206">			return check;</span>
+<span class="fc" id="L207">		} catch (SQLException e) {</span>
+			
+<span class="pc bpc" id="L209" title="1 of 2 branches missed.">			if (1062 == e.getErrorCode())</span>
+<span class="nc" id="L210">				throw new ITrustException(&quot;Error: WardRoom already exists.&quot;);</span>
+<span class="fc" id="L211">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L213">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+	/**
+	 * Updates a particular wardroom's information. Returns the number of rows affected (should be 1)
+	 * 
+	 * @param wardRoom The WardRoomBean to update.
+	 * @return An int indicating the number of affected rows.
+	 * @throws DBException
+	 */
+	public int updateWardRoom(WardRoomBean wardRoom) throws DBException {
+<span class="fc" id="L225">		Connection conn = null;</span>
+<span class="fc" id="L226">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L228">			conn = factory.getConnection();</span>
+<span class="fc" id="L229">			ps = conn.prepareStatement(&quot;UPDATE wardrooms SET InWard=?, RoomName=?, Status=? &quot; + &quot;WHERE RoomID = ?&quot;);</span>
+<span class="fc" id="L230">			ps.setLong(1, wardRoom.getInWard());</span>
+<span class="fc" id="L231">			ps.setString(2, wardRoom.getRoomName());</span>
+<span class="fc" id="L232">			ps.setString(3, wardRoom.getStatus());</span>
+<span class="fc" id="L233">			ps.setLong(4, wardRoom.getRoomID());</span>
+<span class="fc" id="L234">			int result = ps.executeUpdate();</span>
+<span class="fc" id="L235">			ps.close();</span>
+<span class="fc" id="L236">			return result;</span>
+<span class="fc" id="L237">		} catch (SQLException e) {</span>
+			
+<span class="fc" id="L239">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L241">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+	/**
+	 * Removes a room from a ward. Returns whether or not any changes were made
+	 * 
+	 * @param id The RoomId of the Room to remove.
+	 * @return A boolean indicating success.
+	 * @throws DBException
+	 */
+	public boolean removeWardRoom(long id) throws DBException {
+<span class="fc" id="L253">		Connection conn = null;</span>
+<span class="fc" id="L254">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L256">			conn = factory.getConnection();</span>
+<span class="fc" id="L257">			ps = conn.prepareStatement(&quot;DELETE FROM WardRooms WHERE RoomID = ?&quot;);</span>
+<span class="fc" id="L258">			ps.setLong(1, id);</span>
+<span class="fc bfc" id="L259" title="All 2 branches covered.">			boolean check = (1 == ps.executeUpdate());</span>
+<span class="fc" id="L260">			ps.close();</span>
+<span class="fc" id="L261">			return check;</span>
+<span class="fc" id="L262">		} catch (SQLException e) {</span>
+			
+<span class="fc" id="L264">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L266">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+	/**
+	 * Returns a list of all wards assigned to a HCP sorted alphabetically
+	 * 
+	 * @param id The id of the HCP to get wards for
+	 * @return A java.util.List of all WardBeans.
+	 * @throws DBException
+	 */
+	public List&lt;WardBean&gt; getAllWardsByHCP(long id) throws DBException {
+<span class="fc" id="L278">		Connection conn = null;</span>
+<span class="fc" id="L279">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L281">			conn = factory.getConnection();</span>
+<span class="fc" id="L282">			ps = conn.prepareStatement(&quot;SELECT * FROM HCPAssignedToWard haw INNER JOIN Wards w WHERE HCP = ? AND haw.ward = w.wardid ORDER BY RequiredSpecialty&quot;);</span>
+<span class="fc" id="L283">			ps.setLong(1, id);</span>
+<span class="fc" id="L284">			ResultSet rs = ps.executeQuery();</span>
+			
+<span class="fc" id="L286">			List&lt;WardBean&gt; loadlist =wardLoader.loadList(rs);</span>
+<span class="fc" id="L287">			rs.close();</span>
+<span class="fc" id="L288">			ps.close();</span>
+<span class="fc" id="L289">			return loadlist;</span>
+<span class="fc" id="L290">		} catch (SQLException e) {</span>
+			
+<span class="fc" id="L292">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L294">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+	/**
+	 * Returns a list of all HCPs assigned to a ward sorted alphabetically
+	 * 
+	 * @param id The id of the ward to get HCPs for
+	 * @return A java.util.List of PersonnelBean that represent the HCPs assigned to a ward.
+	 * @throws DBException
+	 */
+	public List&lt;PersonnelBean&gt; getAllHCPsAssignedToWard(long id) throws DBException {
+<span class="fc" id="L306">		Connection conn = null;</span>
+<span class="fc" id="L307">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L309">			conn = factory.getConnection();</span>
+<span class="fc" id="L310">			ps = conn.prepareStatement(&quot;SELECT * FROM HCPAssignedToWard haw INNER JOIN Personnel p WHERE haw.HCP = p.MID AND WARD = ? ORDER BY lastName&quot;);</span>
+<span class="fc" id="L311">			ps.setLong(1, id);</span>
+<span class="fc" id="L312">			ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L313">			List&lt;PersonnelBean&gt; loadlist =personnelLoader.loadList(rs);</span>
+<span class="fc" id="L314">			rs.close();</span>
+<span class="fc" id="L315">			ps.close();</span>
+<span class="fc" id="L316">			return loadlist;</span>
+<span class="fc" id="L317">		} catch (SQLException e) {</span>
+			
+<span class="fc" id="L319">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L321">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+	/**
+	 * Assigns an HCP to a the specified ward.
+	 * 
+	 * @param hcpID The id of the HCP to assign
+	 * @param wardID The ward to assign the HCP to.
+	 * @return A boolean whether or not the insert worked correctly.
+	 * @throws ITrustException 
+	 */
+	public boolean assignHCPToWard(long hcpID, long wardID) throws ITrustException {
+<span class="fc" id="L334">		Connection conn = null;</span>
+<span class="fc" id="L335">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L337">			conn = factory.getConnection();</span>
+<span class="fc" id="L338">			ps = conn.prepareStatement(&quot;INSERT INTO HCPAssignedToWard (HCP, WARD) Values(?,?)&quot;);</span>
+<span class="fc" id="L339">			ps.setLong(1, hcpID);</span>
+<span class="fc" id="L340">			ps.setLong(2, wardID);</span>
+			
+<span class="pc bpc" id="L342" title="1 of 2 branches missed.">			boolean check = (1 == ps.executeUpdate());</span>
+<span class="fc" id="L343">			ps.close();</span>
+<span class="fc" id="L344">			return check;</span>
+<span class="fc" id="L345">		} catch (SQLException e) {</span>
+			
+<span class="pc bpc" id="L347" title="1 of 2 branches missed.">			if (1062 == e.getErrorCode())</span>
+<span class="nc" id="L348">				throw new ITrustException(&quot;Error: HCP or WARD ID don't exist!&quot;);</span>
+<span class="fc" id="L349">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L351">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+	/**
+	 * Removes a HCP and Ward association
+	 * 
+	 * @param wardID The Ward ID of the Ward associated to the HCP.
+	 * @param hcpID The HCP ID of the HCP associated with the Ward.
+	 * @return A boolean indicating success.
+	 * @throws DBException
+	 */
+	public boolean removeWard(long hcpID, long wardID) throws DBException {
+<span class="fc" id="L364">		Connection conn = null;</span>
+<span class="fc" id="L365">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L367">			conn = factory.getConnection();</span>
+<span class="fc" id="L368">			ps = conn.prepareStatement(&quot;DELETE FROM HCPAssignedToWard WHERE Ward = ? and hcp = ?&quot;);</span>
+<span class="fc" id="L369">			ps.setLong(1, wardID);</span>
+<span class="fc" id="L370">			ps.setLong(2, hcpID);</span>
+<span class="pc bpc" id="L371" title="1 of 2 branches missed.">			boolean check = (1 == ps.executeUpdate());</span>
+<span class="fc" id="L372">			ps.close();</span>
+<span class="fc" id="L373">			return check;</span>
+<span class="fc" id="L374">		} catch (SQLException e) {</span>
+			
+<span class="fc" id="L376">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L378">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+	/**
+	 * Updates a particular wardroom's occupiedBy information. Returns the number of rows affected (should be 1)
+	 * 
+	 * @param wardRoom The WardRoomBean to update.
+	 * @return An int indicating the number of affected rows.
+	 * @throws DBException
+	 */
+	public int updateWardRoomOccupant(WardRoomBean wardRoom) throws DBException {
+<span class="fc" id="L390">		Connection conn = null;</span>
+<span class="fc" id="L391">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L393">			conn = factory.getConnection();</span>
+<span class="fc" id="L394">			ps = conn.prepareStatement(&quot;UPDATE wardRooms SET OccupiedBy=? &quot; + &quot;WHERE RoomID = ?&quot;);</span>
+<span class="fc bfc" id="L395" title="All 2 branches covered.">			if(wardRoom.getOccupiedBy() == null){</span>
+<span class="fc" id="L396">				ps.setNull(1, java.sql.Types.BIGINT);</span>
+			} else {
+<span class="fc" id="L398">				ps.setLong(1, wardRoom.getOccupiedBy());</span>
+			}
+<span class="fc" id="L400">			ps.setLong(2, wardRoom.getRoomID());</span>
+<span class="fc" id="L401">			int result = ps.executeUpdate();</span>
+<span class="fc" id="L402">			ps.close();</span>
+<span class="fc" id="L403">			return result;</span>
+<span class="fc" id="L404">		} catch (SQLException e) {</span>
+			
+<span class="fc" id="L406">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L408">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+
+	/**
+	 * Returns a list of all wards with the status specified that the hcp has access to
+	 * 
+	 * @param status  The Status to search on
+	 * @param hcpID The id of the HCP to get wards for
+	 * @return A java.util.List of WardRoomBeans that the specified hcp has access too.
+	 * @throws DBException
+	 */
+	public List&lt;WardRoomBean&gt; getWardRoomsByStatus(String status, Long hcpID) throws DBException {
+<span class="fc" id="L422">		Connection conn = null;</span>
+<span class="fc" id="L423">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L425">			conn = factory.getConnection();</span>
+<span class="fc" id="L426">			ps = conn.prepareStatement(&quot;SELECT * FROM wardrooms wr inner join hcpassignedtoward hw where wr.status = ? and wr.inward = hw.ward and hw.hcp = ?&quot;);</span>
+<span class="fc" id="L427">			ps.setString(1, status);</span>
+<span class="fc" id="L428">			ps.setLong(2, hcpID);</span>
+<span class="fc" id="L429">			ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L430">			List&lt;WardRoomBean&gt; loadlist = wardRoomLoader.loadList(rs);</span>
+<span class="fc" id="L431">			rs.close();</span>
+<span class="fc" id="L432">			ps.close();</span>
+<span class="fc" id="L433">			return loadlist;</span>
+<span class="fc" id="L434">		} catch (SQLException e) {</span>
+			
+<span class="fc" id="L436">			throw new DBException(e);</span>
+		} finally {
+<span class="fc" id="L438">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+	/**
+	 * Returns a WardRoom specified by the id
+	 * 
+	 * @param wardRoomID The id of the ward room to get
+	 * @return A WardRoomBean with the ID specified
+	 * @throws DBException
+	 */
+	public WardRoomBean getWardRoom(String wardRoomID) throws DBException {
+<span class="fc" id="L450">		Connection conn = null;</span>
+<span class="fc" id="L451">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L453">			conn = factory.getConnection();</span>
+<span class="fc" id="L454">			ps = conn.prepareStatement(&quot;SELECT * FROM wardrooms where RoomID = ?&quot;);</span>
+<span class="fc" id="L455">			ps.setString(1, wardRoomID);</span>
+<span class="fc" id="L456">			ResultSet rs = ps.executeQuery();</span>
+<span class="pc bpc" id="L457" title="1 of 2 branches missed.">				if(rs.next()){</span>
+<span class="nc" id="L458">					WardRoomBean loaded = wardRoomLoader.loadSingle(rs);</span>
+<span class="nc" id="L459">					rs.close();</span>
+<span class="nc" id="L460">					ps.close();</span>
+<span class="nc" id="L461">					return loaded;</span>
+				} else{
+<span class="fc" id="L463">					rs.close();</span>
+<span class="fc" id="L464">					ps.close();</span>
+<span class="fc" id="L465">					return null;</span>
+				}
+<span class="fc" id="L467">		} catch (SQLException e) {</span>
+			
+<span class="fc" id="L469">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L471">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+	/**
+	 * Returns a Ward specified by the id
+	 * 
+	 * @param wardID The id of the ward to get
+	 * @return A WardBean with the ID specified
+	 * @throws DBException
+	 */
+	public WardBean getWard(String wardID) throws DBException {
+<span class="nc" id="L483">		Connection conn = null;</span>
+<span class="nc" id="L484">		PreparedStatement ps = null;</span>
+		try {
+<span class="nc" id="L486">			conn = factory.getConnection();</span>
+<span class="nc" id="L487">			ps = conn.prepareStatement(&quot;SELECT * FROM wards where wardid = ?&quot;);</span>
+<span class="nc" id="L488">			ps.setString(1, wardID);</span>
+<span class="nc" id="L489">			ResultSet rs = ps.executeQuery();</span>
+<span class="nc bnc" id="L490" title="All 2 branches missed.">				if(rs.next()){</span>
+<span class="nc" id="L491">					WardBean loaded = wardLoader.loadSingle(rs);</span>
+<span class="nc" id="L492">					rs.close();</span>
+<span class="nc" id="L493">					ps.close();</span>
+<span class="nc" id="L494">					return loaded;</span>
+				} else{
+<span class="nc" id="L496">					rs.close();</span>
+<span class="nc" id="L497">					ps.close();</span>
+<span class="nc" id="L498">					return null;</span>
+				}
+<span class="nc" id="L500">		} catch (SQLException e) {</span>
+			
+<span class="nc" id="L502">			throw new DBException(e);</span>
+		} finally {
+<span class="nc" id="L504">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+	/**
+	 * Returns the hospital that the specified ward room is located in
+	 * 
+	 * @param wardRoomID The id of the ward room to get the hospital for
+	 * @return The HospitalBean that the specified ward room is located in.
+	 * @throws DBException
+	 */
+	public HospitalBean getHospitalByWard(String wardRoomID) throws DBException {
+<span class="fc" id="L516">		Connection conn = null;</span>
+<span class="fc" id="L517">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L519">			conn = factory.getConnection();</span>
+<span class="fc" id="L520">			ps = conn.prepareStatement(&quot;SELECT * FROM hospitals h inner join wards ward inner join wardrooms room where room.RoomID = ? and room.inward = ward.wardid and ward.inhospital = h.hospitalid&quot;);</span>
+<span class="fc" id="L521">			ps.setString(1, wardRoomID);</span>
+<span class="fc" id="L522">			ResultSet rs = ps.executeQuery();</span>
+<span class="pc bpc" id="L523" title="1 of 2 branches missed.">			if(rs.next()){</span>
+<span class="nc" id="L524">				HospitalBean loaded = hospitalLoader.loadSingle(rs);</span>
+<span class="nc" id="L525">				rs.close();</span>
+<span class="nc" id="L526">				ps.close();</span>
+<span class="nc" id="L527">				return loaded;</span>
+			} else{
+<span class="fc" id="L529">				rs.close();</span>
+<span class="fc" id="L530">				ps.close();</span>
+<span class="fc" id="L531">				return null;</span>
+			}
+<span class="fc" id="L533">		} catch (SQLException e) {</span>
+			
+<span class="fc" id="L535">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L537">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+	/**
+	 * Logs the checkout reason for a patient
+	 * 
+	 * @param mid The mid of the Patient checking out
+	 * @param reason The reason the patient is being checked out.
+	 * @return Whether 1 patient was inserted
+	 * @throws ITrustException 
+	 */
+	public boolean checkOutPatientReason(long mid, String reason) throws DBException {
+<span class="fc" id="L550">		Connection conn = null;</span>
+<span class="fc" id="L551">		PreparedStatement ps = null;</span>
+		try {
+<span class="fc" id="L553">			conn = factory.getConnection();</span>
+<span class="fc" id="L554">			ps = conn.prepareStatement(&quot;INSERT INTO WardRoomCheckout (PID, Reason) Values(?,?)&quot;);</span>
+<span class="fc" id="L555">			ps.setLong(1, mid);</span>
+<span class="fc" id="L556">			ps.setString(2, reason);</span>
+<span class="pc bpc" id="L557" title="1 of 2 branches missed.">			boolean check = (1 == ps.executeUpdate());</span>
+<span class="fc" id="L558">			ps.close();</span>
+<span class="fc" id="L559">			return check;</span>
+<span class="nc" id="L560">		} catch (SQLException e) {</span>
+			
+<span class="nc" id="L562">			throw new DBException(e);</span>
+		} finally {
+<span class="pc" id="L564">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+	
+	/**
+	 * Returns the hospital that the specified user is located in
+	 * 
+	 * @param pid The id of the user to get the hospital for
+	 * @return The HospitalBean that the specified patient is located in.
+	 * @throws DBException
+	 */
+	public HospitalBean getHospitalByPatientID(long pid) throws DBException {
+<span class="nc" id="L576">		Connection conn = null;</span>
+<span class="nc" id="L577">		PreparedStatement ps = null;</span>
+		try {
+<span class="nc" id="L579">			conn = factory.getConnection();</span>
+<span class="nc" id="L580">			ps = conn.prepareStatement(&quot;SELECT * FROM hospitals h inner join wards ward inner join wardrooms room where room.OccupiedBy = ? and room.inward = ward.wardid and ward.inhospital = h.hospitalid&quot;);</span>
+<span class="nc" id="L581">			ps.setLong(1, pid);</span>
+<span class="nc" id="L582">			ResultSet rs = ps.executeQuery();</span>
+<span class="nc bnc" id="L583" title="All 2 branches missed.">			if(rs.next()){</span>
+<span class="nc" id="L584">				HospitalBean loaded = hospitalLoader.loadSingle(rs);</span>
+<span class="nc" id="L585">				rs.close();</span>
+<span class="nc" id="L586">				ps.close();</span>
+<span class="nc" id="L587">				return loaded;</span>
+			} else{
+<span class="nc" id="L589">				rs.close();</span>
+<span class="nc" id="L590">				ps.close();</span>
+<span class="nc" id="L591">				return null;</span>
+			}
+<span class="nc" id="L593">		} catch (SQLException e) {</span>
+			
+<span class="nc" id="L595">			throw new DBException(e);</span>
+		} finally {
+<span class="nc" id="L597">			DBUtil.closeConnection(conn, ps);</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

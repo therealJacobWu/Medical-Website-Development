@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>EditDiagnosesAction.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.action</a> &gt; <span class="el_source">EditDiagnosesAction.java</span></div><h1>EditDiagnosesAction.java</h1><pre class="source lang-java linenums">/**
+ * 
+ */
+package edu.ncsu.csc.itrust.action;
+
+import java.util.ArrayList;
+import java.util.List;
+import edu.ncsu.csc.itrust.action.base.EditOfficeVisitBaseAction;
+import edu.ncsu.csc.itrust.beans.DiagnosisBean;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.dao.mysql.DiagnosesDAO;
+import edu.ncsu.csc.itrust.dao.mysql.ICDCodesDAO;
+import edu.ncsu.csc.itrust.exception.DBException;
+import edu.ncsu.csc.itrust.exception.ITrustException;
+
+/**
+ * Handle patients Diagnosis
+ * Edit Diagnosis
+ * Add Diagnosis
+ * Remove Diagnosis
+ *  
+ *  
+ */
+public class EditDiagnosesAction extends EditOfficeVisitBaseAction {
+	
+	private DiagnosesDAO diagnosesDAO;
+	private ICDCodesDAO icdDAO;
+	
+	public EditDiagnosesAction(DAOFactory factory, long hcpid, 
+			   	String pidString, String ovIDString) 
+		throws ITrustException {
+<span class="fc" id="L32">		super(factory, hcpid, pidString, ovIDString);</span>
+<span class="fc" id="L33">		diagnosesDAO = factory.getDiagnosesDAO();</span>
+<span class="fc" id="L34">		icdDAO = factory.getICDCodesDAO();</span>
+<span class="fc" id="L35">	}</span>
+	
+	public EditDiagnosesAction(DAOFactory factory, long hcpid, 
+				String pidString) 
+		throws ITrustException {
+<span class="fc" id="L40">		super(factory, hcpid, pidString);</span>
+<span class="fc" id="L41">		diagnosesDAO = factory.getDiagnosesDAO();</span>
+<span class="fc" id="L42">		icdDAO = factory.getICDCodesDAO();</span>
+		
+<span class="fc" id="L44">	}</span>
+	
+	public List&lt;DiagnosisBean&gt; getDiagnoses() throws DBException {
+<span class="fc bfc" id="L47" title="All 2 branches covered.">		if (isUnsaved()) {</span>
+<span class="fc" id="L48">			return new ArrayList&lt;DiagnosisBean&gt;();</span>
+		} else {
+<span class="fc" id="L50">			return diagnosesDAO.getList(getOvID());</span>
+		}
+	}
+	
+	public void addDiagnosis(DiagnosisBean bean) throws ITrustException {
+<span class="fc" id="L55">		verifySaved();</span>
+<span class="fc" id="L56">		diagnosesDAO.add(bean);</span>
+<span class="fc" id="L57">	}</span>
+	
+	public void editDiagnosis(DiagnosisBean bean) throws ITrustException {
+<span class="fc" id="L60">		verifySaved();</span>
+<span class="fc" id="L61">		diagnosesDAO.edit(bean);</span>
+		
+<span class="fc" id="L63">	}</span>
+	
+	public void deleteDiagnosis(DiagnosisBean bean) throws ITrustException {
+<span class="fc" id="L66">		verifySaved();</span>
+<span class="fc" id="L67">		diagnosesDAO.remove(bean.getOvDiagnosisID());</span>
+		
+<span class="fc" id="L69">	}</span>
+	
+	public List&lt;DiagnosisBean&gt; getDiagnosisCodes() throws DBException {
+<span class="fc" id="L72">		return icdDAO.getAllICDCodes();</span>
+	}
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

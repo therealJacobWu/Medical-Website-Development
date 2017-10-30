@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>PatientVisitBean.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.beans</a> &gt; <span class="el_source">PatientVisitBean.java</span></div><h1>PatientVisitBean.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.beans;
+
+/**
+ * A bean for storing data about a patient's visit.
+ * 
+ * A bean's purpose is to store data. Period. Little or no functionality is to be added to a bean 
+ * (with the exception of minor formatting such as concatenating phone numbers together). 
+ * A bean must only have Getters and Setters (Eclipse Hint: Use Source &gt; Generate Getters and Setters.
+ * to create these easily)
+ */
+public class PatientVisitBean {
+<span class="fc" id="L12">	private PatientBean patient = null;</span>
+<span class="fc" id="L13">	private String PatientName = &quot;&quot;;</span>
+<span class="fc" id="L14">	private String Address1 = &quot;&quot;;</span>
+<span class="fc" id="L15">	private String Address2 = &quot;&quot;;</span>
+<span class="fc" id="L16">	private String LastOVDateM = &quot;&quot;;</span>
+<span class="fc" id="L17">	private String LastOVDateD = &quot;&quot;;</span>
+<span class="fc" id="L18">	private String LastOVDateY = &quot;&quot;;</span>
+<span class="fc" id="L19">	private String LastOVDate = &quot;&quot;;</span>
+	
+	public String getLastOVDate() {
+<span class="fc" id="L22">		return LastOVDate;</span>
+	}
+
+	public void setLastOVDate(String lastOVDate) {
+<span class="fc" id="L26">		LastOVDate = lastOVDate;</span>
+<span class="fc" id="L27">	}</span>
+
+	public String getLastOVDateM() {
+<span class="fc" id="L30">		return LastOVDateM;</span>
+	}
+
+	public void setLastOVDateM(String lastOVDateM) {
+<span class="fc" id="L34">		LastOVDateM = lastOVDateM;</span>
+<span class="fc" id="L35">	}</span>
+
+	public String getLastOVDateD() {
+<span class="fc" id="L38">		return LastOVDateD;</span>
+	}
+
+	public void setLastOVDateD(String lastOVDateD) {
+<span class="fc" id="L42">		LastOVDateD = lastOVDateD;</span>
+<span class="fc" id="L43">	}</span>
+
+	public String getLastOVDateY() {
+<span class="nc" id="L46">		return LastOVDateY;</span>
+	}
+
+	public void setLastOVDateY(String lastOVDateY) {
+<span class="fc" id="L50">		LastOVDateY = lastOVDateY;</span>
+<span class="fc" id="L51">	}</span>
+
+<span class="fc" id="L53">	public PatientVisitBean() {</span>
+		
+<span class="fc" id="L55">	}</span>
+
+	public String getPatientName() {
+<span class="fc" id="L58">		return PatientName;</span>
+	}
+
+	public void setPatientName(String patientName) {
+<span class="fc" id="L62">		PatientName = patientName;</span>
+<span class="fc" id="L63">	}</span>
+
+	public String getAddress1() {
+<span class="fc" id="L66">		return Address1;</span>
+	}
+
+	public void setAddress1(String address1) {
+<span class="fc" id="L70">		Address1 = address1;</span>
+<span class="fc" id="L71">	}</span>
+
+	public String getAddress2() {
+<span class="fc" id="L74">		return Address2;</span>
+	}
+
+	public void setAddress2(String address2) {
+<span class="fc" id="L78">		Address2 = address2;</span>
+<span class="fc" id="L79">	}</span>
+
+	public PatientBean getPatient() {
+<span class="fc" id="L82">		return patient;</span>
+	}
+
+	public void setPatient(PatientBean patient) {
+<span class="fc" id="L86">		this.patient = patient;</span>
+<span class="fc" id="L87">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ViewObstetricsAction.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">iTrust</a> &gt; <a href="index.source.html" class="el_package">edu.ncsu.csc.itrust.action</a> &gt; <span class="el_source">ViewObstetricsAction.java</span></div><h1>ViewObstetricsAction.java</h1><pre class="source lang-java linenums">package edu.ncsu.csc.itrust.action;
+
+import java.util.List;
+
+import edu.ncsu.csc.itrust.beans.FlagsBean;
+import edu.ncsu.csc.itrust.beans.ObstetricsRecordBean;
+import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.dao.mysql.FlagsDAO;
+import edu.ncsu.csc.itrust.dao.mysql.ObstetricsRecordDAO;
+import edu.ncsu.csc.itrust.enums.FlagValue;
+import edu.ncsu.csc.itrust.enums.PregnancyStatus;
+import edu.ncsu.csc.itrust.enums.TransactionType;
+import edu.ncsu.csc.itrust.exception.ITrustException;
+
+/**
+ * ViewObstetricsAction is a class to help the Initialize Obstetrics Record page to get all the records that should
+ * be displayed on the page (by MID), and the View Obstetrics Record page to get a record when selected (by OID).
+ */
+public class ViewObstetricsAction {
+
+    /**obstetricsDAO is the DAO that retrieves the obstetrics records from the database*/
+    private ObstetricsRecordDAO obstetricsDAO;
+    private FlagsDAO flagsDAO;
+    /**loggedInMID is the HCP that is logged in.*/
+    private long loggedInMID;
+    private EventLoggingAction loggingAction;
+
+    /**
+     * ViewObstetricsAction is the constructor for this action class. It simply initializes the
+     * instance variables.
+     * @param factory The factory used to get the obstetricsDAO.
+     * @param loggedInMID The MID of the logged in user.
+     * @param MID The MID 
+     * @param OID the OID
+     * @throws ITrustException When there is a bad user.
+     */
+    public ViewObstetricsAction(DAOFactory factory, long loggedInMID) //, long MID, long OID)
+<span class="fc" id="L38">            throws ITrustException {</span>
+<span class="fc" id="L39">        this.obstetricsDAO = factory.getObstetricsRecordDAO();</span>
+<span class="fc" id="L40">        this.flagsDAO = factory.getFlagsDAO();</span>
+<span class="fc" id="L41">        this.loggedInMID = loggedInMID;</span>
+<span class="fc" id="L42">        this.loggingAction = new EventLoggingAction(factory);</span>
+<span class="fc" id="L43">    }</span>
+    
+    /**
+     * getViewableObstetricsRecordsByMID returns a list of obstetrics record beans for past obstetrics care
+     * @return The list of obstetrics records.
+     * @throws ITrustException When there is a bad user.
+     */
+    public List&lt;ObstetricsRecordBean&gt; getViewableObstetricsRecordsByMID(long mid) throws ITrustException{
+        List&lt;ObstetricsRecordBean&gt; result;
+<span class="fc" id="L52">        result = obstetricsDAO.getObstetricsRecordsByMID(mid);</span>
+<span class="fc" id="L53">        return result;</span>
+    }
+    
+    /**
+     * getViewableObstetricsRecordsByMID returns a list of obstetrics record beans for past obstetrics care
+     * @return The list of obstetrics records.
+     * @throws ITrustException When there is a bad user.
+     */
+    public List&lt;ObstetricsRecordBean&gt; getViewableObstetricsRecordsByMIDType(long mid, PregnancyStatus type)
+    		throws ITrustException{
+        List&lt;ObstetricsRecordBean&gt; result;
+<span class="fc" id="L64">        result = obstetricsDAO.getObstetricsRecordsByMIDPregStatus(mid, type.toString());</span>
+<span class="fc" id="L65">        return result;</span>
+    }
+    
+    /**
+     * Retrieves a ObstetricsRecordBean 
+     * 
+     * @return ObstetricsRecordBean
+     * @throws ITrustException
+     */
+    public ObstetricsRecordBean getViewableObstetricsRecords(long oid) throws ITrustException {
+<span class="fc" id="L75">        ObstetricsRecordBean record = obstetricsDAO.getObstetricsRecord(oid);</span>
+<span class="pc bpc" id="L76" title="1 of 4 branches missed.">        if (record != null &amp;&amp; record.getPregnancyStatus().equals(PregnancyStatus.Initial)) {</span>
+<span class="fc" id="L77">        	loggingAction.logEvent(TransactionType.parse(6301), loggedInMID, </span>
+<span class="fc" id="L78">					record.getMid(), &quot;Initial Obstetrics Record &quot; +  oid + &quot; viewed by &quot; + loggedInMID);</span>
+        }
+<span class="pc bpc" id="L80" title="2 of 4 branches missed.">        else if (record != null &amp;&amp; record.getPregnancyStatus().equals(PregnancyStatus.Office)) {</span>
+<span class="fc" id="L81">        	loggingAction.logEvent(TransactionType.parse(6401), loggedInMID, </span>
+<span class="fc" id="L82">					record.getMid(), &quot;Obstetrics Office Visit &quot; +  oid + &quot; viewed by &quot; + loggedInMID);</span>
+        }
+<span class="fc" id="L84">        return record;</span>
+    }
+    
+    public FlagsBean getFlagForRecord(ObstetricsRecordBean p, FlagValue v) throws ITrustException {
+<span class="fc" id="L88">    	FlagsBean bean = new FlagsBean();</span>
+<span class="fc" id="L89">    	bean.setMid(p.getMid());</span>
+<span class="fc" id="L90">    	bean.setPregId(p.getPregId());</span>
+<span class="fc" id="L91">    	bean.setFlagValue(v);</span>
+<span class="fc" id="L92">    	return flagsDAO.getFlag(bean);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>
