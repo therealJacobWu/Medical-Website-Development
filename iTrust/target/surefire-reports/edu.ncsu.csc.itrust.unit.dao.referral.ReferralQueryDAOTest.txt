@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: edu.ncsu.csc.itrust.unit.dao.referral.ReferralQueryDAOTest
--------------------------------------------------------------------------------
-Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.792 sec - in edu.ncsu.csc.itrust.unit.dao.referral.ReferralQueryDAOTest

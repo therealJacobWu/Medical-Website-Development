@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: edu.ncsu.csc.itrust.unit.dao.reportrequest.ReportRequestDAOTest
--------------------------------------------------------------------------------
-Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.758 sec - in edu.ncsu.csc.itrust.unit.dao.reportrequest.ReportRequestDAOTest

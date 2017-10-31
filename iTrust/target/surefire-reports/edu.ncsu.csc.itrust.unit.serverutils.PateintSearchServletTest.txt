@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: edu.ncsu.csc.itrust.unit.serverutils.PateintSearchServletTest
--------------------------------------------------------------------------------
-Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.059 sec - in edu.ncsu.csc.itrust.unit.serverutils.PateintSearchServletTest

@@ -1,5 +1,6 @@
-/build/classes/
-/build/
-/target/
-/WebRoot/WEB-INF/lib/*
-!/WebRoot/WEB-INF/lib/cewolf-1.1.jar
+iTrust/.idea
+iTrust/build/classes/
+iTrust/build/
+iTrust/target/
+iTrust/WebRoot/WEB-INF/lib/*
+!iTrust/WebRoot/WEB-INF/lib/cewolf-1.1.jar
