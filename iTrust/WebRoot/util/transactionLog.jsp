@@ -3,10 +3,13 @@
 <%@page import="java.util.List"%>
 <%@page import="edu.ncsu.csc.itrust.beans.TransactionBean"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
+<%@ page import="edu.ncsu.csc.itrust.enums.Role" %>
 
 <html>
 <head>
 <title>FOR TESTING PURPOSES ONLY</title>
+<link href="/iTrust/css/datepicker.css" type="text/css" rel="stylesheet" />
+<script src="/iTrust/js/DatePicker.js" type="text/javascript"></script>
 <style>
 body, td{
 	font-family: sans-serif;
@@ -15,6 +18,52 @@ body, td{
 </style>
 </head>
 <body>
+
+<%
+    String startDate = "";
+    String endDate = "";
+%>
+
+<form action="/iTrust/util/transactionLog.jsp" method="post">
+    <select name="rolesStr">
+        <%
+            String selected = "";
+            for (Role eth : Role.values()) {
+                // TODO eth.equals(p.getEthnicity()) figure out how to get user role here
+                selected = (false) ? "selected=selected"
+                        : "";
+        %>
+        <option value="<%= eth.getUserRolesString()%>" <%= StringEscapeUtils.escapeHtml("" + (selected)) %>><%= StringEscapeUtils.escapeHtml("" + (eth.getUserRolesString())) %></option>
+        <%
+            }
+        %>
+    </select>
+
+
+    <select name="rolesStr2">
+        <%
+            String selected2 = "";
+            for (Role eth : Role.values()) {
+                // TODO eth.equals(p.getEthnicity()) figure out how to get user role here
+                selected2 = (false) ? "selected=selected"
+                        : "";
+        %>
+        <option value="<%= eth.getUserRolesString()%>" <%= StringEscapeUtils.escapeHtml("" + (selected2)) %>><%= StringEscapeUtils.escapeHtml("" + (eth.getUserRolesString())) %></option>
+        <%
+            }
+        %>
+    </select>
+
+    <input name="startDate" value="<%= StringEscapeUtils.escapeHtml("" + (startDate)) %>" size="10"/>
+    <input type=button value="Select Date" onclick="displayDatePicker('startDate');"/>
+    <input name="endDate" value="<%= StringEscapeUtils.escapeHtml("" + (endDate)) %>" size="10"/>
+    <input type=button value="Select Date" onclick="displayDatePicker('endDate');"/>
+
+    TRANSACTION TYPE NAMES
+
+    <input type="submit">View</input>
+</form>
+
 <h1>Test Utilities</h1>
 A few clarifications:
 <ul>
