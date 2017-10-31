@@ -25,7 +25,9 @@ body, td{
 %>
 
 <form action="/iTrust/util/transactionLog.jsp" method="post">
-    <select name="rolesStr">
+	<h1>Filter Transactions:</h1>
+	<label>Logged-In User Field</label><br/>
+	<select name="rolesStr">
         <%
 			String userRole = (String) session.getAttribute("userRole");
             String selected = "";
@@ -36,10 +38,11 @@ body, td{
         <%
             }
         %>
-    </select>
+    </select><br/>
 
 
-    <select name="rolesStr2">
+	<label>Secondary User Field</label><br/>
+	<select name="rolesStr2">
         <%
             String selected2 = "";
             for (Role eth : Role.values()) {
@@ -49,16 +52,31 @@ body, td{
         <%
             }
         %>
-    </select>
+    </select><br/>
 
+	<label>Transaction Start Date</label><br/>
     <input name="startDate" value="<%= StringEscapeUtils.escapeHtml("" + (startDate)) %>" size="10"/>
-    <input type=button value="Select Date" onclick="displayDatePicker('startDate');"/>
+    <input type=button value="Select Date" onclick="displayDatePicker('startDate');"/><br/>
+	<label>Transaction End Date</label><br/>
     <input name="endDate" value="<%= StringEscapeUtils.escapeHtml("" + (endDate)) %>" size="10"/>
-    <input type=button value="Select Date" onclick="displayDatePicker('endDate');"/>
+    <input type=button value="Select Date" onclick="displayDatePicker('endDate');"/><br/>
 
-    TRANSACTION TYPE NAMES
+	<label>Transaction Type</label><br/>
+	<select name="rolesStr2">
+		<%
+			String selected3 = "";
+			for (TransactionType transactionType: TransactionType.values()) {
+				selected3 = "";
+		%>
+		<option value="<%= transactionType.getCode()%>" <%= StringEscapeUtils.escapeHtml("" + (selected3)) %>><%= StringEscapeUtils.escapeHtml("(" + transactionType.getCode() + ") " + transactionType.name()) %></option>
+		<%
+			}
+		%>
+	</select><br/>
 
-    <input type="submit">View</input>
+	<label>Filter transactions</label><br/>
+	<input type="submit" name="view" value="View"><br/>
+	<input type="submit" name="summarize" value="Summarize"><br/>
 </form>
 
 <h1>Test Utilities</h1>
