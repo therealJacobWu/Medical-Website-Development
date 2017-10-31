@@ -4,6 +4,9 @@
 <%@page import="edu.ncsu.csc.itrust.beans.TransactionBean"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@ page import="edu.ncsu.csc.itrust.enums.Role" %>
+<%@ page import="edu.ncsu.csc.itrust.dao.mysql.AuthDAO" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="edu.ncsu.csc.itrust.exception.ITrustException" %>
 
 <html>
 <head>
@@ -20,14 +23,57 @@ body, td{
 <body>
 
 <%
-    String startDate = "";
-    String endDate = "";
+	String loggedInUserField = request.getParameter("loggedInUserField");
+	String secondaryUserField = request.getParameter("secondaryUserField");
+
+    String startDate = request.getParameter("startDate");
+	String endDate = request.getParameter("endDate");
+
+
+	List<TransactionBean> allTransactions = DAOFactory.getProductionInstance().getTransactionDAO().getAllTransactions();
+	AuthDAO authDAO = DAOFactory.getProductionInstance().getAuthDAO();
+	List<TransactionBean> filteredTransactions = new ArrayList<TransactionBean>();
+
+
+	if ("POST".equalsIgnoreCase(request.getMethod())) {
+	    try {
+			int transactionType = Integer.parseInt(request.getParameter("transactionType"));
+
+			for (TransactionBean t : allTransactions) {
+				if (t.getLoggedInMID() != 0 && !authDAO.getUserRole(t.getLoggedInMID()).getUserRolesString().equals(loggedInUserField)) {
+					continue;
+				}
+
+				if (t.getSecondaryMID() != 0 && !authDAO.getUserRole(t.getSecondaryMID()).getUserRolesString().equals(secondaryUserField)) {
+					continue;
+				}
+
+				if (t.getTransactionType().getCode() != transactionType) {
+					continue;
+				}
+
+				filteredTransactions.add(t);
+			}
+
+			allTransactions = filteredTransactions;
+			// distinguish between view and summarize
+			if (request.getParameter("view") != null) {
+
+			} else if (request.getParameter("summarize") != null) {
+
+			} else {
+				// not possible
+			}
+		} catch (ITrustException | NullPointerException | NumberFormatException e) {
+
+		}
+	}
 %>
 
-<form action="/iTrust/util/transactionLog.jsp" method="post">
+<form action="/iTrust/util/adminTransactionLog.jsp" method="post">
 	<h1>Filter Transactions:</h1>
 	<label>Logged-In User Field</label><br/>
-	<select name="rolesStr">
+	<select name="loggedInUserField">
         <%
 			String userRole = (String) session.getAttribute("userRole");
             String selected = "";
@@ -42,7 +88,7 @@ body, td{
 
 
 	<label>Secondary User Field</label><br/>
-	<select name="rolesStr2">
+	<select name="secondaryUserField">
         <%
             String selected2 = "";
             for (Role eth : Role.values()) {
@@ -62,13 +108,14 @@ body, td{
     <input type=button value="Select Date" onclick="displayDatePicker('endDate');"/><br/>
 
 	<label>Transaction Type</label><br/>
-	<select name="rolesStr2">
+	<select name="transactionType">
 		<%
 			String selected3 = "";
-			for (TransactionType transactionType: TransactionType.values()) {
+			for (TransactionType transType: TransactionType.values()) {
 				selected3 = "";
 		%>
-		<option value="<%= transactionType.getCode()%>" <%= StringEscapeUtils.escapeHtml("" + (selected3)) %>><%= StringEscapeUtils.escapeHtml("(" + transactionType.getCode() + ") " + transactionType.name()) %></option>
+		<option value="<%= transType.getCode()%>" <%= StringEscapeUtils.escapeHtml("" + (selected3)) %>>
+			<%= StringEscapeUtils.escapeHtml("(" + transType.getCode() + ") " + transType.name()) %></option>
 		<%
 			}
 		%>
@@ -98,9 +145,7 @@ A few clarifications:
 		<th>Extra Info</th>
 	</tr>
 	<%
-		
-		List<TransactionBean> list = DAOFactory.getProductionInstance().getTransactionDAO().getAllTransactions();
-		for (TransactionBean t : list) {
+		for (TransactionBean t : allTransactions) {
 	%>
 	<tr>
 		<td><%= StringEscapeUtils.escapeHtml("" + (t.getTransactionID())) %></td>
