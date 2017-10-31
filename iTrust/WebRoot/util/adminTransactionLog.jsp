@@ -4,9 +4,14 @@
 <%@page import="edu.ncsu.csc.itrust.beans.TransactionBean"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@ page import="edu.ncsu.csc.itrust.enums.Role" %>
+<<<<<<< Updated upstream
 <%@ page import="edu.ncsu.csc.itrust.dao.mysql.AuthDAO" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="edu.ncsu.csc.itrust.exception.ITrustException" %>
+||||||| merged common ancestors
+=======
+<%@ page import="edu.ncsu.csc.itrust.dao.mysql.AuthDAO" %>
+>>>>>>> Stashed changes
 
 <html>
 <head>
@@ -145,7 +150,13 @@ A few clarifications:
 		<th>Extra Info</th>
 	</tr>
 	<%
-		for (TransactionBean t : allTransactions) {
+        int loggedInNum = 0;
+        for (TransactionBean t : allTransactions) {
+		    if (selected == AuthDAO.getUserRole(t.getLoggedInMID())){
+		        loggedInNum += 1;
+            }
+		    selected2;
+		    selected3;
 	%>
 	<tr>
 		<td><%= StringEscapeUtils.escapeHtml("" + (t.getTransactionID())) %></td>
