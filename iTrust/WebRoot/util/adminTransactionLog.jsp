@@ -7,6 +7,8 @@
 <%@ page import="edu.ncsu.csc.itrust.dao.mysql.AuthDAO" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="edu.ncsu.csc.itrust.exception.ITrustException" %>
+<%@ page import="java.text.DateFormat" %>
+<%@ page import="java.text.SimpleDateFormat" %>
 
 <html>
 <head>
@@ -29,16 +31,21 @@ body, td{
     String startDate = request.getParameter("startDate");
 	String endDate = request.getParameter("endDate");
 
+	// TODO set to default if doesn't exist
 
 	List<TransactionBean> allTransactions = DAOFactory.getProductionInstance().getTransactionDAO().getAllTransactions();
 	AuthDAO authDAO = DAOFactory.getProductionInstance().getAuthDAO();
 	List<TransactionBean> filteredTransactions = new ArrayList<TransactionBean>();
 
+	int transactionType = 0;
+	try {
+	    transactionType = Integer.parseInt(request.getParameter("transactionType"));
+	} catch (Exception e ) { }
+
+	boolean showView = (request.getParameter("view") != null);
 
 	if ("POST".equalsIgnoreCase(request.getMethod())) {
 	    try {
-			int transactionType = Integer.parseInt(request.getParameter("transactionType"));
-
 			for (TransactionBean t : allTransactions) {
 				if (t.getLoggedInMID() != 0 && !authDAO.getUserRole(t.getLoggedInMID()).getUserRolesString().equals(loggedInUserField)) {
 					continue;
@@ -52,18 +59,21 @@ body, td{
 					continue;
 				}
 
+				DateFormat dateParser = new SimpleDateFormat("MM/dd/yy");
+
+				// TODO check if startDate / endDate are filled out
+				if (t.getTimeLogged().before(dateParser.parse(startDate))) {
+				    continue;
+				}
+
+				if (t.getTimeLogged().after(dateParser.parse(endDate))) {
+					continue;
+				}
+
 				filteredTransactions.add(t);
 			}
 
 			allTransactions = filteredTransactions;
-			// distinguish between view and summarize
-			if (request.getParameter("view") != null) {
-
-			} else if (request.getParameter("summarize") != null) {
-
-			} else {
-				// not possible
-			}
 		} catch (ITrustException | NullPointerException | NumberFormatException e) {
 
 		}
@@ -75,10 +85,9 @@ body, td{
 	<label>Logged-In User Field</label><br/>
 	<select name="loggedInUserField">
         <%
-			String userRole = (String) session.getAttribute("userRole");
             String selected = "";
             for (Role eth : Role.values()) {
-                selected = (eth.getUserRolesString().equals(userRole)) ? "selected=selected" : "";
+                selected = (eth.getUserRolesString().equals(loggedInUserField)) ? "selected=selected" : "";
         %>
         <option value="<%= eth.getUserRolesString()%>" <%= StringEscapeUtils.escapeHtml("" + (selected)) %>><%= StringEscapeUtils.escapeHtml("" + (eth.getUserRolesString())) %></option>
         <%
@@ -92,7 +101,7 @@ body, td{
         <%
             String selected2 = "";
             for (Role eth : Role.values()) {
-				selected2 = (eth.getUserRolesString().equals(userRole)) ? "selected=selected" : "";
+				selected2 = (eth.getUserRolesString().equals(secondaryUserField)) ? "selected=selected" : "";
         %>
         <option value="<%= eth.getUserRolesString()%>" <%= StringEscapeUtils.escapeHtml("" + (selected2)) %>><%= StringEscapeUtils.escapeHtml("" + (eth.getUserRolesString())) %></option>
         <%
@@ -112,7 +121,7 @@ body, td{
 		<%
 			String selected3 = "";
 			for (TransactionType transType: TransactionType.values()) {
-				selected3 = "";
+				selected3 = (transType.getCode() == transactionType) ? "selected=selected" : "";
 		%>
 		<option value="<%= transType.getCode()%>" <%= StringEscapeUtils.escapeHtml("" + (selected3)) %>>
 			<%= StringEscapeUtils.escapeHtml("(" + transType.getCode() + ") " + transType.name()) %></option>
@@ -133,6 +142,9 @@ A few clarifications:
 	<li>The <b>Code</b> is the actual key that gets stored in the database, defined in the Transaction Type enum. Here's the <a href="#transactioncodes">table of transaction codes</a></a></li>
 	<li>The <b>Description</b> is plain-English description of that logging type
 </ul>
+
+<!-- only show if showView is true -->
+
 <table border=1>
 	<tr>
 		<th>ID></th>
