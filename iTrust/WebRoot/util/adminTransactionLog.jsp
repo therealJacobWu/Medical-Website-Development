@@ -4,14 +4,14 @@
 <%@page import="edu.ncsu.csc.itrust.beans.TransactionBean"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@ page import="edu.ncsu.csc.itrust.enums.Role" %>
-<<<<<<< Updated upstream
 <%@ page import="edu.ncsu.csc.itrust.dao.mysql.AuthDAO" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.HashMap" %>
 <%@ page import="edu.ncsu.csc.itrust.exception.ITrustException" %>
-||||||| merged common ancestors
-=======
-<%@ page import="edu.ncsu.csc.itrust.dao.mysql.AuthDAO" %>
->>>>>>> Stashed changes
+<%@ page import="java.util.Set" %>
+<%@ page import="java.util.Iterator" %>
+<%@ page import="java.util.Map" %>
+
 
 <html>
 <head>
@@ -150,13 +150,17 @@ A few clarifications:
 		<th>Extra Info</th>
 	</tr>
 	<%
-        int loggedInNum = 0;
+        String loggedInUserRole;
+        HashMap<String, Integer> chart1 = new HashMap<>();
         for (TransactionBean t : allTransactions) {
-		    if (selected == AuthDAO.getUserRole(t.getLoggedInMID())){
-		        loggedInNum += 1;
+            loggedInUserRole = authDAO.getUserRole(t.getLoggedInMID()).getUserRolesString();
+            if(!chart1.containsKey(loggedInUserRole)){
+                chart1.put(loggedInUserRole,1);
             }
-		    selected2;
-		    selected3;
+            else{
+                int val = chart1.get(loggedInUserRole)+1;
+                chart1.put(loggedInUserRole,val);
+            }
 	%>
 	<tr>
 		<td><%= StringEscapeUtils.escapeHtml("" + (t.getTransactionID())) %></td>
@@ -170,6 +174,18 @@ A few clarifications:
 	</tr>
 	<%
 	}
+        Set set = chart1.entrySet();
+        Iterator iterator = set.iterator();
+	    while(iterator.hasNext()){
+            Map.Entry mentry = (Map.Entry)iterator.next();
+    %>
+    <tr>
+        <td><%= StringEscapeUtils.escapeHtml("" + mentry.getKey()) %></td>
+        <td><%= StringEscapeUtils.escapeHtml("" + mentry.getValue()) %></td>
+    </tr>
+    <%
+        }
+
 	%>
 </table>
 <h1><a href="/iTrust">Back to iTrust</a></h1>
