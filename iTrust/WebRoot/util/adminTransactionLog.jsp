@@ -152,15 +152,16 @@ A few clarifications:
 	<%
         String loggedInUserRole;
         HashMap<String, Integer> chart1 = new HashMap<>();
+        //Initialize chart1
+        for (Role role : Role.values()){
+            loggedInUserRole = role.getUserRolesString();
+            chart1.put(loggedInUserRole,0);
+        }
         for (TransactionBean t : allTransactions) {
             loggedInUserRole = authDAO.getUserRole(t.getLoggedInMID()).getUserRolesString();
-            if(!chart1.containsKey(loggedInUserRole)){
-                chart1.put(loggedInUserRole,1);
-            }
-            else{
-                int val = chart1.get(loggedInUserRole)+1;
-                chart1.put(loggedInUserRole,val);
-            }
+            int val = chart1.get(loggedInUserRole)+1;
+            chart1.put(loggedInUserRole,val);
+
 	%>
 	<tr>
 		<td><%= StringEscapeUtils.escapeHtml("" + (t.getTransactionID())) %></td>
