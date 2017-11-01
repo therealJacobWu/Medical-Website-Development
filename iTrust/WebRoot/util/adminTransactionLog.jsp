@@ -162,16 +162,26 @@ A few clarifications:
 	</tr>
 	<%
         String loggedInUserRole;
+        String secondaryUserRole;
         HashMap<String, Integer> chart1 = new HashMap<>();
+        HashMap<String, Integer> chart2 = new HashMap<>();
         //Initialize chart1
         for (Role role : Role.values()){
             loggedInUserRole = role.getUserRolesString();
             chart1.put(loggedInUserRole,0);
+            chart2.put(loggedInUserRole,0);
         }
+        chart2.put("0",0);
         for (TransactionBean t : allTransactions) {
             loggedInUserRole = authDAO.getUserRole(t.getLoggedInMID()).getUserRolesString();
+            if(t.getSecondaryMID() == 0L)
+                secondaryUserRole = "0";
+            else
+                secondaryUserRole = authDAO.getUserRole(t.getSecondaryMID()).getUserRolesString();
             int val = chart1.get(loggedInUserRole)+1;
             chart1.put(loggedInUserRole,val);
+            val = chart2.get(secondaryUserRole)+1;
+            chart2.put(secondaryUserRole,val);
 
 	%>
 	<tr>
@@ -197,8 +207,20 @@ A few clarifications:
     </tr>
     <%
         }
+        set = chart2.entrySet();
+        iterator = set.iterator();
+        while(iterator.hasNext()){
+            Map.Entry mentry = (Map.Entry)iterator.next();
+    %>
+    <tr>
+        <td><%= StringEscapeUtils.escapeHtml("" + mentry.getKey()) %></td>
+        <td><%= StringEscapeUtils.escapeHtml("" + mentry.getValue()) %></td>
+    </tr>
+    <%
+        }
 
-	%>
+
+    %>
 </table>
 <h1><a href="/iTrust">Back to iTrust</a></h1>
 <h1>Transaction Code Reference</h1>
