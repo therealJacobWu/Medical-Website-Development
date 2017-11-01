@@ -6,9 +6,13 @@
 <%@ page import="edu.ncsu.csc.itrust.enums.Role" %>
 <%@ page import="edu.ncsu.csc.itrust.dao.mysql.AuthDAO" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.HashMap" %>
 <%@ page import="edu.ncsu.csc.itrust.exception.ITrustException" %>
 <%@ page import="java.text.DateFormat" %>
 <%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.util.Set" %>
+<%@ page import="java.util.Iterator" %>
+<%@ page import="java.util.Map" %>
 
 <html>
 <head>
@@ -157,7 +161,18 @@ A few clarifications:
 		<th>Extra Info</th>
 	</tr>
 	<%
-		for (TransactionBean t : allTransactions) {
+        String loggedInUserRole;
+        HashMap<String, Integer> chart1 = new HashMap<>();
+        //Initialize chart1
+        for (Role role : Role.values()){
+            loggedInUserRole = role.getUserRolesString();
+            chart1.put(loggedInUserRole,0);
+        }
+        for (TransactionBean t : allTransactions) {
+            loggedInUserRole = authDAO.getUserRole(t.getLoggedInMID()).getUserRolesString();
+            int val = chart1.get(loggedInUserRole)+1;
+            chart1.put(loggedInUserRole,val);
+
 	%>
 	<tr>
 		<td><%= StringEscapeUtils.escapeHtml("" + (t.getTransactionID())) %></td>
@@ -171,6 +186,18 @@ A few clarifications:
 	</tr>
 	<%
 	}
+        Set set = chart1.entrySet();
+        Iterator iterator = set.iterator();
+	    while(iterator.hasNext()){
+            Map.Entry mentry = (Map.Entry)iterator.next();
+    %>
+    <tr>
+        <td><%= StringEscapeUtils.escapeHtml("" + mentry.getKey()) %></td>
+        <td><%= StringEscapeUtils.escapeHtml("" + mentry.getValue()) %></td>
+    </tr>
+    <%
+        }
+
 	%>
 </table>
 <h1><a href="/iTrust">Back to iTrust</a></h1>
