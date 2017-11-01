@@ -13,12 +13,17 @@
 <%@ page import="java.util.Set" %>
 <%@ page import="java.util.Iterator" %>
 <%@ page import="java.util.Map" %>
+<%@ page import="org.json.JSONArray" %>
+<%@ page import="java.text.ParseException" %>
 
 <html>
 <head>
 <title>FOR TESTING PURPOSES ONLY</title>
 <link href="/iTrust/css/datepicker.css" type="text/css" rel="stylesheet" />
 <script src="/iTrust/js/DatePicker.js" type="text/javascript"></script>
+<script src="/iTrust/js/jquery-1.7.2.js" type="text/javascript"></script>
+<script src="/iTrust/js/highcharts.js" type="text/javascript"></script>
+<script src="/iTrust/js/highcharts-more.js" type="text/javascript"></script>
 <style>
 body, td{
 	font-family: sans-serif;
@@ -47,6 +52,7 @@ body, td{
 	} catch (Exception e ) { }
 
 	boolean showView = (request.getParameter("view") != null);
+	boolean showSummary = (request.getParameter("summarize") != null);
 
 	if ("POST".equalsIgnoreCase(request.getMethod())) {
 	    try {
@@ -64,14 +70,17 @@ body, td{
 				}
 
 				DateFormat dateParser = new SimpleDateFormat("MM/dd/yy");
-
 				// TODO check if startDate / endDate are filled out
-				if (t.getTimeLogged().before(dateParser.parse(startDate))) {
-				    continue;
-				}
+				try {
+					if (t.getTimeLogged().before(dateParser.parse(startDate))) {
+						continue;
+					}
 
-				if (t.getTimeLogged().after(dateParser.parse(endDate))) {
-					continue;
+					if (t.getTimeLogged().after(dateParser.parse(endDate))) {
+						continue;
+					}
+				} catch (ParseException e) {
+				    continue;
 				}
 
 				filteredTransactions.add(t);
@@ -196,8 +205,8 @@ A few clarifications:
 	</tr>
 	<%
 	}
-        Set set = chart1.entrySet();
-        Iterator iterator = set.iterator();
+        Set chart1Set = chart1.entrySet();
+        Iterator iterator = chart1Set.iterator();
 	    while(iterator.hasNext()){
             Map.Entry mentry = (Map.Entry)iterator.next();
     %>
@@ -218,10 +227,39 @@ A few clarifications:
     </tr>
     <%
         }
-
-
     %>
 </table>
+
+<% if (!showView && showSummary) { %>
+<div id="container">
+</div>
+
+<script type="text/javascript">
+		$('#container').highcharts({
+			chart: {
+        		type: 'bar'
+    		},
+    		title: {
+    			text: "Transaction Summary"
+    		},
+
+    		xAxis: {
+    			categories: <%= new JSONArray(chart1.keySet().toString()).toString() %>
+    		},
+    		yAxis: {
+    			title: {
+    				text: "Number of Transactions"
+    			}
+    		},
+    		series: [{
+				name: "Number of Transactions Per User Role",
+				data: <%= chart1.values().toString() %>
+			}]
+		});
+	</script>
+<% } %>
+
+
 <h1><a href="/iTrust">Back to iTrust</a></h1>
 <h1>Transaction Code Reference</h1>
 <a name="transactioncodes"></a>
