@@ -13,6 +13,9 @@
 <%@ page import="java.util.Set" %>
 <%@ page import="java.util.Iterator" %>
 <%@ page import="java.util.Map" %>
+<%@ page import="java.util.LinkedHashMap" %>
+<%@ page import="java.util.Calendar" %>
+<%@ page import="java.util.Date" %>
 
 <html>
 <head>
@@ -165,7 +168,9 @@ A few clarifications:
         String secondaryUserRole;
         HashMap<String, Integer> chart1 = new HashMap<>();
         HashMap<String, Integer> chart2 = new HashMap<>();
-        //Initialize chart1
+        LinkedHashMap<String,Integer> chart3 = new LinkedHashMap<>();
+		Calendar cal = Calendar.getInstance();
+        //Initialize chart1,chart2
         for (Role role : Role.values()){
             loggedInUserRole = role.getUserRolesString();
             chart1.put(loggedInUserRole,0);
@@ -183,6 +188,18 @@ A few clarifications:
             val = chart2.get(secondaryUserRole)+1;
             chart2.put(secondaryUserRole,val);
 
+            //for chart3:
+			cal.setTime(new Date(t.getTimeLogged().getTime()));
+			int year = cal.get(Calendar.YEAR);
+			int month = cal.get(Calendar.MONTH);
+			String timeLogged = Integer.toString(month) + "/" + Integer.toString(year);
+			if(!chart3.containsKey(timeLogged))
+			    chart3.put(timeLogged,0);
+			else{
+			    val = chart3.get(timeLogged)+1;
+			    chart3.put(timeLogged,val);
+			}
+
 	%>
 	<tr>
 		<td><%= StringEscapeUtils.escapeHtml("" + (t.getTransactionID())) %></td>
@@ -196,6 +213,7 @@ A few clarifications:
 	</tr>
 	<%
 	}
+	//print out the charts for testing:
         Set set = chart1.entrySet();
         Iterator iterator = set.iterator();
 	    while(iterator.hasNext()){
@@ -218,6 +236,17 @@ A few clarifications:
     </tr>
     <%
         }
+		set = chart3.entrySet();
+		iterator = set.iterator();
+		while(iterator.hasNext()){
+			Map.Entry mentry = (Map.Entry)iterator.next();
+	%>
+	<tr>
+		<td><%= StringEscapeUtils.escapeHtml("" + mentry.getKey()) %></td>
+		<td><%= StringEscapeUtils.escapeHtml("" + mentry.getValue()) %></td>
+	</tr>
+	<%
+		}
 
 
     %>
