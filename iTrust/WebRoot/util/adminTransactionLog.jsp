@@ -1,20 +1,15 @@
 <%@page import="edu.ncsu.csc.itrust.enums.TransactionType"%>
 <%@page import="edu.ncsu.csc.itrust.dao.DAOFactory"%>
-<%@page import="java.util.List"%>
 <%@page import="edu.ncsu.csc.itrust.beans.TransactionBean"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@ page import="edu.ncsu.csc.itrust.enums.Role" %>
 <%@ page import="edu.ncsu.csc.itrust.dao.mysql.AuthDAO" %>
-<%@ page import="java.util.ArrayList" %>
-<%@ page import="java.util.HashMap" %>
 <%@ page import="edu.ncsu.csc.itrust.exception.ITrustException" %>
 <%@ page import="java.text.DateFormat" %>
 <%@ page import="java.text.SimpleDateFormat" %>
-<%@ page import="java.util.Set" %>
-<%@ page import="java.util.Iterator" %>
-<%@ page import="java.util.Map" %>
 <%@ page import="org.json.JSONArray" %>
 <%@ page import="java.text.ParseException" %>
+<%@ page import="java.util.*" %>
 
 <html>
 <head>
@@ -60,10 +55,12 @@ body, td{
 
 	HashMap<String, Integer> chart1 = new HashMap<>();
 	HashMap<String, Integer> chart2 = new HashMap<>();
+    HashMap<String, Integer> chart3 = new HashMap<>();
+    HashMap<Integer, Integer> chart4 = new HashMap<>();
 	for (Role role : Role.values()){
 		String loggedInUserRole = role.getUserRolesString();
-		chart1.put(loggedInUserRole,0);
-		chart2.put(loggedInUserRole,0);
+		chart1.put(loggedInUserRole, 0);
+		chart2.put(loggedInUserRole, 0);
 	}
 	// Count # of 0 secondaryUserRoles as well
 	chart2.put("0", 0);
@@ -84,7 +81,6 @@ body, td{
 				}
 
 				DateFormat dateParser = new SimpleDateFormat("MM/dd/yy");
-				// TODO check if startDate / endDate are filled out
 				try {
 					if (!startDate.equals("") && t.getTimeLogged().before(dateParser.parse(startDate))) {
 						continue;
@@ -111,6 +107,26 @@ body, td{
 				val = chart2.get(secondaryUserRole) + 1;
 				chart2.put(secondaryUserRole,val);
 
+				DateFormat chart3DateKey = new SimpleDateFormat("MMM YYYY");
+				DateFormat inputDateKey = new SimpleDateFormat("yy-MM-dd");
+				Date chart3Date;
+				try {
+                    chart3Date = inputDateKey.parse(t.getTimeLogged().toString());
+                } catch (ParseException e) {
+				    continue;
+                }
+
+                String chart3Key = chart3DateKey.format(chart3Date);
+				if (!chart3.containsKey(chart3Key)) {
+				    chart3.put(chart3Key, 0);
+                }
+				chart3.put(chart3Key, chart3.get(chart3Key) + 1);
+
+                if (!chart4.containsKey(t.getTransactionType().getCode())) {
+                    chart4.put(t.getTransactionType().getCode(), 0);
+                }
+                chart4.put(t.getTransactionType().getCode(),
+                           chart4.get(t.getTransactionType().getCode()) + 1);
 			}
 
 			allTransactions = filteredTransactions;
@@ -223,6 +239,58 @@ body, td{
 			    {
 			        name: "Number of Transactions Per Secondary User Role",
 			        data: <%= chart2.values().toString() %>
+			    }
+			]
+		});
+	</script>
+
+    <script type="text/javascript">
+		$('#container2').highcharts({
+			chart: {
+        		type: 'bar'
+    		},
+    		title: {
+    			text: "Transaction Summary"
+    		},
+
+    		xAxis: {
+    			categories: <%= new JSONArray(chart3.keySet().toString()).toString() %>
+    		},
+    		yAxis: {
+    			title: {
+    				text: "Number of Transactions"
+    			}
+    		},
+    		series: [
+    		    {
+				    name: "Number of Transactions Per Date",
+				    data: <%= chart3.values().toString() %>
+			    }
+			]
+		});
+	</script>
+
+    <script type="text/javascript">
+		$('#container3').highcharts({
+			chart: {
+        		type: 'bar'
+    		},
+    		title: {
+    			text: "Transaction Summary"
+    		},
+
+    		xAxis: {
+    			categories: <%= new JSONArray(chart4.keySet().toString()).toString() %>
+    		},
+    		yAxis: {
+    			title: {
+    				text: "Number of Transactions"
+    			}
+    		},
+    		series: [
+    		    {
+				    name: "Number of Transactions Per Transaction Type",
+				    data: <%= chart4.values().toString() %>
 			    }
 			]
 		});
