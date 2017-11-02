@@ -169,6 +169,7 @@ A few clarifications:
         HashMap<String, Integer> chart1 = new HashMap<>();
         HashMap<String, Integer> chart2 = new HashMap<>();
         LinkedHashMap<String,Integer> chart3 = new LinkedHashMap<>();
+		HashMap<String, Integer> chart4 = new HashMap<>();
 		Calendar cal = Calendar.getInstance();
         //Initialize chart1,chart2
         for (Role role : Role.values()){
@@ -177,7 +178,11 @@ A few clarifications:
             chart2.put(loggedInUserRole,0);
         }
         chart2.put("0",0);
+		//Initialize chart3:
+		String transName;
+
         for (TransactionBean t : allTransactions) {
+		    //load chart1 and chart 2
             loggedInUserRole = authDAO.getUserRole(t.getLoggedInMID()).getUserRolesString();
             if(t.getSecondaryMID() == 0L)
                 secondaryUserRole = "0";
@@ -200,6 +205,14 @@ A few clarifications:
 			else{
 			    val = chart3.get(timeLogged)+1;
 			    chart3.put(timeLogged,val);
+			}
+			//load chart 4:
+			transName = t.getTransactionType().name();
+			if(!chart4.containsKey(transName))
+			    chart4.put(transName,1);
+			else{
+				val = chart4.get(transName)+1;
+				chart4.put(transName,val);
 			}
 
 	%>
@@ -239,6 +252,17 @@ A few clarifications:
     <%
         }
 		set = chart3.entrySet();
+		iterator = set.iterator();
+		while(iterator.hasNext()){
+			Map.Entry mentry = (Map.Entry)iterator.next();
+	%>
+	<tr>
+		<td><%= StringEscapeUtils.escapeHtml("" + mentry.getKey()) %></td>
+		<td><%= StringEscapeUtils.escapeHtml("" + mentry.getValue()) %></td>
+	</tr>
+	<%
+		}
+		set = chart4.entrySet();
 		iterator = set.iterator();
 		while(iterator.hasNext()){
 			Map.Entry mentry = (Map.Entry)iterator.next();
