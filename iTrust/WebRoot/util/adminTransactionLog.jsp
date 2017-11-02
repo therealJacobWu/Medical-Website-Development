@@ -76,7 +76,7 @@ body, td{
 					continue;
 				}
 
-				if (t.getTransactionType().getCode() != transactionType) {
+				if (transactionType != -1 && t.getTransactionType().getCode() != transactionType) {
 					continue;
 				}
 
@@ -186,6 +186,7 @@ body, td{
 
 	<label>Transaction Type</label><br/>
 	<select name="transactionType">
+        <option value="-1">-1 (N/A)</option>
 		<%
 			String selected3;
 			for (TransactionType transType: TransactionType.values()) {
@@ -317,7 +318,7 @@ body, td{
 		<%
 			for (TransactionBean t : allTransactions) {
 		%>
-		<tr>
+		<tr class="transaction_row">
 			<td><%= StringEscapeUtils.escapeHtml("" + (t.getTransactionID())) %></td>
 			<td><%= StringEscapeUtils.escapeHtml("" + (t.getTimeLogged())) %></td>
 			<td><%= StringEscapeUtils.escapeHtml("" + (t.getTransactionType().name())) %></td>
