@@ -189,12 +189,14 @@ A few clarifications:
             chart2.put(secondaryUserRole,val);
 
             //for chart3:
+			//since the timelog in the databse is already sorted, i did not use any sorting algorithm here.
+			//one thing to notice, former elements are more recent dates, the same as timelog in database.
 			cal.setTime(new Date(t.getTimeLogged().getTime()));
 			int year = cal.get(Calendar.YEAR);
 			int month = cal.get(Calendar.MONTH);
 			String timeLogged = Integer.toString(month) + "/" + Integer.toString(year);
 			if(!chart3.containsKey(timeLogged))
-			    chart3.put(timeLogged,0);
+			    chart3.put(timeLogged,1);
 			else{
 			    val = chart3.get(timeLogged)+1;
 			    chart3.put(timeLogged,val);
