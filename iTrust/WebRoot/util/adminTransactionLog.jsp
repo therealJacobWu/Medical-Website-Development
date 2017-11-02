@@ -193,7 +193,7 @@ A few clarifications:
 			//one thing to notice, former elements are more recent dates, the same as timelog in database.
 			cal.setTime(new Date(t.getTimeLogged().getTime()));
 			int year = cal.get(Calendar.YEAR);
-			int month = cal.get(Calendar.MONTH);
+			int month = cal.get(Calendar.MONTH) + 1;
 			String timeLogged = Integer.toString(month) + "/" + Integer.toString(year);
 			if(!chart3.containsKey(timeLogged))
 			    chart3.put(timeLogged,1);
