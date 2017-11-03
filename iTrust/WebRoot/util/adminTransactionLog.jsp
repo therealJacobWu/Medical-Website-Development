@@ -29,10 +29,12 @@ body, td{
 </head>
 <body>
 
-<%
+<%! public static final long NO_SECONDARY_MID = 0L;
+%><%
 	String loggedInUserField = request.getParameter("loggedInUserField");
 	String secondaryUserField = request.getParameter("secondaryUserField");
 
+	// Default date is empty string, not null
     String startDate = request.getParameter("startDate");
     if (startDate == null) {
         startDate = "";
@@ -58,6 +60,7 @@ body, td{
 	HashMap<String, Integer> chart2 = new HashMap<>();
     LinkedHashMap<String, Integer> chart3 = new LinkedHashMap<>();
     HashMap<Integer, Integer> chart4 = new HashMap<>();
+    // Initialize dictionary
 	for (Role role : Role.values()){
 		String loggedInUserRole = role.getUserRolesString();
 		chart1.put(loggedInUserRole, 0);
@@ -69,11 +72,13 @@ body, td{
 	if ("POST".equalsIgnoreCase(request.getMethod())) {
 	    try {
 			for (TransactionBean t : allTransactions) {
-				if (!loggedInUserField.equals("") && t.getLoggedInMID() != 0 && !authDAO.getUserRole(t.getLoggedInMID()).getUserRolesString().equals(loggedInUserField)) {
+				if (!loggedInUserField.equals("") && t.getLoggedInMID() != 0 &&
+					!authDAO.getUserRole(t.getLoggedInMID()).getUserRolesString().equals(loggedInUserField)) {
 					continue;
 				}
 
-				if (!secondaryUserField.equals("") && t.getSecondaryMID() != 0 && !authDAO.getUserRole(t.getSecondaryMID()).getUserRolesString().equals(secondaryUserField)) {
+				if (!secondaryUserField.equals("") && t.getSecondaryMID() != 0 &&
+					!authDAO.getUserRole(t.getSecondaryMID()).getUserRolesString().equals(secondaryUserField)) {
 					continue;
 				}
 
@@ -81,6 +86,7 @@ body, td{
 					continue;
 				}
 
+				// SimpleDatePicker returns date in this format
 				DateFormat dateParser = new SimpleDateFormat("MM/dd/yy");
 				try {
 					if (!startDate.equals("") && t.getTimeLogged().before(dateParser.parse(startDate))) {
@@ -95,18 +101,14 @@ body, td{
 				}
 				filteredTransactions.add(t);
 
-				// Count stats for the transaction for
+				// Count stats for the transaction t for the four charts
 				String loggedInUserRole = authDAO.getUserRole(t.getLoggedInMID()).getUserRolesString();
 				String secondaryUserRole;
-				if(t.getSecondaryMID() == 0L) {
-					secondaryUserRole = "0";
-				} else {
-					secondaryUserRole = authDAO.getUserRole(t.getSecondaryMID()).getUserRolesString();
-				}
-				int val = chart1.get(loggedInUserRole) + 1;
-				chart1.put(loggedInUserRole,val);
-				val = chart2.get(secondaryUserRole) + 1;
-				chart2.put(secondaryUserRole,val);
+				secondaryUserRole = (t.getSecondaryMID() == NO_SECONDARY_MID)
+					? "0" : authDAO.getUserRole(t.getSecondaryMID()).getUserRolesString();
+
+				chart1.put(loggedInUserRole, chart1.get(loggedInUserRole) + 1);
+				chart2.put(secondaryUserRole, chart2.get(secondaryUserRole) + 1);
 
 				DateFormat chart3DateKey = new SimpleDateFormat("MMM YYYY");
 				DateFormat inputDateKey = new SimpleDateFormat("yy-MM-dd");
@@ -132,7 +134,6 @@ body, td{
 
 			allTransactions = filteredTransactions;
 		} catch (ITrustException | NullPointerException | NumberFormatException e) {
-
 		}
 	}
 %>
@@ -148,14 +149,12 @@ body, td{
         <% } %>
 
         <%
-            String selected = "";
+            String selected;
             for (Role eth : Role.values()) {
                 selected = (eth.getUserRolesString().equals(loggedInUserField)) ? "selected=selected" : "";
         %>
         <option value="<%= eth.getUserRolesString()%>" <%= StringEscapeUtils.escapeHtml("" + (selected)) %>><%= StringEscapeUtils.escapeHtml("" + (eth.getUserRolesString())) %></option>
-        <%
-            }
-        %>
+        <% } %>
     </select><br/>
 
 
@@ -187,7 +186,7 @@ body, td{
 
 	<label>Transaction Type</label><br/>
 	<select name="transactionType">
-        <option value="-1">-1 (N/A)</option>
+        <option value="-1">N/A</option>
 		<%
 			String selected3;
 			for (TransactionType transType: TransactionType.values()) {
@@ -218,20 +217,11 @@ body, td{
 
 	<script type="text/javascript">
 		$('#container1').highcharts({
-			chart: {
-        		type: 'bar'
-    		},
-    		title: {
-    			text: "Transaction Summary"
-    		},
-
-    		xAxis: {
-    			categories: <%= new JSONArray(chart1.keySet().toString()).toString() %>
-    		},
+			chart: { type: 'bar' },
+    		title: { text: "Transaction Summary" },
+    		xAxis: { categories: <%= new JSONArray(chart1.keySet().toString()).toString() %> },
     		yAxis: {
-    			title: {
-    				text: "Number of Transactions"
-    			}
+    			title: { text: "Number of Transactions" }
     		},
     		series: [
     		    {
@@ -248,20 +238,11 @@ body, td{
 
     <script type="text/javascript">
 		$('#container2').highcharts({
-			chart: {
-        		type: 'bar'
-    		},
-    		title: {
-    			text: "Transaction Summary"
-    		},
-
-    		xAxis: {
-    			categories: <%= new JSONArray(chart3.keySet().toString()).toString() %>
-    		},
+			chart: { type: 'bar' },
+    		title: { text: "Transaction Summary" },
+    		xAxis: { categories: <%= new JSONArray(chart3.keySet().toString()).toString() %> },
     		yAxis: {
-    			title: {
-    				text: "Number of Transactions"
-    			}
+    			title: { text: "Number of Transactions" }
     		},
     		series: [
     		    {
@@ -274,20 +255,11 @@ body, td{
 
     <script type="text/javascript">
 		$('#container3').highcharts({
-			chart: {
-        		type: 'bar'
-    		},
-    		title: {
-    			text: "Transaction Summary"
-    		},
-
-    		xAxis: {
-    			categories: <%= new JSONArray(chart4.keySet().toString()).toString() %>
-    		},
+			chart: { type: 'bar' },
+    		title: { text: "Transaction Summary" },
+    		xAxis: { categories: <%= new JSONArray(chart4.keySet().toString()).toString() %> },
     		yAxis: {
-    			title: {
-    				text: "Number of Transactions"
-    			}
+    			title: { text: "Number of Transactions" }
     		},
     		series: [
     		    {
