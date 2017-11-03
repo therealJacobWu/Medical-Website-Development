@@ -7,7 +7,13 @@
 <%
 			if( ! "true".equals(System.getProperty("itrust.production") ) ) { 
 %>
+				<%
+				   if(session.getAttribute("userRole") != null && session.getAttribute("userRole").equals("admin")) {
+				%>
+				  <a class="iTrustTestNavlink" href="/iTrust/util/adminTransactionLog.jsp">Admin Transaction Log</a>
+				<% } else { %>
 				  <a class="iTrustTestNavlink" href="/iTrust/util/transactionLog.jsp">Transaction Log</a>
+				<% } %>
 				| <a class="iTrustTestNavlink" href="/iTrust/util/displayDatabase.jsp">Display Database</a>
 				| <a class="iTrustTestNavlink" href="/iTrust/util/blackbox/blackbox.jsp">Black Box Test Plan</a>
 				| <a class="iTrustTestNavlink" href="/iTrust/util/showFakeEmails.jsp">Show Fake Emails</a>
