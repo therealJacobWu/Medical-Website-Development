@@ -1,27 +1,25 @@
 <%@page import="edu.ncsu.csc.itrust.enums.TransactionType"%>
 <%@page import="edu.ncsu.csc.itrust.dao.DAOFactory"%>
-<%@page import="java.util.List"%>
 <%@page import="edu.ncsu.csc.itrust.beans.TransactionBean"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@ page import="edu.ncsu.csc.itrust.enums.Role" %>
 <%@ page import="edu.ncsu.csc.itrust.dao.mysql.AuthDAO" %>
-<%@ page import="java.util.ArrayList" %>
-<%@ page import="java.util.HashMap" %>
 <%@ page import="edu.ncsu.csc.itrust.exception.ITrustException" %>
 <%@ page import="java.text.DateFormat" %>
 <%@ page import="java.text.SimpleDateFormat" %>
-<%@ page import="java.util.Set" %>
-<%@ page import="java.util.Iterator" %>
-<%@ page import="java.util.Map" %>
-<%@ page import="java.util.LinkedHashMap" %>
-<%@ page import="java.util.Calendar" %>
-<%@ page import="java.util.Date" %>
+<%@ page import="org.json.JSONArray" %>
+<%@ page import="java.text.ParseException" %>
+<%@ page import="java.util.*" %>
+
 
 <html>
 <head>
 <title>FOR TESTING PURPOSES ONLY</title>
 <link href="/iTrust/css/datepicker.css" type="text/css" rel="stylesheet" />
 <script src="/iTrust/js/DatePicker.js" type="text/javascript"></script>
+<script src="/iTrust/js/jquery-1.7.2.js" type="text/javascript"></script>
+<script src="/iTrust/js/highcharts.js" type="text/javascript"></script>
+<script src="/iTrust/js/highcharts-more.js" type="text/javascript"></script>
 <style>
 body, td{
 	font-family: sans-serif;
@@ -36,11 +34,15 @@ body, td{
 	String secondaryUserField = request.getParameter("secondaryUserField");
 
     String startDate = request.getParameter("startDate");
+    if (startDate == null) {
+        startDate = "";
+    }
 	String endDate = request.getParameter("endDate");
+    if (endDate == null) {
+        endDate = "";
+    }
 
-	// TODO set to default if doesn't exist
-
-	List<TransactionBean> allTransactions = DAOFactory.getProductionInstance().getTransactionDAO().getAllTransactions();
+    List<TransactionBean> allTransactions = DAOFactory.getProductionInstance().getTransactionDAO().getAllTransactions();
 	AuthDAO authDAO = DAOFactory.getProductionInstance().getAuthDAO();
 	List<TransactionBean> filteredTransactions = new ArrayList<TransactionBean>();
 
@@ -50,15 +52,28 @@ body, td{
 	} catch (Exception e ) { }
 
 	boolean showView = (request.getParameter("view") != null);
+	boolean showSummary = (request.getParameter("summarize") != null);
+
+	HashMap<String, Integer> chart1 = new HashMap<>();
+	HashMap<String, Integer> chart2 = new HashMap<>();
+    LinkedHashMap<String, Integer> chart3 = new LinkedHashMap<>();
+    HashMap<Integer, Integer> chart4 = new HashMap<>();
+	for (Role role : Role.values()){
+		String loggedInUserRole = role.getUserRolesString();
+		chart1.put(loggedInUserRole, 0);
+		chart2.put(loggedInUserRole, 0);
+	}
+	// Count # of 0 secondaryUserRoles as well
+	chart2.put("0", 0);
 
 	if ("POST".equalsIgnoreCase(request.getMethod())) {
 	    try {
 			for (TransactionBean t : allTransactions) {
-				if (t.getLoggedInMID() != 0 && !authDAO.getUserRole(t.getLoggedInMID()).getUserRolesString().equals(loggedInUserField)) {
+				if (!loggedInUserField.equals("") && t.getLoggedInMID() != 0 && !authDAO.getUserRole(t.getLoggedInMID()).getUserRolesString().equals(loggedInUserField)) {
 					continue;
 				}
 
-				if (t.getSecondaryMID() != 0 && !authDAO.getUserRole(t.getSecondaryMID()).getUserRolesString().equals(secondaryUserField)) {
+				if (!secondaryUserField.equals("") && t.getSecondaryMID() != 0 && !authDAO.getUserRole(t.getSecondaryMID()).getUserRolesString().equals(secondaryUserField)) {
 					continue;
 				}
 
@@ -67,17 +82,52 @@ body, td{
 				}
 
 				DateFormat dateParser = new SimpleDateFormat("MM/dd/yy");
+				try {
+					if (!startDate.equals("") && t.getTimeLogged().before(dateParser.parse(startDate))) {
+						continue;
+					}
 
-				// TODO check if startDate / endDate are filled out
-				if (t.getTimeLogged().before(dateParser.parse(startDate))) {
+					if (!endDate.equals("") && t.getTimeLogged().after(dateParser.parse(endDate))) {
+						continue;
+					}
+				} catch (ParseException e) {
 				    continue;
 				}
-
-				if (t.getTimeLogged().after(dateParser.parse(endDate))) {
-					continue;
-				}
-
 				filteredTransactions.add(t);
+
+				// Count stats for the transaction for
+				String loggedInUserRole = authDAO.getUserRole(t.getLoggedInMID()).getUserRolesString();
+				String secondaryUserRole;
+				if(t.getSecondaryMID() == 0L) {
+					secondaryUserRole = "0";
+				} else {
+					secondaryUserRole = authDAO.getUserRole(t.getSecondaryMID()).getUserRolesString();
+				}
+				int val = chart1.get(loggedInUserRole) + 1;
+				chart1.put(loggedInUserRole,val);
+				val = chart2.get(secondaryUserRole) + 1;
+				chart2.put(secondaryUserRole,val);
+
+				DateFormat chart3DateKey = new SimpleDateFormat("MMM YYYY");
+				DateFormat inputDateKey = new SimpleDateFormat("yy-MM-dd");
+				Date chart3Date;
+				try {
+                    chart3Date = inputDateKey.parse(t.getTimeLogged().toString());
+                } catch (ParseException e) {
+				    continue;
+                }
+
+                String chart3Key = chart3DateKey.format(chart3Date);
+				if (!chart3.containsKey(chart3Key)) {
+				    chart3.put(chart3Key, 0);
+                }
+				chart3.put(chart3Key, chart3.get(chart3Key) + 1);
+
+                if (!chart4.containsKey(t.getTransactionType().getCode())) {
+                    chart4.put(t.getTransactionType().getCode(), 0);
+                }
+                chart4.put(t.getTransactionType().getCode(),
+                           chart4.get(t.getTransactionType().getCode()) + 1);
 			}
 
 			allTransactions = filteredTransactions;
@@ -91,6 +141,12 @@ body, td{
 	<h1>Filter Transactions:</h1>
 	<label>Logged-In User Field</label><br/>
 	<select name="loggedInUserField">
+        <% if (loggedInUserField != null && loggedInUserField.equals("")) { %>
+            <option value="" selected="selected">N/A</option>
+        <% } else { %>
+            <option value="">N/A</option>
+        <% } %>
+
         <%
             String selected = "";
             for (Role eth : Role.values()) {
@@ -105,8 +161,14 @@ body, td{
 
 	<label>Secondary User Field</label><br/>
 	<select name="secondaryUserField">
+        <% if (secondaryUserField != null && secondaryUserField.equals("")) { %>
+            <option value="" selected="selected">N/A</option>
+        <% } else { %>
+            <option value="">N/A</option>
+        <% } %>
+
         <%
-            String selected2 = "";
+            String selected2;
             for (Role eth : Role.values()) {
 				selected2 = (eth.getUserRolesString().equals(secondaryUserField)) ? "selected=selected" : "";
         %>
@@ -126,7 +188,7 @@ body, td{
 	<label>Transaction Type</label><br/>
 	<select name="transactionType">
 		<%
-			String selected3 = "";
+			String selected3;
 			for (TransactionType transType: TransactionType.values()) {
 				selected3 = (transType.getCode() == transactionType) ? "selected=selected" : "";
 		%>
@@ -142,140 +204,133 @@ body, td{
 	<input type="submit" name="summarize" value="Summarize"><br/>
 </form>
 
-<h1>Test Utilities</h1>
-A few clarifications:
-<ul>
-	<li>The <b>Type</b> is the name of the Java enum (from <code>edu.ncsu.csc.itrust.enums.TransactionType</code>)</li>
-	<li>The <b>Code</b> is the actual key that gets stored in the database, defined in the Transaction Type enum. Here's the <a href="#transactioncodes">table of transaction codes</a></a></li>
-	<li>The <b>Description</b> is plain-English description of that logging type
-</ul>
+<% if (!showView && showSummary) { %>
+    <h1>Graph Summaries</h1>
+	<div id="container1">
+	</div>
 
-<!-- only show if showView is true -->
+    <div id="container2">
+    </div>
 
-<table border=1>
-	<tr>
-		<th>ID></th>
-		<th>Time Logged</th>
-		<th>Type</th>
-		<th>Code</th>
-		<th>Description</th>
-		<th>Logged in User MID</th>
-		<th>Secondary MID</th>
-		<th>Extra Info</th>
-	</tr>
-	<%
-        String loggedInUserRole;
-        String secondaryUserRole;
-        HashMap<String, Integer> chart1 = new HashMap<>();
-        HashMap<String, Integer> chart2 = new HashMap<>();
-        LinkedHashMap<String,Integer> chart3 = new LinkedHashMap<>();
-		HashMap<String, Integer> chart4 = new HashMap<>();
-		Calendar cal = Calendar.getInstance();
-        //Initialize chart1,chart2
-        for (Role role : Role.values()){
-            loggedInUserRole = role.getUserRolesString();
-            chart1.put(loggedInUserRole,0);
-            chart2.put(loggedInUserRole,0);
-        }
-        chart2.put("0",0);
-		//Initialize chart3:
-		String transName;
+    <div id="container3">
+    </div>
 
-        for (TransactionBean t : allTransactions) {
-		    //load chart1 and chart 2
-            loggedInUserRole = authDAO.getUserRole(t.getLoggedInMID()).getUserRolesString();
-            if(t.getSecondaryMID() == 0L)
-                secondaryUserRole = "0";
-            else
-                secondaryUserRole = authDAO.getUserRole(t.getSecondaryMID()).getUserRolesString();
-            int val = chart1.get(loggedInUserRole)+1;
-            chart1.put(loggedInUserRole,val);
-            val = chart2.get(secondaryUserRole)+1;
-            chart2.put(secondaryUserRole,val);
+	<script type="text/javascript">
+		$('#container1').highcharts({
+			chart: {
+        		type: 'bar'
+    		},
+    		title: {
+    			text: "Transaction Summary"
+    		},
 
-            //for chart3:
-			//since the timelog in the databse is already sorted, i did not use any sorting algorithm here.
-			//one thing to notice, former elements are more recent dates, the same as timelog in database.
-			cal.setTime(new Date(t.getTimeLogged().getTime()));
-			int year = cal.get(Calendar.YEAR);
-			int month = cal.get(Calendar.MONTH) + 1;
-			String timeLogged = Integer.toString(month) + "/" + Integer.toString(year);
-			if(!chart3.containsKey(timeLogged))
-			    chart3.put(timeLogged,1);
-			else{
-			    val = chart3.get(timeLogged)+1;
-			    chart3.put(timeLogged,val);
-			}
-			//load chart 4:
-			transName = t.getTransactionType().name();
-			if(!chart4.containsKey(transName))
-			    chart4.put(transName,1);
-			else{
-				val = chart4.get(transName)+1;
-				chart4.put(transName,val);
-			}
+    		xAxis: {
+    			categories: <%= new JSONArray(chart1.keySet().toString()).toString() %>
+    		},
+    		yAxis: {
+    			title: {
+    				text: "Number of Transactions"
+    			}
+    		},
+    		series: [
+    		    {
+				    name: "Number of Transactions Per Logged In User Role",
+				    data: <%= chart1.values().toString() %>
+			    },
+			    {
+			        name: "Number of Transactions Per Secondary User Role",
+			        data: <%= chart2.values().toString() %>
+			    }
+			]
+		});
+	</script>
 
-	%>
-	<tr>
-		<td><%= StringEscapeUtils.escapeHtml("" + (t.getTransactionID())) %></td>
-		<td><%= StringEscapeUtils.escapeHtml("" + (t.getTimeLogged())) %></td>
-		<td><%= StringEscapeUtils.escapeHtml("" + (t.getTransactionType().name())) %></td>
-		<td><%= StringEscapeUtils.escapeHtml("" + (t.getTransactionType().getCode())) %></td>
-		<td><%= StringEscapeUtils.escapeHtml("" + (t.getTransactionType().getDescription())) %></td>
-		<td><%= StringEscapeUtils.escapeHtml("" + (t.getLoggedInMID())) %></td>
-		<td><%= StringEscapeUtils.escapeHtml("" + (t.getSecondaryMID())) %></td>
-		<td><%= StringEscapeUtils.escapeHtml("" + (t.getAddedInfo())) %></td>
-	</tr>
-	<%
-	}
-	//print out the charts for testing:
-        Set set = chart1.entrySet();
-        Iterator iterator = set.iterator();
-	    while(iterator.hasNext()){
-            Map.Entry mentry = (Map.Entry)iterator.next();
-    %>
-    <tr>
-        <td><%= StringEscapeUtils.escapeHtml("" + mentry.getKey()) %></td>
-        <td><%= StringEscapeUtils.escapeHtml("" + mentry.getValue()) %></td>
-    </tr>
-    <%
-        }
-        set = chart2.entrySet();
-        iterator = set.iterator();
-        while(iterator.hasNext()){
-            Map.Entry mentry = (Map.Entry)iterator.next();
-    %>
-    <tr>
-        <td><%= StringEscapeUtils.escapeHtml("" + mentry.getKey()) %></td>
-        <td><%= StringEscapeUtils.escapeHtml("" + mentry.getValue()) %></td>
-    </tr>
-    <%
-        }
-		set = chart3.entrySet();
-		iterator = set.iterator();
-		while(iterator.hasNext()){
-			Map.Entry mentry = (Map.Entry)iterator.next();
-	%>
-	<tr>
-		<td><%= StringEscapeUtils.escapeHtml("" + mentry.getKey()) %></td>
-		<td><%= StringEscapeUtils.escapeHtml("" + mentry.getValue()) %></td>
-	</tr>
-	<%
-		}
-		set = chart4.entrySet();
-		iterator = set.iterator();
-		while(iterator.hasNext()){
-			Map.Entry mentry = (Map.Entry)iterator.next();
-	%>
-	<tr>
-		<td><%= StringEscapeUtils.escapeHtml("" + mentry.getKey()) %></td>
-		<td><%= StringEscapeUtils.escapeHtml("" + mentry.getValue()) %></td>
-	</tr>
-	<%
-		}
+    <script type="text/javascript">
+		$('#container2').highcharts({
+			chart: {
+        		type: 'bar'
+    		},
+    		title: {
+    			text: "Transaction Summary"
+    		},
 
+    		xAxis: {
+    			categories: <%= new JSONArray(chart3.keySet().toString()).toString() %>
+    		},
+    		yAxis: {
+    			title: {
+    				text: "Number of Transactions"
+    			}
+    		},
+    		series: [
+    		    {
+				    name: "Number of Transactions Per Date",
+				    data: <%= chart3.values().toString() %>
+			    }
+			]
+		});
+	</script>
 
-    %>
+    <script type="text/javascript">
+		$('#container3').highcharts({
+			chart: {
+        		type: 'bar'
+    		},
+    		title: {
+    			text: "Transaction Summary"
+    		},
+
+    		xAxis: {
+    			categories: <%= new JSONArray(chart4.keySet().toString()).toString() %>
+    		},
+    		yAxis: {
+    			title: {
+    				text: "Number of Transactions"
+    			}
+    		},
+    		series: [
+    		    {
+				    name: "Number of Transactions Per Transaction Type",
+				    data: <%= chart4.values().toString() %>
+			    }
+			]
+		});
+	</script>
+<% } else { %>
+    <h1>Test Utilities</h1>
+    A few clarifications:
+    <ul>
+        <li>The <b>Type</b> is the name of the Java enum (from <code>edu.ncsu.csc.itrust.enums.TransactionType</code>)</li>
+        <li>The <b>Code</b> is the actual key that gets stored in the database, defined in the Transaction Type enum. Here's the <a href="#transactioncodes">table of transaction codes</a></a></li>
+        <li>The <b>Description</b> is plain-English description of that logging type
+    </ul>
+	<table border=1>
+		<tr>
+			<th>ID></th>
+			<th>Time Logged</th>
+			<th>Type</th>
+			<th>Code</th>
+			<th>Description</th>
+			<th>Logged in User MID</th>
+			<th>Secondary MID</th>
+			<th>Extra Info</th>
+		</tr>
+		<%
+			for (TransactionBean t : allTransactions) {
+		%>
+		<tr>
+			<td><%= StringEscapeUtils.escapeHtml("" + (t.getTransactionID())) %></td>
+			<td><%= StringEscapeUtils.escapeHtml("" + (t.getTimeLogged())) %></td>
+			<td><%= StringEscapeUtils.escapeHtml("" + (t.getTransactionType().name())) %></td>
+			<td><%= StringEscapeUtils.escapeHtml("" + (t.getTransactionType().getCode())) %></td>
+			<td><%= StringEscapeUtils.escapeHtml("" + (t.getTransactionType().getDescription())) %></td>
+			<td><%= StringEscapeUtils.escapeHtml("" + (t.getLoggedInMID())) %></td>
+			<td><%= StringEscapeUtils.escapeHtml("" + (t.getSecondaryMID())) %></td>
+			<td><%= StringEscapeUtils.escapeHtml("" + (t.getAddedInfo())) %></td>
+		</tr>
+        <% } %>
+	</table>
+<% } %>
 </table>
 <h1><a href="/iTrust">Back to iTrust</a></h1>
 <h1>Transaction Code Reference</h1>
