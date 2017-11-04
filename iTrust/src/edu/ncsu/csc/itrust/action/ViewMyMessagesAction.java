@@ -242,6 +242,10 @@ public class ViewMyMessagesAction {
 	 * @throws ITrustException
 	 */
 	public String getName(long mid) throws ITrustException {
+		if (mid == MessageDAO.SYSTEMREMINDERID) {
+			return "System";
+		}
+
 		if(mid < 7000000000L)
 			return patientDAO.getName(mid);
 		else

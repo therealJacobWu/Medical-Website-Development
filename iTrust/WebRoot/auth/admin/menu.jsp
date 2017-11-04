@@ -37,6 +37,8 @@
 	</div>
 	<div class="panel-body" id="other-menu">
 		<ul class="nav nav-sidebar">
+			<li><a href="/iTrust/auth/staff/sendReminderMessages.jsp">Send Appointment Reminders</a></li>
+			<li><a href="/iTrust/auth/staff/viewReminderMessages.jsp">View Reminder Messages</a></li>
 			<li><a href="/iTrust/auth/staff/linkToResources.jsp">Edit Diagnoses URLs</a></li>
 			<li><a href="/iTrust/auth/admin/uploadCDCMetrics.jsp">Upload CDC Percentile Metrics</a></li>
 			<li><a href="/iTrust/auth/admin/manageWards.jsp">Manage Wards</a></li>

@@ -23,7 +23,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-
 /**
  * Created by thechaseduncan on 11/2/17.
  */
