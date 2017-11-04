@@ -557,6 +557,14 @@ public class TestDataGenerator {
 		new DBBuilder(factory).executeSQLFile(DIR + "/patient22.sql");
 	}
 
+	public void patient1000s() throws FileNotFoundException, SQLException, IOException {
+		new DBBuilder(factory).executeSQLFile(DIR + "/patient1001.sql");
+		new DBBuilder(factory).executeSQLFile(DIR + "/patient1002.sql");
+		new DBBuilder(factory).executeSQLFile(DIR + "/patient1003.sql");
+		new DBBuilder(factory).executeSQLFile(DIR + "/patient1004.sql");
+		new DBBuilder(factory).executeSQLFile(DIR + "/patient1005.sql");
+	}
+
 	/**
 	 * Adds patient Dare Devil for testing purposes.
 	 * 

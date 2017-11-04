@@ -20,11 +20,14 @@ import edu.ncsu.csc.itrust.beans.loaders.PersonnelLoader;
 import edu.ncsu.csc.itrust.beans.loaders.PrescriptionBeanLoader;
 import edu.ncsu.csc.itrust.beans.loaders.ProcedureBeanLoader;
 import edu.ncsu.csc.itrust.dao.DAOFactory;
+import edu.ncsu.csc.itrust.enums.Gender;
 import edu.ncsu.csc.itrust.exception.DBException;
 import edu.ncsu.csc.itrust.exception.ITrustException;
 import edu.ncsu.csc.itrust.DateUtil;
 
 import javax.annotation.Nullable;
+import static edu.ncsu.csc.itrust.enums.Gender.Female;
+import static edu.ncsu.csc.itrust.enums.Gender.Male;
 
 /**
  * Used for managing all static information related to a patient. For other information related to all aspects
@@ -487,6 +490,76 @@ public class PatientDAO {
 		} finally {
 			DBUtil.closeConnection(conn, ps);
 		}
+	}
+
+	public List<String> getCauseOfDeath(Gender gender, Long hcpid, String start, String end) throws DBException{
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = factory.getConnection();
+			if (gender == Male || gender == Female) {
+				ps = conn.prepareStatement(
+						"SELECT Description, COUNT(CauseOfDeath) " +
+						"FROM Patients, Declaredhcp, Icdcodes " +
+						"WHERE CauseOfDeath IS NOT NULL AND CauseOfDeath <> '' AND Code = CauseOfDeath AND Gender = ? " +
+								"AND Patients.Mid = Declaredhcp.Patientid AND Declaredhcp.Hcpid = ?  " +
+								"AND DateOfDeath > ? AND DateOfDeath < ?" +
+						"GROUP BY CauseOfDeath, Description " +
+						"ORDER BY COUNT(CauseOfDeath) DESC, Description ASC " +
+						"LIMIT 2");
+				ps.setString(1, gender.toString());
+				ps.setLong(2, hcpid);
+				ps.setString(3, start);
+				ps.setString(4, end);
+				ResultSet rs = ps.executeQuery();
+				List<String> loadlist = loadCauseOfDeathList(rs);
+				rs.close();
+				ps.close();
+				return loadlist;
+			}
+		} catch (SQLException e) {
+			throw new DBException(e);
+		} finally {
+			DBUtil.closeConnection(conn, ps);
+		}
+		return new ArrayList<>();
+	}
+
+	public List<String> getCauseOfDeath(Long hcpid, String start, String end) throws DBException{
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = factory.getConnection();
+			ps = conn.prepareStatement(
+							"SELECT Description, COUNT(CauseOfDeath) " +
+								"FROM Patients, Declaredhcp, Icdcodes " +
+								"WHERE CauseOfDeath IS NOT NULL AND CauseOfDeath <> '' AND Code = CauseOfDeath " +
+									"AND Patients.Mid = Declaredhcp.Patientid AND Declaredhcp.Hcpid = ?  " +
+									"AND DateOfDeath > ? AND DateOfDeath < ? " +
+								"GROUP BY CauseOfDeath, Description " +
+								"ORDER BY COUNT(CauseOfDeath) DESC, Description ASC " +
+								"LIMIT 2");
+			ps.setLong(1, hcpid);
+			ps.setString(2, start);
+			ps.setString(3, end);
+			ResultSet rs = ps.executeQuery();
+			List<String> loadlist = loadCauseOfDeathList(rs);
+			rs.close();
+			ps.close();
+			return loadlist;
+		} catch (SQLException e) {
+			throw new DBException(e);
+		} finally {
+			DBUtil.closeConnection(conn, ps);
+		}
+	}
+
+	private List<String> loadCauseOfDeathList(ResultSet rs) throws SQLException{
+		List<String> result = new ArrayList<>();
+		while (rs.next()) {
+			result.add(rs.getString("Description"));
+		}
+		return result;
 	}
 	
 	/**
