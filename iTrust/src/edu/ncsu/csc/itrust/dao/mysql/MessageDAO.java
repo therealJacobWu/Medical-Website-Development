@@ -29,7 +29,7 @@ import java.util.List;
 public class MessageDAO {
 	private DAOFactory factory;
 	private MessageBeanLoader mbLoader;
-    public static final long SYSTEMREMINDERID = Long.MAX_VALUE;
+    public static final long SYSTEMREMINDERID = 9000000009L;
 
 	/**
 	 * The typical constructor.
