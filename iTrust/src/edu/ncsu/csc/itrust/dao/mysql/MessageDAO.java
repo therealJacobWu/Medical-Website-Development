@@ -1,15 +1,16 @@
 package edu.ncsu.csc.itrust.dao.mysql;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
 import edu.ncsu.csc.itrust.DBUtil;
 import edu.ncsu.csc.itrust.beans.MessageBean;
 import edu.ncsu.csc.itrust.beans.loaders.MessageBeanLoader;
 import edu.ncsu.csc.itrust.dao.DAOFactory;
 import edu.ncsu.csc.itrust.exception.DBException;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Used for the logging mechanism.
@@ -28,6 +29,7 @@ import edu.ncsu.csc.itrust.exception.DBException;
 public class MessageDAO {
 	private DAOFactory factory;
 	private MessageBeanLoader mbLoader;
+    private final long SYSTEMREMINDERID = Long.MAX_VALUE;
 
 	/**
 	 * The typical constructor.
@@ -38,6 +40,16 @@ public class MessageDAO {
 		this.mbLoader = new MessageBeanLoader();
 	}
 
+ 	/**
+	 * Gets all the messages sent by System.
+	 * @return A java.util.List of MessageBeans.
+	 * @throws SQLException
+	 * @throws DBException
+	 */
+	public List<MessageBean> getAllReminderMessages() throws SQLException, DBException {
+        return getMessagesFrom(SYSTEMREMINDERID);
+    }
+
 	/**
 	 * Gets all the messages for a certain user MID.
 	 * @param mid The MID of the user to be looked up.
@@ -45,7 +57,6 @@ public class MessageDAO {
 	 * @throws SQLException
 	 * @throws DBException 
 	 */
-	
 	public List<MessageBean> getMessagesFor(long mid) throws SQLException, DBException {
 		Connection conn = null;
 		PreparedStatement ps = null;
@@ -185,22 +196,23 @@ public class MessageDAO {
 		Connection conn = null;
 		PreparedStatement ps = null;
 		try{
-		conn = factory.getConnection();
-		ps = conn.prepareStatement("SELECT * FROM message WHERE from_id = ? ORDER BY sent_date DESC");
-		ps.setLong(1, mid);
-		ResultSet rs = ps.executeQuery();
+            conn = factory.getConnection();
 
-		List<MessageBean> mbList = this.mbLoader.loadList(rs);
-		
-		rs.close();
-		ps.close();
-		return mbList;
-	} catch(SQLException e) {
-		
-		throw new DBException(e);
-	}finally{
-		DBUtil.closeConnection(conn, ps);
-	}
+            ps = conn.prepareStatement("SELECT * FROM message WHERE from_id = ? ORDER BY sent_date DESC");
+            ps.setLong(1, mid);
+            ResultSet rs = ps.executeQuery();
+
+            List<MessageBean> mbList = this.mbLoader.loadList(rs);
+
+            rs.close();
+            ps.close();
+            return mbList;
+        } catch(SQLException e) {
+
+            throw new DBException(e);
+        }finally{
+            DBUtil.closeConnection(conn, ps);
+        }
 
 	}
 	
@@ -309,6 +321,17 @@ public class MessageDAO {
 
 
 	}
+
+	/**
+	 * Adds a reminder message to the database.
+	 * @param mBean A bean representing the message to be added.
+	 * @throws SQLException
+	 * @throws DBException
+	 */
+	public void addReminderMessage(MessageBean mBean) throws SQLException, DBException {
+        mBean.setFrom(SYSTEMREMINDERID);
+        addMessage(mBean);
+    }
 
 	/**
 	 * Adds a message to the database.

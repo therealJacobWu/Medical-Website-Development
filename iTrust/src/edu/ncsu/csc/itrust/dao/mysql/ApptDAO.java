@@ -1,15 +1,17 @@
 package edu.ncsu.csc.itrust.dao.mysql;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
 import edu.ncsu.csc.itrust.DBUtil;
 import edu.ncsu.csc.itrust.beans.ApptBean;
 import edu.ncsu.csc.itrust.beans.loaders.ApptBeanLoader;
 import edu.ncsu.csc.itrust.dao.DAOFactory;
 import edu.ncsu.csc.itrust.exception.DBException;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.List;
 
 @SuppressWarnings({})
 public class ApptDAO {
@@ -166,7 +168,8 @@ public class ApptDAO {
 			DBUtil.closeConnection(conn, pstring);
 		}
 	}
-	
+
+
 	public List<ApptBean> getAllHCPConflictsForAppt(final long mid, final ApptBean appt) throws SQLException, DBException{
 		
 
@@ -206,7 +209,38 @@ public class ApptDAO {
 		DBUtil.closeConnection(conn, pstring);
 	}
 	}
-	
+
+    /**
+	 * Returns all appointments within date range (start, end]
+	 * @param start
+     * @param end
+	 * @throws SQLException
+	 * @throws DBException
+     **/
+    public List<ApptBean> getAllAppointmentsWithinRange(Timestamp start, Timestamp end) throws SQLException, DBException{
+		Connection conn = null;
+		PreparedStatement pstring = null;
+
+        try{
+		    conn = factory.getConnection();
+		    pstring = conn.prepareStatement("SELECT * FROM appointment WHERE sched_date>? AND sched_date<=?;");
+		    pstring.setTimestamp(1,start);
+            pstring.setTimestamp(2,end);
+
+		    final ResultSet results = pstring.executeQuery();
+
+		    final List<ApptBean> apptList = this.abloader.loadList(results);
+		    results.close();
+		    pstring.close();
+		    return apptList;
+        } catch (SQLException e) {
+
+            throw new DBException(e);
+        } finally {
+            DBUtil.closeConnection(conn, pstring);
+        }
+	}
+
 	public List<ApptBean> getAllPatientConflictsForAppt(final long mid, final ApptBean appt) throws SQLException, DBException{
 		final int duration = apptTypeDAO.getApptType(appt.getApptType()).getDuration();
 		Connection conn = null;
