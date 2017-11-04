@@ -1,5 +1,6 @@
 package edu.ncsu.csc.itrust.action;
 
+import com.google.common.annotations.VisibleForTesting;
 import edu.ncsu.csc.itrust.EmailUtil;
 import edu.ncsu.csc.itrust.beans.ApptBean;
 import edu.ncsu.csc.itrust.beans.Email;
@@ -24,7 +25,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by thechaseduncan on 11/2/17.
+ * Handles sending appointment reminders to patients who have upcoming appointments bounded by a certain number of days
  */
 public class SendRemindersAction {
     private EmailUtil emailer;
@@ -91,26 +92,27 @@ public class SendRemindersAction {
      * @throws SQLException
      * @throws FormValidationException
      */
+    @VisibleForTesting
     public void sendReminders(int n, Timestamp start) throws ITrustException, SQLException, FormValidationException {
         Timestamp end = endDate(start, n);
         List<ApptBean> appts = apptDAO.getAllAppointmentsWithinRange(start, end);
         long days;
         for (ApptBean appt : appts) {
             // TODO: comment on this
-            days = (start.getTime () / (1000 * 3600 * 24)) -
-                    (appt.getDate().getTime () / (1000 * 3600 * 24));
+            days = (appt.getDate().getTime () / (1000 * 3600 * 24)) -
+                    (start.getTime () / (1000 * 3600 * 24));
             MessageBean mBean = initMessageBean(appt,days);
             messageDAO.addReminderMessage(mBean);
             sendReminderEmail(mBean);
         }
     }
 
-    private MessageBean initMessageBean(ApptBean appt, long days) {
+    private MessageBean initMessageBean(ApptBean appt, long days) throws ITrustException {
         MessageBean message = new MessageBean();
         String dateString = new SimpleDateFormat("HH.mm.ss, yyyy.MM.dd")
                 .format( new Date(appt.getDate().getTime()));
-        //TODO doctor needs a name
-        message.setBody(String.format(REMINDER_MSG, dateString,appt.getHcp()));
+
+        message.setBody(String.format(REMINDER_MSG, dateString, personnelDAO.getName(appt.getHcp())));
         message.setSubject(String.format(REMINDER_SBJ,days));
 
         message.setRead(0);

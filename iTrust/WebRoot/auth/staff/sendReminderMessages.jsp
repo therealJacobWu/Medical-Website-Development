@@ -25,8 +25,6 @@
 
                 }
             }
-
-
         }
     %>
     <form method="post" action="sendReminderMessages.jsp">
@@ -34,6 +32,7 @@
 
         <label>n days</label>
         <input type="number" name="number"/>
+        <br/>
         <input type="submit" value="Send Appointment Reminders"><br/>
     </form>
 </div>
