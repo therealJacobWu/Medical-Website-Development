@@ -24,7 +24,7 @@ pageTitle = "iTrust - View Message";
 		} catch (NumberFormatException nfe) {
 			response.sendRedirect("messageOutbox.jsp");
 		}
-		List<MessageBean> messages = null; 
+		List<MessageBean> messages = null;
 		if (session.getAttribute("messages") != null) {
 			messages = (List<MessageBean>) session.getAttribute("messages");
 			if(msgIndex > messages.size() || msgIndex < 0) {

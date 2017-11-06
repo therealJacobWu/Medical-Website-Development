@@ -105,7 +105,7 @@ if(messages.size() > 0) { %>
 					<td><%= StringEscapeUtils.escapeHtml("" + ( toString)) %></td>
 					<td><%= StringEscapeUtils.escapeHtml("" + ( message.getSubject() )) %></td>
 					<td><%= StringEscapeUtils.escapeHtml("" + ( dateFormat.format(message.getSentDate()) )) %></td>
-					<td><a href="<%= outbox?"viewMessageOutbox.jsp?msg=" + StringEscapeUtils.escapeHtml("" + ( index )):"viewMessageInbox.jsp?msg=" + StringEscapeUtils.escapeHtml("" + ( index )) %>">Read</a></td>
+					<td><a href="<%= outbox?"messageOutbox.jsp?msg=" + StringEscapeUtils.escapeHtml("" + ( index )):"viewMessageInbox.jsp?msg=" + StringEscapeUtils.escapeHtml("" + ( index )) %>">Read</a></td>
 				</tr>			
 			<%
 		}

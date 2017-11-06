@@ -1,8 +1,5 @@
 package edu.ncsu.csc.itrust.action;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import edu.ncsu.csc.itrust.EmailUtil;
 import edu.ncsu.csc.itrust.beans.Email;
 import edu.ncsu.csc.itrust.beans.MessageBean;
@@ -17,6 +14,10 @@ import edu.ncsu.csc.itrust.exception.FormValidationException;
 import edu.ncsu.csc.itrust.exception.ITrustException;
 import edu.ncsu.csc.itrust.validate.EMailValidator;
 import edu.ncsu.csc.itrust.validate.MessageValidator;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -47,7 +48,7 @@ public class SendMessageAction {
 		this.emailVal = new EMailValidator();
 		this.messVal = new MessageValidator();
 	}
-	
+
 	/**
 	 * Sends a message
 	 * 

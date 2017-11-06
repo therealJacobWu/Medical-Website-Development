@@ -1,13 +1,5 @@
 package edu.ncsu.csc.itrust.action;
 
-import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 import edu.ncsu.csc.itrust.beans.MessageBean;
 import edu.ncsu.csc.itrust.dao.DAOFactory;
 import edu.ncsu.csc.itrust.dao.mysql.MessageDAO;
@@ -16,6 +8,15 @@ import edu.ncsu.csc.itrust.dao.mysql.PersonnelDAO;
 import edu.ncsu.csc.itrust.dao.mysql.ReferralDAO;
 import edu.ncsu.csc.itrust.exception.DBException;
 import edu.ncsu.csc.itrust.exception.ITrustException;
+
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Action class for ViewMyMessages.jsp
@@ -99,7 +100,18 @@ public class ViewMyMessagesAction {
 		
 		return messageDAO.getMessagesFrom(loggedInMID);
 	}
-	
+
+    /**
+	 * Gets all the sent messages for the logged in user
+	 *
+	 * @return a list of all the user's sent messages
+	 * @throws SQLException
+	 */
+	public List<MessageBean> getAllReminderMessages() throws DBException, SQLException {
+
+		return messageDAO.getAllReminderMessages();
+	}
+
 	/**
 	 * Gets all the messages for the logged in user and sorts by ascending time
 	 * 
