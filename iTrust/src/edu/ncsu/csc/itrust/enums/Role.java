@@ -20,7 +20,7 @@ public enum Role {
 	/**PHA*/
 	PHA("pha", "Personnel", 7L),
 	/**PRE_PATIENT*/
-	PRE_PATIENT("pre_patient", "Pre Patient", 6L),
+	PRE_PATIENT("pre_patient", "Prepatient", 6L),
 	/**TESTER*/
 	TESTER("tester", "", 0L);
 	

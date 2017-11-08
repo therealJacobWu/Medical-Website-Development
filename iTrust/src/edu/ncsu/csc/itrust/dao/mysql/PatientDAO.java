@@ -24,6 +24,8 @@ import edu.ncsu.csc.itrust.exception.DBException;
 import edu.ncsu.csc.itrust.exception.ITrustException;
 import edu.ncsu.csc.itrust.DateUtil;
 
+import javax.annotation.Nullable;
+
 /**
  * Used for managing all static information related to a patient. For other information related to all aspects
  * of patient care, see the other DAOs.
@@ -189,6 +191,31 @@ public class PatientDAO {
 		}
 	}
 
+	public @Nullable PatientBean getPatient(String email) throws DBException {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = factory.getConnection();
+			ps = conn.prepareStatement("SELECT * FROM patients WHERE email = ?");
+			ps.setLong(1, email);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				PatientBean pat = patientLoader.loadSingle(rs);
+				rs.close();
+				ps.close();
+				return pat;
+			} else{
+				rs.close();
+				ps.close();
+				return null;
+			}
+		} catch (SQLException e) {
+			throw new DBException(e);
+		} finally {
+			DBUtil.closeConnection(conn, ps);
+		}
+	}
+
 	/**
 	 * Updates a patient's information for the given MID
 	 * 
@@ -212,8 +239,10 @@ public class PatientDAO {
 			patientLoader.loadParameters(ps, p);
 			ps.setLong(37, p.getMID());
 			ps.executeUpdate();
-			
-			addHistory(p.getMID(), hcpid);
+
+			if (hcpid != -1) {
+				addHistory(p.getMID(), hcpid);
+			}
 			ps.close();
 			
 		} catch (SQLException e) {
@@ -222,6 +251,10 @@ public class PatientDAO {
 		} finally {
 			DBUtil.closeConnection(conn, ps);
 		}
+	}
+
+	public void editPatient(PatientBean p) throws DBException {
+		editPatient(p, -1);
 	}
 	
 	public void addHistory(long pid, long hcpid) throws DBException {

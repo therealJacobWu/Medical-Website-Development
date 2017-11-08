@@ -6,6 +6,9 @@
 <%@ page import="net.tanesha.recaptcha.ReCaptchaImpl" %>
 <%@ page import="net.tanesha.recaptcha.ReCaptchaResponse" %>
 <%@ page import="org.apache.commons.codec.digest.DigestUtils" %>
+<%@ page import="edu.ncsu.csc.itrust.beans.PatientBean" %>
+<%@ page import="edu.ncsu.csc.itrust.BeanBuilder" %>
+<%@ page import="edu.ncsu.csc.itrust.action.AddPrepatientAction" %>
 
 <%@include file="/global.jsp" %>
 
@@ -13,77 +16,29 @@
     pageTitle = "iTrust - Login";
 %>
 <%
-    String remoteAddr = request.getRemoteAddr();
-//recaptcha.properties file found in WEB-INF/classes (usually not seen in Eclipse)
-    ReCaptchaImpl reCaptcha = new ReCaptchaImpl();
-//ResourceBundle reCaptchaProps = ResourceBundle.getBundle("recaptcha");
-    reCaptcha.setPrivateKey("6Lcpzb4SAAAAAGbscE39L3UmHQ_ferVd7RyJuo5Y");
+    String email = request.getParameter("email");
 
-    String user = request.getParameter("pre_name");
-    String pass = request.getParameter("pre_password");
-    String confPass = request.getParameter("pre_password_conf");
-    String addr = request.getParameter("pre_addr");
-    String phone = request.getParameter("pre_phone");
-    String insuranceName = request.getParameter("pre_insurance_name");
-    String insuranceAddr = request.getParameter("pre_insurance_addr");
-    String insurancePhone = request.getParameter("pre_insurance_phone");
-    String height = request.getParameter("pre_height");
-    String weight = request.getParameter("pre_weight");
-    String smoker = request.getParameter("pre_smoker");
+    PatientBean existing = prodDAO.getPatientDAO().getPatient(email);
 
+    String password = request.getParameter("password");
+    String confirmPassword = request.getParameter("confirmPassword");
 
-    if(pass!=null){
-        String salt = "";
-        try {
-            long tempID = Long.parseLong(user);
-            salt = authDAO.getSalt(tempID);
-        } catch (NumberFormatException e){
-            salt = "";
-        }
-        pass = DigestUtils.sha256Hex(pass + salt);
-    }
-
-
-    if(challenge != null) {
-        ReCaptchaResponse reCaptchaResponse = reCaptcha.checkAnswer(remoteAddr, challenge, uresponse);
-
-        if (reCaptchaResponse.isValid()) {
-            loginFailureAction.setCaptcha(true);
-            validSession = true;
-            response.sendRedirect("/iTrust/j_security_check?j_username=" + user + "&j_password=" + pass);
-        } else {
-            if(request.getParameter("loginError") == null) {
-                loginFailureAction.setCaptcha(false);
-                long userMID;
-                try{
-                    userMID= Long.parseLong(user);
-                    loggingAction.logEvent(TransactionType.LOGIN_FAILURE, userMID, userMID, "");
-                }catch(NumberFormatException e){
-                    loggingAction.logEvent(TransactionType.LOGIN_FAILURE, 0, 0, "Username: "+user);
-                }
-
-                pageContext.forward("/login.jsp?loginError=true");
-            }
-        }
-    } else if(loginFailureAction.needsCaptcha() && user != null ) {
-        loginFailureAction.setCaptcha(false);
-    } else if(user != null && !"true".equals(request.getParameter("loginError"))) {
-        session.setAttribute("loginFlag", "true");
-        response.sendRedirect("/iTrust/j_security_check?j_username=" + user + "&j_password=" + pass);
-    }
-
-    if(request.getParameter("loginError") != null) {
-        loginMessage = loginFailureAction.recordLoginFailure();
-        long userMID;
-        try{
-            userMID= Long.parseLong(user);
-            loggingAction.logEvent(TransactionType.LOGIN_FAILURE, userMID, userMID, "");
-        }catch(NumberFormatException e){
-            loggingAction.logEvent(TransactionType.LOGIN_FAILURE, 0, 0, "Username: "+user);
-        }
+    if (existing != null) {
+        // TODO send back to /login.jsp with an error
         response.sendRedirect("/iTrust/login.jsp");
     }
 
+    if (!password.equals(confirmPassword)) {
+        // TODO send back to /login.jsp with an error
+        response.sendRedirect("/iTrust/login.jsp");
+    }
+
+    // Construct Patient
+    PatientBean p = new BeanBuilder<PatientBean>().build(request.getParameterMap(), new PatientBean());
+    // Add to database
+    long userMID = new AddPrepatientAction(prodDAO).addPrepatient(p);
+    // Log transaction
+    loggingAction.logEvent(TransactionType.PATIENT_PREREGISTER, userMID, 0, "");
 %>
 
 <%@include file="/header.jsp" %>

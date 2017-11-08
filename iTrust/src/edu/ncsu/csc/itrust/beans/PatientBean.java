@@ -35,6 +35,10 @@ public class PatientBean implements Serializable, Comparable<PatientBean> {
 	private String phone = "";
 	private String emergencyName = "";
 	private String emergencyPhone = "";
+	private String height = "";
+	private String weight = "";
+	private String smoker;
+
 	private String icName = "";
 	private String icAddress1 = "";
 	private String icAddress2 = "";
@@ -483,6 +487,30 @@ public class PatientBean implements Serializable, Comparable<PatientBean> {
 
 	public void setDateOfDeactivationStr(String dateOfDeactivationStr) {
 		this.dateOfDeactivationStr = dateOfDeactivationStr;
+	}
+
+	public String getHeight() {
+		return height;
+	}
+
+	public String getWeight() {
+		return weight;
+	}
+
+	public String getSmoker() {
+		return smoker;
+	}
+
+	public void setHeight(String height) {
+		this.height = height;
+	}
+
+	public void setWeight(String weight) {
+		this.weight = weight;
+	}
+
+	public void setSmoker(String smoker) {
+		this.smoker = smoker;
 	}
 
 	public int compareTo(PatientBean o) {

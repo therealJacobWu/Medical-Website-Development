@@ -148,46 +148,49 @@ if( ! "true".equals(System.getProperty("itrust.production") ) ) {
 <% } %>
 
 		<form method="post" action="/iTrust/pre_register.jsp">
-			<label>Full Name*</label> <br/>
-			<input type="text" name="pre_name"/> <br/>
+			<label>First Name*</label> <br/>
+			<input type="text" name="firstName"/> <br/>
+
+			<label>Last Name*</label> <br/>
+			<input type="text" name="lastName"/> <br/>
 
 			<label>Email*</label> <br/>
-			<input type="email" name="pre_email"/> <br/>
+			<input type="email" name="email"/> <br/>
 
 			<label>Password*</label> <br/>
-			<input type="password" name="pre_password" /> <br/>
+			<input type="password" name="password" /> <br/>
 
 			<label>Password Confirmation*</label> <br/>
-			<input type="password" name="pre_password_conf" /> <br/>
+			<input type="password" name="confirmPassword" /> <br/>
 
 			<label>Address</label> <br/>
-			<input type="text" name="pre_addr" /> <br/>
+			<input type="text" name="streetAddress1" /> <br/>
 
 			<label>Phone</label> <br/>
-			<input type="number" maxlength="10" name="pre_phone" /> <br/>
+			<input type="number" maxlength="10" name="phone" /> <br/>
 
 			<label>Insurance Info</label> <br/>
 
 			<label>Insurance Provider Name</label> <br/>
-			<input type="text" name="pre_insurance_name" /> <br/>
+			<input type="text" name="icName" /> <br/>
 
 			<label>Insurance Provider Address</label> <br/>
-			<input type="text" name="pre_insurance_addr" /> <br/>
+			<input type="text" name="icAddress1" /> <br/>
 
 			<label>Insurance Provider Phone</label> <br/>
-			<input type="number" maxlength="10" name="pre_insurance_phone" /> <br/>
+			<input type="number" maxlength="10" name="icPhone" /> <br/>
 
 			<label>Height (inches)</label> <br/>
-			<input type="number" maxlength="3" name="pre_height" /> <br/>
+			<input type="number" maxlength="3" name="height" /> <br/>
 
 			<label>Weight (pounds)</label> <br/>
-			<input type="number" maxlength="3" name="pre_weight" /> <br/>
+			<input type="number" maxlength="3" name="weight" /> <br/>
 
 			<label>Smoker?</label> <br/>
-			<input type="radio" id="smoker1Choice" name="pre_smoker" value="Yes"/>
+			<input type="radio" id="smoker1Choice" name="smoker" value="true"/>
 			<label for="smoker1Choice">Yes</label>
 
-			<input type="radio" id="smoker2Choice" name="pre_smoker" value="No"/>
+			<input type="radio" id="smoker2Choice" name="smoker" value="false"/>
 			<label for="smoker2Choice">No</label>
 
 			<br/>
