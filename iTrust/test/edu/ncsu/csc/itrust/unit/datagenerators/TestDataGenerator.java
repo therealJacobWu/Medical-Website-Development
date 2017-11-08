@@ -1046,6 +1046,7 @@ public class TestDataGenerator {
 		patient26(); // NEW
 		patient42();
 		patient100(); // NEW
+		patient1000s(); // NEW UC20
 
 		admin1();
 		admin2();
