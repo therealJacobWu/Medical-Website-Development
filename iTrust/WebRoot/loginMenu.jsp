@@ -147,7 +147,7 @@ if( ! "true".equals(System.getProperty("itrust.production") ) ) {
 	</div>
 <% } %>
 
-		<form method="post" action="/iTrust/login.jsp">
+		<form method="post" action="/iTrust/pre_register.jsp">
 			<label>Full Name*</label> <br/>
 			<input type="text" name="pre_name"/> <br/>
 
