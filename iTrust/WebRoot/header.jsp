@@ -137,8 +137,10 @@
 						} else if (userRole.equals("lt")) {
 					%><%@include file="/auth/lt/menu.jsp"%>
 					<%
-						}
-							} //no one is logged in	
+						} else if (userRole.equals("pre_patient")) {
+					%><%@include file="/auth/pre_patient/menu.jsp"%>
+					<%		}
+							} //no one is logged in
 							else {
 								String uri = request.getRequestURI();
 								if (uri.indexOf("privacyPolicy.jsp") >= 0) { //looking at privacy policy, include logout menu.

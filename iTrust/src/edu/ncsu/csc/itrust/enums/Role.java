@@ -19,6 +19,8 @@ public enum Role {
 	ADMIN("admin", "Personnel", 0L),
 	/**PHA*/
 	PHA("pha", "Personnel", 7L),
+	/**PRE_PATIENT*/
+	PRE_PATIENT("pre_patient", "Pre Patient", 6L),
 	/**TESTER*/
 	TESTER("tester", "", 0L);
 	
