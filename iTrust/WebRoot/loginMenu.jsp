@@ -145,9 +145,55 @@ if( ! "true".equals(System.getProperty("itrust.production") ) ) {
 		</tr>
 	</table>
 	</div>
-<% 
-} 
-%>
+<% } %>
+
+		<form method="post" action="/iTrust/login.jsp">
+			<label>Full Name*</label> <br/>
+			<input type="text" name="pre_name"/> <br/>
+
+			<label>Email*</label> <br/>
+			<input type="email" name="pre_email"/> <br/>
+
+			<label>Password*</label> <br/>
+			<input type="password" name="pre_password" /> <br/>
+
+			<label>Password Confirmation*</label> <br/>
+			<input type="password" name="pre_password_conf" /> <br/>
+
+			<label>Address</label> <br/>
+			<input type="text" name="pre_addr" /> <br/>
+
+			<label>Phone</label> <br/>
+			<input type="number" maxlength="10" name="pre_phone" /> <br/>
+
+			<label>Insurance Info</label> <br/>
+
+			<label>Insurance Provider Name</label> <br/>
+			<input type="text" name="pre_insurance_name" /> <br/>
+
+			<label>Insurance Provider Address</label> <br/>
+			<input type="text" name="pre_insurance_addr" /> <br/>
+
+			<label>Insurance Provider Phone</label> <br/>
+			<input type="number" maxlength="10" name="pre_insurance_phone" /> <br/>
+
+			<label>Height (inches)</label> <br/>
+			<input type="number" maxlength="3" name="pre_height" /> <br/>
+
+			<label>Weight (pounds)</label> <br/>
+			<input type="number" maxlength="3" name="pre_weight" /> <br/>
+
+			<label>Smoker?</label> <br/>
+			<input type="radio" id="smoker1Choice" name="pre_smoker" value="Yes"/>
+			<label for="smoker1Choice">Yes</label>
+
+			<input type="radio" id="smoker2Choice" name="pre_smoker" value="No"/>
+			<label for="smoker2Choice">No</label>
+
+			<br/>
+			<button type="submit">(Pre)register</button>
+		</form>
+
 </div>
 </div>
 </div>
