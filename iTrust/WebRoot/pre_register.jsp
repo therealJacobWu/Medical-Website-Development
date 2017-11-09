@@ -1,20 +1,13 @@
 <%@page errorPage="/auth/exceptionHandler.jsp"%>
-<%@page import="java.util.ResourceBundle"%>
-<%@page import="edu.ncsu.csc.itrust.enums.TransactionType"%>
-<%@ page import="net.tanesha.recaptcha.ReCaptcha" %>
-<%@ page import="net.tanesha.recaptcha.ReCaptchaFactory" %>
-<%@ page import="net.tanesha.recaptcha.ReCaptchaImpl" %>
-<%@ page import="net.tanesha.recaptcha.ReCaptchaResponse" %>
-<%@ page import="org.apache.commons.codec.digest.DigestUtils" %>
+<%@page import="edu.ncsu.csc.itrust.BeanBuilder"%>
+<%@page import="edu.ncsu.csc.itrust.action.AddPrepatientAction"%>
+<%@ page import="edu.ncsu.csc.itrust.beans.HealthRecord" %>
 <%@ page import="edu.ncsu.csc.itrust.beans.PatientBean" %>
-<%@ page import="edu.ncsu.csc.itrust.BeanBuilder" %>
-<%@ page import="edu.ncsu.csc.itrust.action.AddPrepatientAction" %>
+<%@ page import="java.util.Date" %>
+<%@ page import="java.text.SimpleDateFormat" %>
 
 <%@include file="/global.jsp" %>
 
-<%
-    pageTitle = "iTrust - Login";
-%>
 <%
     String email = request.getParameter("email");
 
@@ -24,21 +17,41 @@
     String confirmPassword = request.getParameter("confirmPassword");
 
     if (existing != null) {
-        // TODO send back to /login.jsp with an error
-        response.sendRedirect("/iTrust/login.jsp");
+        response.sendRedirect("/iTrust/login.jsp?preRegisterError=A login already exists with that email");
     }
 
     if (!password.equals(confirmPassword)) {
-        // TODO send back to /login.jsp with an error
-        response.sendRedirect("/iTrust/login.jsp");
+        response.sendRedirect("/iTrust/login.jsp?preRegisterError=Passwords do not match. Please try again.");
     }
 
     // Construct Patient
     PatientBean p = new BeanBuilder<PatientBean>().build(request.getParameterMap(), new PatientBean());
     // Add to database
     long userMID = new AddPrepatientAction(prodDAO).addPrepatient(p);
+
+    HealthRecord hr = new HealthRecord();
+    hr.setPatientID(userMID);
+    // Set date to be today
+    hr.setOfficeVisitDateStr(new SimpleDateFormat("MM/dd/yyyy").format(new Date()));
+
+    if (request.getParameter("height") != null) {
+        hr.setHeight(Double.parseDouble(request.getParameter("height")));
+    }
+    if (request.getParameter("weight") != null) {
+        hr.setWeight(Double.parseDouble(request.getParameter("weight")));
+    }
+
+    if (request.getParameter("smoker").equals("true")) {
+        hr.setSmoker(2);
+    } else { // Default is no smoking
+        hr.setSmoker(9);
+    }
+    prodDAO.getHealthRecordsDAO().add(hr);
+
     // Log transaction
     loggingAction.logEvent(TransactionType.PATIENT_PREREGISTER, userMID, 0, "");
+
+    response.sendRedirect("/iTrust/login.jsp?preRegisterError=You have pre-registered. Log in with your MID: " + userMID);
 %>
 
 <%@include file="/header.jsp" %>

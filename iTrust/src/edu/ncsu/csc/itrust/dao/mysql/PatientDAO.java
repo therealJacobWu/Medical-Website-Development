@@ -197,7 +197,7 @@ public class PatientDAO {
 		try {
 			conn = factory.getConnection();
 			ps = conn.prepareStatement("SELECT * FROM patients WHERE email = ?");
-			ps.setLong(1, email);
+			ps.setString(1, email);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
 				PatientBean pat = patientLoader.loadSingle(rs);
@@ -718,8 +718,7 @@ public class PatientDAO {
 	
 	/**
 	 * Removes all dependencies participated by the patient passed in the parameter
-	 * 
-	 * @param representerMID the mid for the patient to remove all representees for
+	 *
 	 * @throws DBException
 	 */
 	public void removeAllRepresentee(long representeeMID) throws DBException {

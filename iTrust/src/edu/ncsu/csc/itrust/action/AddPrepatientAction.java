@@ -50,39 +50,4 @@ public class AddPrepatientAction {
         patientDAO.editPatient(p);
         return newMID;
     }
-
-    /*
-
-     * Creates a new patient, returns the new MID. Adds a new user to the table with a
-     * specified dependency
-     *
-     * @param p patient to be created
-     * @param isDependent true if the patient is to be a dependent, false otherwise
-     * @return the new MID of the patient
-     * @throws FormValidationException if the patient is not successfully validated
-     * @throws ITrustException
-
-    public long addDependentPatient(PatientBean p, long repId) throws FormValidationException, ITrustException {
-        new AddPatientValidator().validate(p);
-        long newMID = patientDAO.addEmptyPatient();
-        boolean isDependent = true;
-        p.setMID(newMID);
-        String pwd = authDAO.addUser(newMID, Role.PATIENT, RandomPassword.getRandomPassword());
-
-        patientDAO.addRepresentative(repId, newMID);
-        authDAO.setDependent(newMID, isDependent);
-        p.setPassword(pwd);
-        patientDAO.editPatient(p, loggedInMID);
-        return newMID;
-    }
-
-    public long addPatient(PatientBean p) throws FormValidationException, ITrustException {
-        new AddPatientValidator().validate(p);
-        long newMID = patientDAO.addEmptyPatient();
-        p.setMID(newMID);
-        String pwd = authDAO.addUser(newMID, Role.PATIENT, RandomPassword.getRandomPassword());
-        p.setPassword(pwd);
-        patientDAO.editPatient(p, loggedInMID);
-        return newMID;
-    }*/
 }
