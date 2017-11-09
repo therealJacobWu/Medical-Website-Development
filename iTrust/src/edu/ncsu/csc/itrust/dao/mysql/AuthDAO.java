@@ -135,6 +135,7 @@ public class AuthDAO {
 			case LT:
 				uName = factory.getPersonnelDAO().getName(mid);
 				break;
+			case PRE_PATIENT:
 			case PATIENT:
 				uName = factory.getPatientDAO().getName(mid);
 				break;

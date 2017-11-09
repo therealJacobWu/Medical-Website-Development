@@ -83,6 +83,9 @@
 		<role-name>lt</role-name>
 	</security-role>
 	<security-role>
+		<role-name>pre_patient</role-name>
+	</security-role>
+	<security-role>
 		<role-name>tester</role-name>
 	</security-role>		
 
@@ -126,6 +129,7 @@
 			<role-name>tester</role-name>
 			<role-name>pha</role-name>
 			<role-name>lt</role-name>
+			<role-name>pre_patient</role-name>
 		</auth-constraint>
 	</security-constraint>
 
@@ -275,6 +279,21 @@
 		<auth-constraint>
 			<!-- Anyone with one of the listed roles may access this area -->
 			<role-name>patient</role-name>
+		</auth-constraint>
+	</security-constraint>
+
+	<security-constraint>
+		<display-name>Pre Patient Only</display-name>
+		<web-resource-collection>
+			<web-resource-name>
+				Only Pre-Patients are Allowed
+			</web-resource-name>
+			<!-- Define the context-relative URL(s) to be protected -->
+			<url-pattern>/auth/pre_patient/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<!-- Anyone with one of the listed roles may access this area -->
+			<role-name>pre_patient</role-name>
 		</auth-constraint>
 	</security-constraint>
 	
