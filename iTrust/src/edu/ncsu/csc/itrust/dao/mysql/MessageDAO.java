@@ -58,26 +58,7 @@ public class MessageDAO {
      * @throws DBException
      */
     public List<MessageBean> getMessagesFor(long mid) throws SQLException, DBException {
-        Connection conn = null;
-        PreparedStatement ps = null;
-
-        try {
-            conn = factory.getConnection();
-            ps = conn.prepareStatement("SELECT * FROM message WHERE to_id = ? ORDER BY sent_date DESC");
-            ps.setLong(1, mid);
-            ResultSet rs = ps.executeQuery();
-
-            List<MessageBean> mbList = this.mbLoader.loadList(rs);
-            rs.close();
-            ps.close();
-            return mbList;
-        } catch (SQLException e) {
-
-            throw new DBException(e);
-        } finally {
-            DBUtil.closeConnection(conn, ps);
-        }
-
+        return getMessages(mid, false, false);
     }
 
     /**
@@ -89,11 +70,29 @@ public class MessageDAO {
      * @throws DBException
      */
     public List<MessageBean> getMessagesTimeAscending(long mid) throws SQLException, DBException {
+        return getMessages(mid, false, true);
+    }
+
+    /**
+     * Gets all the messages to or from a certain user MID sorted either ascending or descending.
+     *
+     * @param mid The MID of the user to be looked up.
+     * @param from true will get the messages from mid, false will get the messages to mid
+     * @param asc true will sort the messages in order of increasing sent date, false will sort decreasing
+     * @return A java.util.List of MessageBeans.
+     * @throws SQLException
+     * @throws DBException
+     */
+    public List<MessageBean> getMessages(long mid, boolean from, boolean asc) throws SQLException, DBException {
         Connection conn = null;
         PreparedStatement ps = null;
         try {
             conn = factory.getConnection();
-            ps = conn.prepareStatement("SELECT * FROM message WHERE to_id = ? ORDER BY sent_date ASC");
+            String query = "SELECT * FROM message WHERE "
+                    + (from ? "from_id" : "to_id" )
+                    + " = ? ORDER BY sent_date "
+                    + (asc ? "ASC" : "DESC");
+            ps = conn.prepareStatement(query);
             ps.setLong(1, mid);
             ResultSet rs = ps.executeQuery();
 
@@ -195,27 +194,7 @@ public class MessageDAO {
      */
 
     public List<MessageBean> getMessagesFrom(long mid) throws SQLException, DBException {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try {
-            conn = factory.getConnection();
-
-            ps = conn.prepareStatement("SELECT * FROM message WHERE from_id = ? ORDER BY sent_date DESC");
-            ps.setLong(1, mid);
-            ResultSet rs = ps.executeQuery();
-
-            List<MessageBean> mbList = this.mbLoader.loadList(rs);
-
-            rs.close();
-            ps.close();
-            return mbList;
-        } catch (SQLException e) {
-
-            throw new DBException(e);
-        } finally {
-            DBUtil.closeConnection(conn, ps);
-        }
-
+        return getMessages(mid, true, false);
     }
 
     /**
@@ -226,27 +205,7 @@ public class MessageDAO {
      * @throws SQLException
      */
     public List<MessageBean> getMessagesFromTimeAscending(long mid) throws DBException, SQLException {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try {
-            conn = factory.getConnection();
-            ps = conn.prepareStatement("SELECT * FROM message WHERE from_id = ? ORDER BY sent_date ASC");
-            ps.setLong(1, mid);
-            ResultSet rs = ps.executeQuery();
-
-            List<MessageBean> mbList = this.mbLoader.loadList(rs);
-
-            rs.close();
-            ps.close();
-            return mbList;
-        } catch (SQLException e) {
-
-            throw new DBException(e);
-        } finally {
-            DBUtil.closeConnection(conn, ps);
-        }
-
-
+        return getMessages(mid, true, true);
     }
 
     /**
