@@ -147,6 +147,7 @@ if( ! "true".equals(System.getProperty("itrust.production") ) ) {
 	</div>
 <% } %>
     <form method="post" action="/iTrust/pre_register.jsp">
+		<h4>Pre-register yourself as a patient below! Fields marked * are required.</h4>
         <div style="padding-left:10px">
             <label>First Name*</label> <br/>
             <input type="text" name="firstName"/> <br/>
