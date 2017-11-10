@@ -146,56 +146,63 @@ if( ! "true".equals(System.getProperty("itrust.production") ) ) {
 	</table>
 	</div>
 <% } %>
+    <form method="post" action="/iTrust/pre_register.jsp">
+        <div style="padding-left:10px">
+            <label>First Name*</label> <br/>
+            <input type="text" name="firstName"/> <br/>
 
-		<form method="post" action="/iTrust/pre_register.jsp">
-			<label>First Name*</label> <br/>
-			<input type="text" name="firstName"/> <br/>
+            <label>Last Name*</label> <br/>
+            <input type="text" name="lastName"/> <br/>
 
-			<label>Last Name*</label> <br/>
-			<input type="text" name="lastName"/> <br/>
+            <label>Email*</label> <br/>
+            <input type="email" name="email"/> <br/>
 
-			<label>Email*</label> <br/>
-			<input type="email" name="email"/> <br/>
+            <label>Password*</label> <br/>
+            <input type="password" name="password" /> <br/>
 
-			<label>Password*</label> <br/>
-			<input type="password" name="password" /> <br/>
+            <label>Password Confirmation*</label> <br/>
+            <input type="password" name="confirmPassword" /> <br/>
 
-			<label>Password Confirmation*</label> <br/>
-			<input type="password" name="confirmPassword" /> <br/>
+            <label>Address1</label> <br/>
+            <input type="text" name="streetAddress1" /> <br/>
 
-			<label>Address</label> <br/>
-			<input type="text" name="streetAddress1" /> <br/>
+            <label>Address2</label> <br/>
+            <input type="text" name="streetAddress2" /> <br/>
 
-			<label>Phone</label> <br/>
-			<input type="number" maxlength="10" name="phone" /> <br/>
+            <label>Phone</label> <br/>
+            <input type="number" maxlength="10" name="phone" /> <br/>
 
-			<label>Insurance Info</label> <br/>
+            <label>Insurance Info</label> <br/>
 
-			<label>Insurance Provider Name</label> <br/>
-			<input type="text" name="icName" /> <br/>
+            <label>Insurance Provider Name</label> <br/>
+            <input type="text" name="icName" /> <br/>
 
-			<label>Insurance Provider Address</label> <br/>
-			<input type="text" name="icAddress1" /> <br/>
+            <label>Insurance Provider Address1</label> <br/>
+            <input type="text" name="icAddress1" /> <br/>
 
-			<label>Insurance Provider Phone</label> <br/>
-			<input type="number" maxlength="10" name="icPhone" /> <br/>
+            <label>Insurance Provider Address2</label> <br/>
+            <input type="text" name="icAddress2" /> <br/>
 
-			<label>Height (inches)</label> <br/>
-			<input type="number" maxlength="3" name="height" /> <br/>
+            <label>Insurance Provider Phone</label> <br/>
+            <input type="number" maxlength="10" name="icPhone" /> <br/>
 
-			<label>Weight (pounds)</label> <br/>
-			<input type="number" maxlength="3" name="weight" /> <br/>
+            <label>Height (inches)</label> <br/>
+            <input type="number" maxlength="3" name="height" /> <br/>
 
-			<label>Smoker?</label> <br/>
-			<input type="radio" id="smoker1Choice" name="smoker" value="true"/>
-			<label for="smoker1Choice">Yes</label>
+            <label>Weight (pounds)</label> <br/>
+            <input type="number" maxlength="3" name="weight" /> <br/>
 
-			<input type="radio" id="smoker2Choice" name="smoker" value="false"/>
-			<label for="smoker2Choice">No</label>
+            <label>Smoker?</label> <br/>
+            <input type="radio" id="smoker1Choice" name="smoker" value="true"/>
+            <label for="smoker1Choice">Yes</label>
 
-			<br/>
-			<button type="submit">(Pre)register</button>
-		</form>
+            <input type="radio" id="smoker2Choice" name="smoker" value="false"/>
+            <label for="smoker2Choice">No</label>
+
+            <br/>
+            <button type="submit" id="preregistSubmit">(Pre)register</button>
+            </div>
+    </form>
 
 </div>
 </div>
