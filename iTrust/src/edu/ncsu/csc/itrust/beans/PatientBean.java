@@ -35,7 +35,6 @@ public class PatientBean implements Serializable, Comparable<PatientBean> {
 	private String phone = "";
 	private String emergencyName = "";
 	private String emergencyPhone = "";
-
 	private String icName = "";
 	private String icAddress1 = "";
 	private String icAddress2 = "";

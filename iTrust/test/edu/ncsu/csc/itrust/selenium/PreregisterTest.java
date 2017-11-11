@@ -182,13 +182,9 @@ public class PreregisterTest extends iTrustSeleniumTest{
         assertEquals(testPatientBean.getIcPhone(), "");
 
         HealthRecordsDAO testHealthRecordDao = new HealthRecordsDAO(factory);
-        try {
-            HealthRecord testHealthRecod = testHealthRecordDao.getAllHealthRecords(411).get(0);
-            assertEquals(testHealthRecod.getHeight(), 0.0);
-            assertEquals(testHealthRecod.getWeight(), 0.0);
-            assertEquals(testHealthRecod.getSmokingStatus(), 9);
-        } catch(IndexOutOfBoundsException e) {
-            System.out.println("PreregisterTest.testOptionalFieldsFill Index out of bound.");
-        }
+        HealthRecord testHealthRecod = testHealthRecordDao.getAllHealthRecords(411).get(0);
+        assertEquals(testHealthRecod.getHeight(), 0.0);
+        assertEquals(testHealthRecod.getWeight(), 0.0);
+        assertEquals(testHealthRecod.getSmokingStatus(), 9);
     }
 }
