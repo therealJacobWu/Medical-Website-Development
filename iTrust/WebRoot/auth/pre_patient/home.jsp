@@ -13,6 +13,13 @@
 
 <div style="text-align: center;">
     <h2>Welcome Pre-Registered Patient <%= StringEscapeUtils.escapeHtml("" + (userName )) %>!</h2>
+
+    <p>
+        You have successfully pre-registered. However, you need an HCP to activate your account in order
+        to fully use the iTrust system.
+
+        In the meantime, please wait.
+    </p>
 </div>
 
 <%@include file="/footer.jsp" %>
