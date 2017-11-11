@@ -48,8 +48,10 @@ if(request.getUserPrincipal() != null) {
 	else if (request.isUserInRole("lt")) {
 		response.sendRedirect("lt/home.jsp");
 		return;
-	}
-	else if(!validSession) {
+	} else if (request.isUserInRole("pre_patient")) {
+		response.sendRedirect("pre_patient/home.jsp");
+		return;
+	} else if(!validSession) {
 		session.invalidate();
 		response.sendRedirect("/iTrust/");
 	}

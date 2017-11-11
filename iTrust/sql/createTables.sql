@@ -4,7 +4,7 @@ CREATE TABLE users(
 	Password            VARCHAR(200),
 	Salt				VARCHAR(200) DEFAULT '',
 	openID              VARCHAR(200),
-	Role                enum('patient','admin','hcp','uap','er','tester','pha', 'lt') NOT NULL DEFAULT 'admin',
+	Role                enum('patient','admin','hcp','uap','er','tester','pha', 'lt', 'pre_patient') NOT NULL DEFAULT 'admin',
 	sQuestion           VARCHAR(100) DEFAULT '', 
 	sAnswer             VARCHAR(30) DEFAULT '',
 	isDependent			tinyint(1) unsigned NOT NULL default '0',

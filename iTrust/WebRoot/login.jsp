@@ -75,9 +75,19 @@ if(request.getParameter("loginError") != null) {
 	response.sendRedirect("/iTrust/login.jsp");
 }
 
+String preRegisterError = request.getParameter("preRegisterError");
 %>
 
 <%@include file="/header.jsp" %>
+
+<% if (preRegisterError != null) { %>
+<div style="text-align: center; width: 100%; background-color: white; border:1px solid #cc0000">
+	<h3 style="color: #cc0000; font-size: 20px; font-weight: bold;">
+		<%= preRegisterError %>
+	</h3>
+</div>
+<% } %>
+
 <script type="text/javascript">
 	$( document ).ready(function(){
 		$('#home-content').delay(1000).animate({opacity:1},3000);
