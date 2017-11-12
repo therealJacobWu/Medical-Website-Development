@@ -161,4 +161,8 @@ public class EditPatientAction extends PatientBaseAction {
 		
 		return true;
 	}
+    //TODO:
+	public void editMessageFilter(String filter){
+		return;
+	}
 }

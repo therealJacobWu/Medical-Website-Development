@@ -310,4 +310,9 @@ public class ViewMyMessagesAction {
 	public List<MessageBean> getCCdMessages(long refID) throws DBException, SQLException{
 		return messageDAO.getCCdMessages(refID);
 	}
+
+    //TODO:
+    public String validateAndCreateFilter(String filter){
+	    return "";
+    }
 }

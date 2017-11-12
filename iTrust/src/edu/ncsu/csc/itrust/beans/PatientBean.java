@@ -498,5 +498,8 @@ public class PatientBean implements Serializable, Comparable<PatientBean> {
 		assert false : "hashCode not designed";
 		return 42; // any arbitrary constant will do
 	}
-	
+	//TODO:
+	 public String getMessageFilter(){
+		return "";
+	 }
 }

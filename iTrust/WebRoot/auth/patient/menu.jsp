@@ -78,7 +78,7 @@
 	<div class="panel-body" id="msg-menu">
 		<ul class="nav nav-sidebar">
 			<li><a href="/iTrust/auth/patient/sendMessage.jsp">Compose a Message</a>
-			<li><a href="/iTrust/auth/hcp-patient/messageInbox.jsp">Message Inbox</a>
+			<li><a href="/iTrust/auth/patient/messageInbox.jsp">Message Inbox</a>
 			<li><a href="/iTrust/auth/hcp-patient/messageOutbox.jsp">Message Outbox</a>
 		</ul>
 	</div>

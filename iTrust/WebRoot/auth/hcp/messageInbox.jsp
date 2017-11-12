@@ -23,10 +23,10 @@ pageTitle = "iTrust - View My Message ";
 
 <div align=center>
 	<h2>My Messages</h2>
-	
+
 <%
 	loggingAction.logEvent(TransactionType.INBOX_VIEW, loggedInMID.longValue(), 0, "");
-	
+
 	ViewMyMessagesAction action = new ViewMyMessagesAction(prodDAO, loggedInMID.longValue());
 	EditPersonnelAction f_action = new EditPersonnelAction(prodDAO, loggedInMID.longValue(), loggedInMID.toString());
 	PersonnelDAO dao = new PersonnelDAO(prodDAO);

@@ -60,5 +60,9 @@ public class EditPersonnelAction extends PersonnelBaseAction {
 		validator.validate(personnelForm);
 		personnelDAO.editPersonnel(personnelForm);
 	}
+    //TODO:
+	public void editMessageFilter(String filter){
+        return;
+    }
 	
 }

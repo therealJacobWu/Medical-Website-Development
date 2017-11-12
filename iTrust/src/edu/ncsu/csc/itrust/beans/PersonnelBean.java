@@ -198,5 +198,9 @@ public class PersonnelBean implements Serializable {
 		assert false : "hashCode not designed";
 		return 0;
 	}
+    //TODO:
+    public String getMessageFilter(){
+	    return "";
+    }
 
 }
