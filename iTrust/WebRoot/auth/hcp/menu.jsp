@@ -29,6 +29,18 @@
 </div>
 
 <div class="panel panel-default">
+	<div class="panel-heading" anim-type="collapse" anim-target="#aggr-menu">
+		<h2 class="panel-title">Patient Info Visualizations</h2>
+	</div>
+	<div class="panel-body" id="aggr-menu">
+		<ul class="nav nav-sidebar">
+			<li><a href="/iTrust/auth/hcp/viewPatientVisualization.jsp">Histogram from one attribute</a></li>
+			<li><a href="/iTrust/auth/hcp/viewPatientVisualization.jsp">Line plot</a></li>
+		</ul>
+	</div>
+</div>
+
+<div class="panel panel-default">
 	<div class="panel-heading"  anim-type="collapse" anim-target="#appt-menu">
 		<h2 class="panel-title">Appointments</h2>
 	</div>
