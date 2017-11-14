@@ -113,33 +113,7 @@
 						if (validSession) {
 							if ((loggedInMID != null) && (loggedInMID.longValue() != 0L)) //someone is logged in
 							{
-								if (userRole.equals("patient")) {
-					%><%@include file="/auth/patient/menu.jsp"%>
-					<%
-						} else if (userRole.equals("uap")) {
-					%><%@include file="/auth/uap/menu.jsp"%>
-					<%
-						} else if (userRole.equals("hcp")) {
-					%><%@include file="/auth/hcp/menu.jsp"%>
-					<%
-						} else if (userRole.equals("er")) {
-					%><%@include file="/auth/er/menu.jsp"%>
-					<%
-						} else if (userRole.equals("pha")) {
-					%><%@include file="/auth/pha/menu.jsp"%>
-					<%
-						} else if (userRole.equals("admin")) {
-					%><%@include file="/auth/admin/menu.jsp"%>
-					<%
-						} else if (userRole.equals("tester")) {
-					%><%@include file="/auth/tester/menu.jsp"%>
-					<%
-						} else if (userRole.equals("lt")) {
-					%><%@include file="/auth/lt/menu.jsp"%>
-					<%
-						} else if (userRole.equals("pre_patient")) {
-					%><%@include file="/auth/pre_patient/menu.jsp"%>
-					<%		}
+							    %><jsp:include page="<%= \"/auth/\" + userRole + \"/menu.jsp\" %>" /><%
 							} //no one is logged in
 							else {
 								String uri = request.getRequestURI();
