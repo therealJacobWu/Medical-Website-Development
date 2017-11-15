@@ -48,8 +48,7 @@
         gender = "";
 %>
 <br />
-<form method="post" id="formMain">
-    <!--<input type="hidden" name="viewSelect" value="trends" />-->
+<form action= "viewCauseOfDeath.jsp" method="post" id="formMain">
     <table class="fTable" align="center" id="causeOfDeathStatisticsSelectionTable">
         <tr>
             <th colspan="4">Cause Of Death Statistics</th>
