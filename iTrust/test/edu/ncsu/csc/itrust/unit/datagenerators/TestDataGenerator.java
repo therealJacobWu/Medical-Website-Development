@@ -38,7 +38,7 @@ public class TestDataGenerator {
 		TestDataGenerator gen = new TestDataGenerator();
 		gen.clearAllTables();
 		gen.standardData();
-
+		gen.patient1000s();
 	}
 
 	private String DIR = "sql/data";
@@ -1046,7 +1046,6 @@ public class TestDataGenerator {
 		patient26(); // NEW
 		patient42();
 		patient100(); // NEW
-		patient1000s(); // NEW UC20
 
 		admin1();
 		admin2();

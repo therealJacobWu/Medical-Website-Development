@@ -12,15 +12,15 @@ import java.util.List;
 
 public class GetCauseOfDeathTest extends TestCase{
     private Long hcpid = 9000000003L;
+    private Long emptyHcpid = 9000000001L;
     private Date year1970 = new Date(1000L);
     private Date year2000 = new Date(946688461000L);
     private Date year2010 = new Date(1262307661000L);
     private PatientDAO patientDAO = TestDAOFactory.getTestInstance().getPatientDAO();
-    private TestDataGenerator gen;
+    private TestDataGenerator gen = new TestDataGenerator();
 
     @Override
     protected void setUp() throws Exception {
-        gen = new TestDataGenerator();
         gen.clearAllTables();
         gen.icd9cmCodes();
         gen.patient2();
@@ -32,33 +32,33 @@ public class GetCauseOfDeathTest extends TestCase{
     }
 
     public void testGetAllPatients() throws Exception {
-        List<String> causes = patientDAO.getCauseOfDeath(9000000003L, formatDate(year1970), formatDate(year2010));
+        List<String> causes = patientDAO.getCauseOfDeath(hcpid, formatDate(year1970), formatDate(year2010));
         assertEquals(2, causes.size());
         assertEquals(1, causes.indexOf("Diabetes with ketoacidosis"));
         assertEquals(0, causes.indexOf("Coxsackie"));
     }
 
     public void testGetMalePatients() throws Exception {
-        List<String> causes = patientDAO.getCauseOfDeath(Gender.Male, 9000000003L, formatDate(year1970), formatDate(year2010));
+        List<String> causes = patientDAO.getCauseOfDeath(Gender.Male, hcpid, formatDate(year1970), formatDate(year2010));
         assertEquals(2, causes.size());
         assertEquals(1, causes.indexOf("Diabetes with ketoacidosis"));
         assertEquals(0, causes.indexOf("Coxsackie"));
     }
 
     public void testGetFemalePatients() throws Exception {
-        List<String> causes = patientDAO.getCauseOfDeath(Gender.Female, 9000000003L, formatDate(year1970), formatDate(year2010));
+        List<String> causes = patientDAO.getCauseOfDeath(Gender.Female, hcpid, formatDate(year1970), formatDate(year2010));
         assertEquals(2, causes.size());
         assertEquals(1, causes.indexOf("Human Immunodeficiency Virus"));
         assertEquals(0, causes.indexOf("Age-Related Macular Degeneration"));
     }
 
     public void testGetNonHcpidPatients() throws Exception {
-        List<String> causes = patientDAO.getCauseOfDeath(Gender.NotSpecified, 9000000001L, formatDate(year1970), formatDate(year2010));
+        List<String> causes = patientDAO.getCauseOfDeath(Gender.NotSpecified, emptyHcpid, formatDate(year1970), formatDate(year2010));
         assertEquals(0, causes.size());
     }
 
     public void testGetSmallerRangePatients() throws Exception {
-        List<String> causes = patientDAO.getCauseOfDeath(9000000003L, formatDate(year2000), formatDate(year2010));
+        List<String> causes = patientDAO.getCauseOfDeath(hcpid, formatDate(year2000), formatDate(year2010));
         assertEquals(2, causes.size());
         assertEquals(1, causes.indexOf("Diabetes with ketoacidosis"));
         assertEquals(0, causes.indexOf("Coxsackie"));

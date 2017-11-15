@@ -2,7 +2,7 @@
 <%@page errorPage="/auth/exceptionHandler.jsp"%>
 
 <%@page import="edu.ncsu.csc.itrust.exception.FormValidationException"%>
-<%@ page import="edu.ncsu.csc.itrust.action.base.ViewCauseOfDeathStatisticsAction" %>
+<%@ page import="edu.ncsu.csc.itrust.action.ViewCauseOfDeathStatisticsAction" %>
 <%@ page import="java.util.List" %>
 <%@ page import="edu.ncsu.csc.itrust.enums.Gender" %>
 <%@ page import="java.util.Collections" %>

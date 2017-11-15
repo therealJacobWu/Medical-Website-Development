@@ -1,4 +1,4 @@
-package edu.ncsu.csc.itrust.action.base;
+package edu.ncsu.csc.itrust.action;
 
 import edu.ncsu.csc.itrust.dao.DAOFactory;
 import edu.ncsu.csc.itrust.dao.mysql.PatientDAO;

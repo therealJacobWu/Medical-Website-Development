@@ -23,6 +23,7 @@ public class ViewCauseOfDeathTest extends iTrustSeleniumTest {
     }
 
     public void testAllGender() throws Exception {
+
         driver = (HtmlUnitDriver)login("9000000003", "pw");
         driver.findElement(By.cssSelector("h2.panel-title")).click();
         driver.findElement(By.xpath("//div[@class='panel-body']/ul/li[2]")).click();
@@ -35,9 +36,6 @@ public class ViewCauseOfDeathTest extends iTrustSeleniumTest {
         } catch (NoSuchElementException d) {
             assertNull(elem);
         }
-        //assertFalse(isElementPresent(By.id("diagnosisStatisticsTable")));
-        //new Select(driver.findElement(By.name("viewSelect"))).selectByValue("trends");
-        //driver.findElement(By.id("select_View")).click();
         new Select(driver.findElement(By.name("gender"))).selectByVisibleText("All");
 
         driver.findElement(By.name("startDate")).clear();
@@ -52,6 +50,8 @@ public class ViewCauseOfDeathTest extends iTrustSeleniumTest {
         } catch (NoSuchElementException d) {
             fail("Element should be present");
         }
+
+        assertEquals(3, elem.findElements(By.tagName("tr")).size());
     }
 
     public void testInvalidDate() throws Exception {
@@ -67,9 +67,6 @@ public class ViewCauseOfDeathTest extends iTrustSeleniumTest {
         } catch (NoSuchElementException d) {
             assertNull(elem);
         }
-        //assertFalse(isElementPresent(By.id("diagnosisStatisticsTable")));
-        //new Select(driver.findElement(By.name("viewSelect"))).selectByValue("trends");
-        //driver.findElement(By.id("select_View")).click();
         new Select(driver.findElement(By.name("gender"))).selectByVisibleText("Male");
 
         driver.findElement(By.name("startDate")).clear();
