@@ -312,7 +312,12 @@ public class ViewMyMessagesAction {
 	}
 
     //TODO:
-    public String validateAndCreateFilter(String filter){
-	    return "";
+    public String validateAndCreateFilter(String filter) throws SQLException, ITrustException,ParseException {
+        List<MessageBean> allMessages = this.getAllMyMessages();
+        List<MessageBean> filtered = this.filterMessages(allMessages, filter);
+        if(filtered.isEmpty())
+            return "Error, the filter is not valid.";
+        else
+            return filter;
     }
 }
