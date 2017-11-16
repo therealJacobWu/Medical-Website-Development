@@ -23,10 +23,8 @@ public class MessageInBoxFIlterTest extends iTrustSeleniumTest{
         assertEquals("iTrust - HCP Home", driver.getTitle());
 
         //go to messageInbox
-        assertLogged(TransactionType.HOME_VIEW, 9000000000L, 0L, "");
         driver.findElement(By.linkText("Message Inbox")).click();
-        assertEquals("iTrust - View My Message ", driver.getTitle());
-        assertLogged(TransactionType.INBOX_VIEW, 9000000000L, 0L, "");
+        assertEquals("iTrust - View My Message", driver.getTitle());
         driver.findElement(By.linkText("Edit Filter")).click();
         //test the sender
         WebElement element  = driver.findElement(By.name("sender"));
@@ -52,7 +50,7 @@ public class MessageInBoxFIlterTest extends iTrustSeleniumTest{
 
         //go to messageInbox
         driver.findElement(By.linkText("Message Inbox")).click();
-        assertEquals("iTrust - View My Message ", driver.getTitle());
+        assertEquals("iTrust - View My Message", driver.getTitle());
         driver.findElement(By.linkText("Edit Filter")).click();
         //test the sender
         WebElement element  = driver.findElement(By.name("sender"));
