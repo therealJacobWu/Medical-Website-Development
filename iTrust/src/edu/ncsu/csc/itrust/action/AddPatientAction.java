@@ -47,16 +47,10 @@ public class AddPatientAction {
 	 * @throws ITrustException 
 	 */
 	public long addDependentPatient(PatientBean p, long repId) throws FormValidationException, ITrustException {
-		new AddPatientValidator().validate(p);
-		long newMID = patientDAO.addEmptyPatient();
-		boolean isDependent = true;
-		p.setMID(newMID);
-		String pwd = authDAO.addUser(newMID, Role.PATIENT, RandomPassword.getRandomPassword());
-		
+		long newMID = addPatient(p);
+
 		patientDAO.addRepresentative(repId, newMID);
-		authDAO.setDependent(newMID, isDependent);
-		p.setPassword(pwd);
-		patientDAO.editPatient(p, loggedInMID);
+		authDAO.setDependent(newMID, true);
 		return newMID;
 	}
 	
