@@ -38,7 +38,8 @@ public class TestDataGenerator {
 		TestDataGenerator gen = new TestDataGenerator();
 		gen.clearAllTables();
 		gen.standardData();
-
+		// Put it here so that actual iTrust runs can see cause of death data of patients
+		gen.patient1000s();
 	}
 
 	private String DIR = "sql/data";
@@ -555,6 +556,14 @@ public class TestDataGenerator {
 	public void patient22() throws FileNotFoundException, SQLException,
 			IOException {
 		new DBBuilder(factory).executeSQLFile(DIR + "/patient22.sql");
+	}
+
+	public void patient1000s() throws FileNotFoundException, SQLException, IOException {
+		new DBBuilder(factory).executeSQLFile(DIR + "/patient1001.sql");
+		new DBBuilder(factory).executeSQLFile(DIR + "/patient1002.sql");
+		new DBBuilder(factory).executeSQLFile(DIR + "/patient1003.sql");
+		new DBBuilder(factory).executeSQLFile(DIR + "/patient1004.sql");
+		new DBBuilder(factory).executeSQLFile(DIR + "/patient1005.sql");
 	}
 
 	/**
