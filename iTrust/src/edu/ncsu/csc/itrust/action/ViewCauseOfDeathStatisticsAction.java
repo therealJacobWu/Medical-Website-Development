@@ -12,14 +12,32 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Used for Cause Of Death page, can return top two cause of death
+ * based on the gender, start and end date provided
+ */
 public class ViewCauseOfDeathStatisticsAction {
-
+    // Database access for patients
     private PatientDAO patientDAO;
 
+    /**
+     * Constructor for the action. Initializes DAO fields
+     * @param factory The session's factory for DAOs
+     */
     public ViewCauseOfDeathStatisticsAction(DAOFactory factory) {
         this.patientDAO = factory.getPatientDAO();
     }
 
+    /**
+     * Get the top two cause of death for the given input
+     * @param startDate start date to be queried from (in "MM/dd/yyyy" format)
+     * @param endDate end date that query stops
+     * @param hcpId patients from specific hcp
+     * @param gender gender of patients to be queried
+     * @return List of string represents the top two cause of death
+     * @throws DBException
+     * @throws FormValidationException
+     */
     public List<String> getCauseOfDeathStatistics(String startDate, String endDate, long hcpId, String gender)
         throws DBException, FormValidationException
     {

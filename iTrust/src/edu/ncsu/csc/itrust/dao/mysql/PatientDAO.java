@@ -492,6 +492,17 @@ public class PatientDAO {
 		}
 	}
 
+	/**
+	 * Return the top two cause of death of given hcp patients
+	 *
+	 * @param gender gender of patients to be queried ({@link Gender.NotSpecified} should be used when
+	 *               querying both mail and female patients)
+	 * @param hcpid hcpid of patients to be queried from
+	 * @param start start date to query from (in "yyyy-MM-dd" format)
+	 * @param end end datet to query to (in "yyyy-MM-dd" format)
+	 * @return List of Strings that represent cause of death
+	 * @throws DBException
+	 */
 	public List<String> getCauseOfDeath(Gender gender, Long hcpid, String start, String end) throws DBException{
 		Connection conn = null;
 		PreparedStatement ps = null;
@@ -525,6 +536,15 @@ public class PatientDAO {
 		return new ArrayList<>();
 	}
 
+	/**
+	 * Return the top two cause of death of given hcp patients
+	 *
+	 * @param hcpid hcpid of patients to be queried from
+	 * @param start start date to query from (in "yyyy-MM-dd" format)
+	 * @param end end datet to query to (in "yyyy-MM-dd" format)
+	 * @return List of Strings that represent cause of death
+	 * @throws DBException
+	 */
 	public List<String> getCauseOfDeath(Long hcpid, String start, String end) throws DBException{
 		Connection conn = null;
 		PreparedStatement ps = null;
@@ -554,6 +574,13 @@ public class PatientDAO {
 		}
 	}
 
+	/**
+	 * Convert database query result to list of strings
+	 *
+	 * @param rs query result
+	 * @return list of sttring
+	 * @throws SQLException
+	 */
 	private List<String> loadCauseOfDeathList(ResultSet rs) throws SQLException{
 		List<String> result = new ArrayList<>();
 		while (rs.next()) {

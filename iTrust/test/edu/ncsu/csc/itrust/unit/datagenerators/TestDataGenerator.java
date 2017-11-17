@@ -38,6 +38,7 @@ public class TestDataGenerator {
 		TestDataGenerator gen = new TestDataGenerator();
 		gen.clearAllTables();
 		gen.standardData();
+		// Put it here so that actual iTrust runs can see cause of death data of patients
 		gen.patient1000s();
 	}
 
