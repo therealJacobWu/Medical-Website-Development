@@ -34,8 +34,8 @@
 	</div>
 	<div class="panel-body" id="aggr-menu">
 		<ul class="nav nav-sidebar">
-			<li><a href="/iTrust/auth/hcp/viewPatientVisualization.jsp">Histogram from one attribute</a></li>
-			<li><a href="/iTrust/auth/hcp/viewPatientVisualization.jsp">Line plot</a></li>
+			<li><a href="/iTrust/auth/hcp/viewPatientVisualization.jsp?histogram=true">Histogram from one attribute</a></li>
+			<li><a href="/iTrust/auth/hcp/viewPatientVisualization.jsp?histogram=false">Line plot</a></li>
 		</ul>
 	</div>
 </div>

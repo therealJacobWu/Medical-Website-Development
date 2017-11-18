@@ -16,7 +16,7 @@
 <%@include file="/global.jsp"%>
 
 <%
-    pageTitle = "iTrust - My Patients with Potential Prescription-Renewal Needs";
+    pageTitle = "iTrust - Patient Visualization";
 
 
     List<String> attributes = ImmutableList.of("age", "number of visits", "number of appointments", "icState",
@@ -40,6 +40,8 @@
         }
     }
     String highchartsChartData = chartData.toString().replace("\"", "");
+
+    String inputType = request.getParameter("histogram") != null && request.getParameter("histogram").equals("true") ? "radio": "checkbox";
 %>
 
 <%@include file="/header.jsp"%>
@@ -50,7 +52,7 @@
             for (String attr : attributes) {
                 %>
                     <div>
-                        <input type="checkbox" id="<%= attr %>" name="attribute" value="<%= attr %>">
+                        <input type="<%= inputType %>" id="<%= attr %>" name="attribute" value="<%= attr %>">
                         <label for="<%= attr %>"><%= attr %></label>
                     </div>
                 <%
@@ -66,21 +68,24 @@
     <script src="/iTrust/js/jquery-1.7.2.js" type="text/javascript"></script>
     <script src="/iTrust/js/highcharts.js" type="text/javascript"></script>
     <script src="/iTrust/js/highcharts-more.js" type="text/javascript"></script>
-    <script type="text/javascript">
-        $("#container").highcharts({
-			chart: { type: 'line' },
-    		title: { text: "Transaction Summary" },
-    		yAxis: {
-    			title: { text: "Number of Transactions" }
-    		},
-    		series: <%= highchartsChartData %>,
-    		legend: {
-                layout: 'vertical',
-                align: 'right',
-                verticalAlign: 'middle'
-            }
-        });
-    </script>
+
+    <% if (selectedAttributes != null && selectedAttributes.length != 0) { %>
+        <script type="text/javascript">
+            $("#container").highcharts({
+                chart: { type: 'line' },
+                title: { text: "Transaction Summary" },
+                yAxis: {
+                    title: { text: "Number of Transactions" }
+                },
+                series: <%= highchartsChartData %>,
+                legend: {
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'middle'
+                }
+            });
+        </script>
+    <% } %>
 </div>
 
 <%@include file="/footer.jsp"%>
