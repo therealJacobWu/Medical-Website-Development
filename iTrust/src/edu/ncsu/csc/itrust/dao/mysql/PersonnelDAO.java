@@ -590,42 +590,17 @@ public class PersonnelDAO {
 		}
 	}
 
-    private void validateMessageFilterColumn() throws DBException{
-     	Connection conn = null;
-		PreparedStatement ps = null;
-
-		try {
-			conn = factory.getConnection();
-			ps = conn.prepareStatement("SHOW COLUMNS FROM personnel LIKE 'messagefilter' ");
-			ResultSet rs = ps.executeQuery();
-            if (!rs.first() ) {
-                ps = conn.prepareStatement("ALTER TABLE personnel ADD COLUMN messagefilter varchar(1024)");
-                rs = ps.executeQuery();
-            }
-			rs.close();
-			ps.close();
-		} catch (SQLException e) {
-		} finally {
-			DBUtil.closeConnection(conn, ps);
-		}
-    }
-
     public void editMessageFilter(long pid, String filter) throws DBException{
-        validateMessageFilterColumn();
+        //validateMessageFilterColumn();
         Connection conn = null;
 		PreparedStatement ps = null;
 
 		try {
 			conn = factory.getConnection();
-            //ps = conn.prepareStatement("DELETE FROM messagefilters WHERE MID=?");
             ps = conn.prepareStatement("UPDATE personnel SET messagefilter=? WHERE MID=?");
             ps.setString(1, filter);
             ps.setLong(2, pid);
 			ps.executeUpdate();
-			//ps = conn.prepareStatement("INSERT INTO messagefilters (MID,filter) VALUES (?,?)");
-            //ps.setLong(1, pid);
-            //ps.setString(2, filter);
-			//rs = ps.executeQuery();
 			ps.close();
 		} catch (SQLException e) {
 			throw new DBException(e);

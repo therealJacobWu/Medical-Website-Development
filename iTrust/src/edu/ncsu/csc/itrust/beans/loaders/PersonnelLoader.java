@@ -1,11 +1,12 @@
 package edu.ncsu.csc.itrust.beans.loaders;
 
+import edu.ncsu.csc.itrust.beans.PersonnelBean;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import edu.ncsu.csc.itrust.beans.PersonnelBean;
 
 /**
  * A loader for PersonnelBeans.
@@ -37,6 +38,7 @@ public class PersonnelLoader implements BeanLoader<PersonnelBean> {
 		p.setZip((rs.getString("zip")));
 		p.setEmail(rs.getString("email"));
 		p.setSpecialty(rs.getString("specialty"));
+		p.setMessageFilter(rs.getString("messageFilter"));
 		return p;
 	}
 
