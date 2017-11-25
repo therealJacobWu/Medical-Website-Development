@@ -453,6 +453,11 @@ public class TestDataGenerator {
 		new DBBuilder(factory).executeSQLFile(DIR + "/operationalProfile.sql");
 	}
 
+	public void pre_patient1() throws FileNotFoundException, IOException,
+			SQLException {
+		new DBBuilder(factory).executeSQLFile(DIR + "/pre_patient1.sql");
+	}
+
 	public void patient1() throws FileNotFoundException, IOException,
 			SQLException {
 		new DBBuilder(factory).executeSQLFile(DIR + "/patient1.sql");

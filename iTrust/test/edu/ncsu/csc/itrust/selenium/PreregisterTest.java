@@ -181,6 +181,9 @@ public class PreregisterTest extends iTrustSeleniumTest{
         assertEquals(testPatientBean.getStreetAddress2(), "");
         assertEquals(testPatientBean.getIcPhone(), "");
 
+        assertTrue(testPatientBean.equals(testPatientDao.getPatient("test@gg.com")) == 0);
+        assertEquals(null, testPatientDao.getPatient("test1@gg.com"));
+
         HealthRecordsDAO testHealthRecordDao = new HealthRecordsDAO(factory);
         HealthRecord testHealthRecod = testHealthRecordDao.getAllHealthRecords(411).get(0);
         assertEquals(testHealthRecod.getHeight(), 0.0);

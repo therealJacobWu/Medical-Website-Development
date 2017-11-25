@@ -50,14 +50,23 @@ public class ResetPasswordActionTest extends TestCase {
 	}
 
 	public void testCheckRole() throws Exception {
+		gen.pre_patient1();
 		gen.patient2();
 		gen.hcp0();
 		gen.uap1();
+		gen.er4();
+		gen.pha0();
+		gen.ltData0();
+		assertEquals("pre_patient", action.checkRole(1L, "pre_patient"));
 		assertEquals("patient", action.checkRole(2L, "patient"));
 		assertEquals("hcp", action.checkRole(9000000000L, "hcp"));
 		assertEquals("uap", action.checkRole(8000000009L, "uap"));
+		assertEquals("er", action.checkRole(9000000006L, "er"));
+		assertEquals("lt", action.checkRole(5000000001L, "lt"));
+		assertEquals("pha", action.checkRole(9999999990L, "pha"));
 		assertEquals(null, action.checkRole(0L, "admin"));
 		assertEquals(null, action.checkRole(0L, "HCP"));
+
 	}
 
 	public void testCheckWrongRole() {
