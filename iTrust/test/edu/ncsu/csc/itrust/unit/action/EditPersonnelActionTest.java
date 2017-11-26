@@ -1,5 +1,7 @@
 package edu.ncsu.csc.itrust.unit.action;
 
+import edu.ncsu.csc.itrust.action.EditPatientAction;
+import edu.ncsu.csc.itrust.dao.mysql.PatientDAO;
 import junit.framework.TestCase;
 import edu.ncsu.csc.itrust.action.EditPersonnelAction;
 import edu.ncsu.csc.itrust.beans.PersonnelBean;
@@ -77,6 +79,12 @@ public class EditPersonnelActionTest extends TestCase {
 		j = factory.getPersonnelDAO().getPersonnel(8000000009l);
 		assertEquals("second line", j.getStreetAddress2());
 	}
-	
+
+	public void testEditMessageFilter()throws Exception{
+		gen.uap1();
+		personnelEditor = new EditPersonnelAction(factory, 8000000009L, "8000000009");
+		personnelEditor.editMessageFilter("Kelly Doctor");
+		assertEquals("Kelly Doctor", factory.getPersonnelDAO().getPersonnel(8000000009l).getMessageFilter());
+	}
 	
 }

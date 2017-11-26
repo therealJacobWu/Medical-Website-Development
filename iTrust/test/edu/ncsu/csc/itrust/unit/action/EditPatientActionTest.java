@@ -172,11 +172,10 @@ public class EditPatientActionTest extends TestCase {
 	}
 
 	public void testEditMessageFilter()throws Exception{
-        Long loggedInMID = 2L;
-        action = new EditPatientAction(factory, loggedInMID, loggedInMID.toString());
-        PatientDAO pDAO = new PatientDAO(factory);
-        PatientBean pb = pDAO.getPatient(loggedInMID);
+        gen.patient1();
+        PatientDAO po = TestDAOFactory.getTestInstance().getPatientDAO();
+        action = new EditPatientAction(factory, 1L, "1");
         action.editMessageFilter("Kelly Doctor");
-        assertEquals("Kelly Doctor", pb.getMessageFilter());
+        assertEquals("Kelly Doctor", po.getPatient(1l).getMessageFilter());
     }
 }
