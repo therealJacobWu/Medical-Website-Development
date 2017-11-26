@@ -311,7 +311,6 @@ public class ViewMyMessagesAction {
 		return messageDAO.getCCdMessages(refID);
 	}
 
-    //TODO:
 	/**
 	 * validate And Create Filter
 	 * @param filter
