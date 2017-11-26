@@ -164,6 +164,6 @@ public class EditPatientAction extends PatientBaseAction {
 	}
 
 	public void editMessageFilter(String filter) throws DBException{
-		personnelDAO.editMessageFilter(getPid(),filter);
+		patientDAO.editMessageFilter(getPid(),filter);
 	}
 }
