@@ -299,4 +299,15 @@ public class ViewMyMessagesActionTest extends TestCase {
 			assertNull(resultList);
 		}
 	}
+
+    /**
+     * testvalidateAndCreateFilter
+     * @throws ITrustException
+     * @throws SQLException
+     * @throws ParseException
+     */
+    public void testvalidateAndCreateFilter() throws SQLException, ITrustException,ParseException {
+        String filter = "This is not a valid filter.";
+        assertEquals("Error, the filter is not valid.", action.validateAndCreateFilter(filter));
+    }
 }

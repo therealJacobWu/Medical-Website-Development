@@ -59,4 +59,10 @@ public class MessageInBoxFIlterTest extends iTrustSeleniumTest{
         driver.findElement(By.cssSelector("input[value=\"Test Filter\"]")).submit();
         assertTrue(driver.getPageSource().contains("Kelly Doctor"));
     }
+
+
+
+
+
+
 }
