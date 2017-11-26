@@ -306,7 +306,7 @@ public class ViewMyMessagesActionTest extends TestCase {
      * @throws SQLException
      * @throws ParseException
      */
-    public void testvalidateAndCreateFilter() throws SQLException, ITrustException,ParseException {
+    public void testValidateAndCreateFilter() throws SQLException, ITrustException,ParseException {
         String filter = "This is not a valid filter.";
         assertEquals("Error, the filter is not valid.", action.validateAndCreateFilter(filter));
     }

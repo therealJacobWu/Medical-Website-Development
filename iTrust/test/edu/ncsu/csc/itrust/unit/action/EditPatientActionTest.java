@@ -170,4 +170,13 @@ public class EditPatientActionTest extends TestCase {
 		//Check that patient 2 is not a dependent
 		assertFalse(authDAO.isDependent(2L));
 	}
+
+	public void testEditMessageFilter()throws Exception{
+        Long loggedInMID = 2L;
+        action = new EditPatientAction(factory, loggedInMID, loggedInMID.toString());
+        PatientDAO pDAO = new PatientDAO(factory);
+        PatientBean pb = pDAO.getPatient(loggedInMID);
+        action.editMessageFilter("Kelly Doctor");
+        assertEquals("Kelly Doctor", pb.getMessageFilter());
+    }
 }
