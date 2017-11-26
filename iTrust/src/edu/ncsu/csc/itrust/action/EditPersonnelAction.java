@@ -62,7 +62,6 @@ public class EditPersonnelAction extends PersonnelBaseAction {
 		personnelDAO.editPersonnel(personnelForm);
 	}
 
-    //TODO:
 	public void editMessageFilter(String filter) throws DBException{
 		personnelDAO.editMessageFilter(getPid(),filter);
     }
