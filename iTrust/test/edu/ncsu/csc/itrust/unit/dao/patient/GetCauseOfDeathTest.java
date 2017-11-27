@@ -23,7 +23,7 @@ public class GetCauseOfDeathTest extends TestCase{
     protected void setUp() throws Exception {
         gen.clearAllTables();
         gen.icd9cmCodes();
-        gen.patient2();
+        gen.patientDeath();
         gen.patient1000s();
     }
 
