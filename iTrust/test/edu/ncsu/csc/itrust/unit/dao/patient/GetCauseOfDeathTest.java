@@ -34,22 +34,22 @@ public class GetCauseOfDeathTest extends TestCase{
     public void testGetAllPatients() throws Exception {
         List<String> causes = patientDAO.getCauseOfDeath(hcpid, formatDate(year1970), formatDate(year2010));
         assertEquals(2, causes.size());
-        assertTrue(causes.contains("Diabetes with ketoacidosis"));
-        assertTrue(causes.contains("Coxsackie"));
+        assertEquals(0, causes.indexOf("Diabetes with ketoacidosis"));
+        assertEquals(1, causes.indexOf("Coxsackie"));
     }
 
     public void testGetMalePatients() throws Exception {
         List<String> causes = patientDAO.getCauseOfDeath(Gender.Male, hcpid, formatDate(year1970), formatDate(year2010));
         assertEquals(2, causes.size());
-        assertTrue(causes.contains("Diabetes with ketoacidosis"));
-        assertTrue(causes.contains("Coxsackie"));
+        assertEquals(0, causes.indexOf("Diabetes with ketoacidosis"));
+        assertEquals(1, causes.indexOf("Coxsackie"));
     }
 
     public void testGetFemalePatients() throws Exception {
         List<String> causes = patientDAO.getCauseOfDeath(Gender.Female, hcpid, formatDate(year1970), formatDate(year2010));
         assertEquals(2, causes.size());
-        assertTrue(causes.contains("Human Immunodeficiency Virus"));
-        assertTrue(causes.contains("Age-Related Macular Degeneration"));
+        assertEquals(1, causes.indexOf("Human Immunodeficiency Virus"));
+        assertEquals(0, causes.indexOf("Age-Related Macular Degeneration"));
     }
 
     public void testGetNonHcpidPatients() throws Exception {
@@ -60,7 +60,7 @@ public class GetCauseOfDeathTest extends TestCase{
     public void testGetSmallerRangePatients() throws Exception {
         List<String> causes = patientDAO.getCauseOfDeath(hcpid, formatDate(year2000), formatDate(year2010));
         assertEquals(2, causes.size());
-        assertTrue(causes.contains("Diabetes with ketoacidosis"));
-        assertTrue(causes.contains("Coxsackie"));
+        assertEquals(0, causes.indexOf("Diabetes with ketoacidosis"));
+        assertEquals(1, causes.indexOf("Coxsackie"));
     }
 }
