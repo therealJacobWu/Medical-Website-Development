@@ -78,23 +78,23 @@ ON DUPLICATE KEY UPDATE Code = Code;
 DELETE FROM personalhealthinformation WHERE PatientID = 2;
 INSERT INTO personalhealthinformation
 (PatientID,OfficeVisitID,Height,Weight,Smoker,SmokingStatus,BloodPressureN,BloodPressureD,CholesterolHDL,CholesterolLDL,CholesterolTri,HCPID, AsOfDate,OfficeVisitDate,BMI)
-VALUES ( 2,  961, 60,   200,   0, 9,     190,          100,           500,             239,         290,          9000000000, '2007-06-07 20:33:58','2007-06-07',39.06),
-	   ( 2,  962, 62,   210,   1, 5,     195,          250,             36,             215,           280,          9000000000, '2007-06-07 20:34:58','2007-06-07',38.41)
+VALUES ( 2,  961, 60,   200,   0, 9,     190,          100,           500,             239,         290,          9000000003, '2007-06-07 20:33:58','2007-06-07',39.06),
+	   ( 2,  962, 62,   210,   1, 5,     195,          250,             36,             215,           280,          9000000003, '2007-06-07 20:34:58','2007-06-07',38.41)
 	   on duplicate key update OfficeVisitID = OfficeVisitID;
 
 
 INSERT INTO officevisits(id,visitDate,HCPID,notes,HospitalID,PatientID)
-VALUES (952,'2007-6-09',9000000000,'Yet another office visit.','1',2),
-	   (953,'2005-10-10',9000000000,'Yet another office visit.','1',2),
-	   (954,'2005-10-10',9000000000,'Yet another office visit.','1',2),
-	   (955,'2007-6-10',9000000000,'Yet another office visit.','1',2),
-	   (956,'2005-10-10',9000000000,'Yet another office visit.','1',2),
-	   (957,'2005-10-10',9000000000,'Yet another office visit.','1',2),
-	   (958,'2005-10-10',9000000000,'Yet another office visit.','1',2),
-	   (959,'2006-10-10',9000000000,'Yet another office visit.','1',2),
-	   (960,'1985-10-10',9000000000,'Yet another office visit.','',2),
-	   (961,'2007-06-07',9000000000,'Yet another office visit.','',2),
-	   (962,'2007-06-07',9000000000,'Yet another office visit.','',2)
+VALUES (952,'2007-6-09',9000000003,'Yet another office visit.','1',2),
+	   (953,'2005-10-10',9000000003,'Yet another office visit.','1',2),
+	   (954,'2005-10-10',9000000003,'Yet another office visit.','1',2),
+	   (955,'2007-6-10',9000000003,'Yet another office visit.','1',2),
+	   (956,'2005-10-10',9000000003,'Yet another office visit.','1',2),
+	   (957,'2005-10-10',9000000003,'Yet another office visit.','1',2),
+	   (958,'2005-10-10',9000000003,'Yet another office visit.','1',2),
+	   (959,'2006-10-10',9000000003,'Yet another office visit.','1',2),
+	   (960,'1985-10-10',9000000003,'Yet another office visit.','',2),
+	   (961,'2007-06-07',9000000003,'Yet another office visit.','',2),
+	   (962,'2007-06-07',9000000003,'Yet another office visit.','',2)
 		 ON DUPLICATE KEY UPDATE id = id;
 
 INSERT INTO ovdiagnosis(ID, ICDCode, VisitID) 

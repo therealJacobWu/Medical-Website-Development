@@ -511,9 +511,9 @@ public class PatientDAO {
 			if (gender == Male || gender == Female) {
 				ps = conn.prepareStatement(
 						"SELECT Description, COUNT(CauseOfDeath) " +
-						"FROM Patients, Declaredhcp, Icdcodes " +
+						"FROM Patients, officevisits, Icdcodes " +
 						"WHERE CauseOfDeath IS NOT NULL AND CauseOfDeath <> '' AND Code = CauseOfDeath AND Gender = ? " +
-								"AND Patients.Mid = Declaredhcp.Patientid AND Declaredhcp.Hcpid = ?  " +
+								"AND Patients.Mid = officevisits.PatientID AND officevisits.HCPID = ?  " +
 								"AND DateOfDeath > ? AND DateOfDeath < ?" +
 						"GROUP BY CauseOfDeath, Description " +
 						"ORDER BY COUNT(CauseOfDeath) DESC, Description ASC " +
@@ -552,9 +552,9 @@ public class PatientDAO {
 			conn = factory.getConnection();
 			ps = conn.prepareStatement(
 							"SELECT Description, COUNT(CauseOfDeath) " +
-								"FROM Patients, Declaredhcp, Icdcodes " +
+								"FROM Patients, officevisits, Icdcodes " +
 								"WHERE CauseOfDeath IS NOT NULL AND CauseOfDeath <> '' AND Code = CauseOfDeath " +
-									"AND Patients.Mid = Declaredhcp.Patientid AND Declaredhcp.Hcpid = ?  " +
+									"AND Patients.Mid = officevisits.PatientID AND officevisits.HCPID = ?  " +
 									"AND DateOfDeath > ? AND DateOfDeath < ? " +
 								"GROUP BY CauseOfDeath, Description " +
 								"ORDER BY COUNT(CauseOfDeath) DESC, Description ASC " +

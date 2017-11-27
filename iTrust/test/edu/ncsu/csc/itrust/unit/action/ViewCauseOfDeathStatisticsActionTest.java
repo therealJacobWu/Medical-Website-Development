@@ -33,15 +33,15 @@ public class ViewCauseOfDeathStatisticsActionTest extends TestCase{
     public void testValidQueryAll() throws Exception {
         List<String> causes = action.getCauseOfDeathStatistics(formatDate(year1970), formatDate(year2010), hcpid, "ALL");
         assertEquals(2, causes.size());
-        assertEquals(1, causes.indexOf("Diabetes with ketoacidosis"));
-        assertEquals(0, causes.indexOf("Coxsackie"));
+        assertTrue(causes.contains("Diabetes with ketoacidosis"));
+        assertTrue(causes.contains("Coxsackie"));
     }
 
     public void testValidQueryMale() throws Exception {
         List<String> causes = action.getCauseOfDeathStatistics(formatDate(year1970), formatDate(year2010), hcpid, "Male");
         assertEquals(2, causes.size());
-        assertEquals(1, causes.indexOf("Diabetes with ketoacidosis"));
-        assertEquals(0, causes.indexOf("Coxsackie"));
+        assertTrue(causes.contains("Diabetes with ketoacidosis"));
+        assertTrue(causes.contains("Coxsackie"));
     }
 
     public void testInvalidQueryGender() throws Exception {
