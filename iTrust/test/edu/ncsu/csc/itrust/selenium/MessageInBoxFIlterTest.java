@@ -1,11 +1,11 @@
 package edu.ncsu.csc.itrust.selenium;
-import edu.ncsu.csc.itrust.enums.TransactionType;
+
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class MessageInBoxFilterTest extends iTrustSeleniumTest{
+public class MessageInboxFilterTest extends iTrustSeleniumTest{
 
     WebDriver driver;
     WebElement element;
