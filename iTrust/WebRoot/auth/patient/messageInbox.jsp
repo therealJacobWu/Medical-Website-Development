@@ -23,13 +23,13 @@ pageTitle = "iTrust - View My Message ";
 
 <div align=center>
 	<h2>My Messages</h2>
-	
+
 <%
 	ViewMyMessagesAction action = new ViewMyMessagesAction(prodDAO, loggedInMID.longValue());
 	EditPatientAction f_action = new EditPatientAction(prodDAO, loggedInMID.longValue(), loggedInMID.toString());
 	PatientDAO dao = new PatientDAO(prodDAO);
 	List<MessageBean> messages = null;
-	
+
 	//Edit Filter backend
 	boolean editing = false;
 	String headerMessage = "";

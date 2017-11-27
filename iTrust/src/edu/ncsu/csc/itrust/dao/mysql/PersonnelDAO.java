@@ -541,7 +541,7 @@ public class PersonnelDAO {
 			DBUtil.closeConnection(conn, ps);
 		}
 	}
-	
+
 	/**
 	 * Returns all of the personnel who have a specialty of nutritionist
 	 */
@@ -589,4 +589,23 @@ public class PersonnelDAO {
 			DBUtil.closeConnection(conn, ps);
 		}
 	}
+
+    public void editMessageFilter(long pid, String filter) throws DBException{
+        //validateMessageFilterColumn();
+        Connection conn = null;
+		PreparedStatement ps = null;
+
+		try {
+			conn = factory.getConnection();
+            ps = conn.prepareStatement("UPDATE personnel SET messagefilter=? WHERE MID=?");
+            ps.setString(1, filter);
+            ps.setLong(2, pid);
+			ps.executeUpdate();
+			ps.close();
+		} catch (SQLException e) {
+			throw new DBException(e);
+		} finally {
+			DBUtil.closeConnection(conn, ps);
+		}
+    }
 }

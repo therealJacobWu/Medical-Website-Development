@@ -1335,5 +1335,22 @@ public class PatientDAO {
 		}
 	}
 
-	
+	public void editMessageFilter(long pid, String filter) throws DBException{
+		//validateMessageFilterColumn();
+		Connection conn = null;
+		PreparedStatement ps = null;
+
+		try {
+			conn = factory.getConnection();
+			ps = conn.prepareStatement("UPDATE patients SET messagefilter=? WHERE MID=?");
+			ps.setString(1, filter);
+			ps.setLong(2, pid);
+			ps.executeUpdate();
+			ps.close();
+		} catch (SQLException e) {
+			throw new DBException(e);
+		} finally {
+			DBUtil.closeConnection(conn, ps);
+		}
+	}
 }

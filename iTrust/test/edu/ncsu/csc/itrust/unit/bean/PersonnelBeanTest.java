@@ -51,7 +51,11 @@ public class PersonnelBeanTest extends TestCase {
 		p1.setMID(000002);
 		
 		assertEquals(000001, p.getMID());
-		
+
+		p.setMessageFilter("Random Person");
+
+		assertEquals("Random Person", p.getMessageFilter());
+
 		List<PersonnelBean> list = new LinkedList<PersonnelBean>();
 		
 		list.add(p);

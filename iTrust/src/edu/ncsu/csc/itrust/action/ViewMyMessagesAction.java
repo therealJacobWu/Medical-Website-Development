@@ -310,4 +310,21 @@ public class ViewMyMessagesAction {
 	public List<MessageBean> getCCdMessages(long refID) throws DBException, SQLException{
 		return messageDAO.getCCdMessages(refID);
 	}
+
+	/**
+	 * validate And Create Filter
+	 * @param filter
+	 * @return the valid string or an error message
+	 * @throws ITrustException
+	 * @throws SQLException
+     * @throws ParseException
+	 */
+    public String validateAndCreateFilter(String filter) throws SQLException, ITrustException,ParseException {
+        List<MessageBean> allMessages = this.getAllMyMessages();
+        List<MessageBean> filtered = this.filterMessages(allMessages, filter);
+        if(filtered.isEmpty())
+            return "Error, the filter is not valid.";
+        else
+            return filter;
+    }
 }

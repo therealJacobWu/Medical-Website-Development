@@ -1,12 +1,13 @@
 package edu.ncsu.csc.itrust.beans;
 
+import edu.ncsu.csc.itrust.enums.BloodType;
+import edu.ncsu.csc.itrust.enums.Ethnicity;
+import edu.ncsu.csc.itrust.enums.Gender;
+
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import edu.ncsu.csc.itrust.enums.BloodType;
-import edu.ncsu.csc.itrust.enums.Ethnicity;
-import edu.ncsu.csc.itrust.enums.Gender;
 
 /**
  * A bean for storing data about a patient.
@@ -61,7 +62,16 @@ public class PatientBean implements Serializable, Comparable<PatientBean> {
 	private String spiritualPractices = "";
 	private String alternateName = "";
 	private String dateOfDeactivationStr = "";
+	private String messageFilter = "";
 
+
+    public String getMessageFilter() {
+        return messageFilter;
+    }
+
+    public void setMessageFilter(String messageFilter) {
+		this.messageFilter= messageFilter;
+	}
 
 	public BloodType getBloodType() {
 		return bloodType;
@@ -498,5 +508,4 @@ public class PatientBean implements Serializable, Comparable<PatientBean> {
 		assert false : "hashCode not designed";
 		return 42; // any arbitrary constant will do
 	}
-	
 }

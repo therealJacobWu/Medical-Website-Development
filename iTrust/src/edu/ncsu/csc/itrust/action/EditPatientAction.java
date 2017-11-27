@@ -1,9 +1,6 @@
 package edu.ncsu.csc.itrust.action;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
+import edu.ncsu.csc.itrust.EmailUtil;
 import edu.ncsu.csc.itrust.action.base.PatientBaseAction;
 import edu.ncsu.csc.itrust.beans.Email;
 import edu.ncsu.csc.itrust.beans.PatientBean;
@@ -16,7 +13,11 @@ import edu.ncsu.csc.itrust.exception.DBException;
 import edu.ncsu.csc.itrust.exception.FormValidationException;
 import edu.ncsu.csc.itrust.exception.ITrustException;
 import edu.ncsu.csc.itrust.validate.PatientValidator;
-import edu.ncsu.csc.itrust.EmailUtil;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 
 /**
@@ -160,5 +161,9 @@ public class EditPatientAction extends PatientBaseAction {
 		}
 		
 		return true;
+	}
+
+	public void editMessageFilter(String filter) throws DBException{
+		patientDAO.editMessageFilter(getPid(),filter);
 	}
 }

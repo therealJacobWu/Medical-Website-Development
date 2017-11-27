@@ -1,5 +1,8 @@
 package edu.ncsu.csc.itrust.beans.loaders;
 
+import edu.ncsu.csc.itrust.beans.PatientBean;
+import edu.ncsu.csc.itrust.beans.PatientHistoryBean;
+
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,8 +11,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import edu.ncsu.csc.itrust.beans.PatientBean;
-import edu.ncsu.csc.itrust.beans.PatientHistoryBean;
 
 /**
  * A loader for PatientBeans.
@@ -77,6 +78,7 @@ public class PatientLoader implements BeanLoader<PatientBean> {
 		p.setSpiritualPractices(rs.getString("SpiritualPractices"));
 		p.setAlternateName(rs.getString("AlternateName"));
 		Date dateOfDeactivation = rs.getDate("DateOfDeactivation");
+		p.setMessageFilter(rs.getString("messagefilter"));
 		if (dateOfDeactivation != null){
 			p.setDateOfDeactivationStr(DATE_FORMAT.format(dateOfDeactivation));
 		}
