@@ -18,7 +18,7 @@ public class ViewCauseOfDeathTest extends iTrustSeleniumTest {
         gen.clearAllTables();
         gen.standardData();
         gen.icd9cmCodes();
-        gen.patient2();
+        gen.patientDeath();
         gen.patient1000s();
     }
 

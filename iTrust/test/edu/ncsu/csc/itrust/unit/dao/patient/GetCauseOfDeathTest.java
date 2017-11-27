@@ -23,7 +23,7 @@ public class GetCauseOfDeathTest extends TestCase{
     protected void setUp() throws Exception {
         gen.clearAllTables();
         gen.icd9cmCodes();
-        gen.patient2();
+        gen.patientDeath();
         gen.patient1000s();
     }
 
@@ -34,15 +34,15 @@ public class GetCauseOfDeathTest extends TestCase{
     public void testGetAllPatients() throws Exception {
         List<String> causes = patientDAO.getCauseOfDeath(hcpid, formatDate(year1970), formatDate(year2010));
         assertEquals(2, causes.size());
-        assertEquals(1, causes.indexOf("Diabetes with ketoacidosis"));
-        assertEquals(0, causes.indexOf("Coxsackie"));
+        assertEquals(0, causes.indexOf("Diabetes with ketoacidosis"));
+        assertEquals(1, causes.indexOf("Coxsackie"));
     }
 
     public void testGetMalePatients() throws Exception {
         List<String> causes = patientDAO.getCauseOfDeath(Gender.Male, hcpid, formatDate(year1970), formatDate(year2010));
         assertEquals(2, causes.size());
-        assertEquals(1, causes.indexOf("Diabetes with ketoacidosis"));
-        assertEquals(0, causes.indexOf("Coxsackie"));
+        assertEquals(0, causes.indexOf("Diabetes with ketoacidosis"));
+        assertEquals(1, causes.indexOf("Coxsackie"));
     }
 
     public void testGetFemalePatients() throws Exception {
@@ -60,7 +60,7 @@ public class GetCauseOfDeathTest extends TestCase{
     public void testGetSmallerRangePatients() throws Exception {
         List<String> causes = patientDAO.getCauseOfDeath(hcpid, formatDate(year2000), formatDate(year2010));
         assertEquals(2, causes.size());
-        assertEquals(1, causes.indexOf("Diabetes with ketoacidosis"));
-        assertEquals(0, causes.indexOf("Coxsackie"));
+        assertEquals(0, causes.indexOf("Diabetes with ketoacidosis"));
+        assertEquals(1, causes.indexOf("Coxsackie"));
     }
 }

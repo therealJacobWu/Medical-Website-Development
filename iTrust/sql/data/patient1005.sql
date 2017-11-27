@@ -66,11 +66,11 @@ INSERT INTO users(MID, password, role, sQuestion, sAnswer)
 
 INSERT INTO personalhealthinformation
 (PatientID,OfficeVisitID,Height,Weight,Smoker,SmokingStatus,BloodPressureN,BloodPressureD,CholesterolHDL,CholesterolLDL,CholesterolTri,HCPID, AsOfDate,OfficeVisitDate,BMI)
-VALUES ( 1005,  111, 72,   180,   0, 9,     100,          100,           40,             100,         100,          9000000000, '2005-06-07 20:33:58','2005-06-07',24.41)
+VALUES ( 1005,  111, 72,   180,   0, 9,     100,          100,           40,             100,         100,          9000000003, '2005-06-07 20:33:58','2005-06-07',24.41)
  ON DUPLICATE KEY UPDATE OfficeVisitID = OfficeVisitID;
 
 INSERT INTO officevisits(id,visitDate,HCPID,notes,HospitalID,PatientID)
-VALUES (111,'2005-10-10',9000000000,'Old office visit.','',1005)
+VALUES (115,'2005-10-10',9000000003,'Old office visit.','',1005)
  ON DUPLICATE KEY UPDATE id = id;
 
 INSERT INTO ovdiagnosis(ICDCode, VisitID) VALUES 
