@@ -47,7 +47,7 @@
 <%@include file="/header.jsp"%>
 
 <div>
-    <form method="post" action="/iTrust/auth/hcp/viewPatientVisualization.jsp">
+    <form method="post">
         <%
             for (String attr : attributes) {
                 %>
@@ -70,21 +70,32 @@
     <script src="/iTrust/js/highcharts-more.js" type="text/javascript"></script>
 
     <% if (selectedAttributes != null && selectedAttributes.length != 0) { %>
-        <script type="text/javascript">
-            $("#container").highcharts({
-                chart: { type: 'line' },
-                title: { text: "Transaction Summary" },
-                yAxis: {
-                    title: { text: "Number of Transactions" }
-                },
-                series: <%= highchartsChartData %>,
-                legend: {
-                    layout: 'vertical',
-                    align: 'right',
-                    verticalAlign: 'middle'
-                }
-            });
-        </script>
+
+        <% if (request.getParameter("histogram") != null && request.getParameter("histogram").equals("true")) { %>
+            <script type="text/javascript">
+                $("#container").highcharts({
+                    chart: { type: 'column' },
+                    title: { text: 'Distribution of <%= selectedAttributes[0] %>' },
+                    series: <%= highchartsChartData %>
+                });
+            </script>
+        <% } else { %>
+            <script type="text/javascript">
+                $("#container").highcharts({
+                    chart: { type: 'line' },
+                    title: { text: "Line chart visualization" },
+                    yAxis: {
+                        title: { text: "Something something" }
+                    },
+                    series: <%= highchartsChartData %>,
+                    legend: {
+                        layout: 'vertical',
+                        align: 'right',
+                        verticalAlign: 'middle'
+                    }
+                });
+            </script>
+        <% } %>
     <% } %>
 </div>
 
