@@ -88,8 +88,9 @@
 %>
 		<td><span id="thresh1" <%= hide %>>Threshold:</span></td>
 		<td>
-			<span id="thresh2" <%= hide %>><input name="threshold" value="<%= threshold %>" size="10"></span>
+			<span id="thresh2" <%= hide %>><input name="threshold" value="<%= threshold %>" size="10">%</span>
 		</td>
+
 	</tr>
 	<tr>
 		<td colspan="4" style="text-align: center;"><input type="submit" id="select_diagnosis" value="View Statistics"></td>
@@ -100,9 +101,9 @@
 
 <% if (dsBean != null && avgBean != null) { %>
 
-<p style="display:block; margin-left:auto; margin-right:auto; width:600px;">
-<%@include file="DiagnosisEpidemicsChart.jsp" %>
-</p>
+<%--<p style="display:block; margin-left:auto; margin-right:auto; width:600px;">--%>
+<%--<%@include file="DiagnosisEpidemicsChart.jsp" %>--%>
+<%--</p>--%>
 
 <%
 	boolean isEp = false;
