@@ -5,6 +5,7 @@
 <%@page import="edu.ncsu.csc.itrust.beans.DiagnosisBean"%>
 <%@page import="edu.ncsu.csc.itrust.beans.DiagnosisStatisticsBean"%>
 <%@page import="edu.ncsu.csc.itrust.exception.FormValidationException"%>
+<%@page import="java.text.SimpleDateFormat"%>
 
 <% 
 	//log the page view
@@ -95,6 +96,7 @@
 	<td><%= zipCode %></td>
 	<td><%= dsBean.getZipStats() %></td>
 	<td><%= dsBean.getRegionStats() %></td>
+    <td><%=new SimpleDateFormat("MM/dd/YYYY").format(dsBean.getStartDate())%></td>
 	<td><%= endDate %></td>
 </tr>
 
