@@ -50,7 +50,7 @@ public class ViewDiagnosisStatisticsAction {
 	
 	/**
 	 * Gets the counts of local and regional diagnoses for the specified input
-	 * 
+	 *
 	 * @param lowerDate The beginning date for the time range
 	 * @param upperDate The ending date for the time range
 	 * @param icdCode The diagnosis code to examine
@@ -59,19 +59,18 @@ public class ViewDiagnosisStatisticsAction {
 	 * @throws FormValidationException
 	 * @throws ITrustException
 	 */
-	public DiagnosisStatisticsBean getDiagnosisStatistics(String lowerDate, String upperDate, String icdCode, String zip) throws FormValidationException, ITrustException {
+	public DiagnosisStatisticsBean getDiagnosisStatisticsInRange(String lowerDate, String upperDate, String icdCode, String zip) throws FormValidationException, ITrustException {
 		DiagnosisStatisticsBean dsBean;
 		try {
-			
 			if (lowerDate == null || upperDate == null || icdCode == null)
 				return null;
-			
+
 			Date lower = new SimpleDateFormat("MM/dd/yyyy").parse(lowerDate);
 			Date upper = new SimpleDateFormat("MM/dd/yyyy").parse(upperDate);
 
 			if (lower.after(upper))
 				throw new FormValidationException("Start date must be before end date!");
-			
+
 			if (!zip.matches("([0-9]{5})|([0-9]{5}-[0-9]{4})"))
 				throw new FormValidationException("Zip Code must be 5 digits!");
 
@@ -85,14 +84,59 @@ public class ViewDiagnosisStatisticsAction {
 			}
 
 			dsBean = diagnosesDAO.getDiagnosisCounts(icdCode, zip, lower, upper);
-			
+
 		} catch (ParseException e) {
 			throw new FormValidationException("Enter dates in MM/dd/yyyy");
-		} 
-		
-		
+		}
+
+
 		return dsBean;
 	}
+    /**
+     * Gets the counts of local and regional diagnoses for the specified input
+     * For 8 weeks before the upper date.
+     *
+     * @param endDate The ending date for the time range
+     * @param icdCode The diagnosis code to examine
+     * @param zip The zip code to examine
+     * @return A bean containing the local and regional counts
+     * @throws FormValidationException
+     * @throws ITrustException
+     */
+    public DiagnosisStatisticsBean getDiagnosisStatistics(String endDate, String icdCode, String zip) throws FormValidationException, ITrustException {
+        DiagnosisStatisticsBean dsBean;
+        try {
+            if (endDate == null || icdCode == null)
+                return null;
+
+            Date end = new SimpleDateFormat("MM/dd/yyyy").parse(endDate);
+
+            if (!zip.matches("([0-9]{5})|([0-9]{5}-[0-9]{4})"))
+                throw new FormValidationException("Zip Code must be 5 digits!");
+
+            boolean validCode = false;
+            for(DiagnosisBean diag : getDiagnosisCodes()) {
+                if (diag.getICDCode().equals(icdCode))
+                    validCode = true;
+            }
+            if (validCode == false) {
+                throw new FormValidationException("ICDCode must be valid diagnosis!");
+            }
+
+            Calendar startDateCal = Calendar.getInstance();
+            startDateCal.setTime(end);
+            startDateCal.add(Calendar.DAY_OF_MONTH, -8*7);
+            Date start = startDateCal.getTime();
+
+            dsBean = diagnosesDAO.getDiagnosisCounts(icdCode, zip, start, end);
+
+        } catch (ParseException e) {
+            throw new FormValidationException("Enter dates in MM/dd/yyyy");
+        }
+
+
+        return dsBean;
+    }
 	
 	/**
 	 * Gets the local and regional counts for the specified week and calculates the prior average.
