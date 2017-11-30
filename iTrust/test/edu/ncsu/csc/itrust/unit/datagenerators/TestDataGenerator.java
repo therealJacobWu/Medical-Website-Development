@@ -36,10 +36,12 @@ import edu.ncsu.csc.itrust.unit.testutils.TestDAOFactory;
 public class TestDataGenerator {
 	public static void main(String[] args) throws IOException, SQLException {
 		TestDataGenerator gen = new TestDataGenerator();
+		DBBuilder.rebuildAll();
 		gen.clearAllTables();
 		gen.standardData();
 		// Put it here so that actual iTrust runs can see cause of death data of patients
 		gen.patient1000s();
+		gen.prepatient2000s();
 	}
 
 	private String DIR = "sql/data";
@@ -576,6 +578,11 @@ public class TestDataGenerator {
 		new DBBuilder(factory).executeSQLFile(DIR + "/patient1005.sql");
 	}
 
+	public void prepatient2000s() throws FileNotFoundException, SQLException, IOException {
+		new DBBuilder(factory).executeSQLFile(DIR + "/pre_patient_2001.sql");
+		new DBBuilder(factory).executeSQLFile(DIR + "/pre_patient_2002.sql");
+		new DBBuilder(factory).executeSQLFile(DIR + "/pre_patient_2003.sql");
+	}
 	/**
 	 * Adds patient Dare Devil for testing purposes.
 	 * 
