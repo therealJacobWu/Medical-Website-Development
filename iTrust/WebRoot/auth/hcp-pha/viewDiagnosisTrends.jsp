@@ -14,9 +14,8 @@
 	DiagnosisStatisticsBean dsBean = null;
 
 	//get form data
-	String startDate = request.getParameter("startDate");
 	String endDate = request.getParameter("endDate");
-	
+
 	String zipCode = request.getParameter("zipCode");
 	if (zipCode == null)
 		zipCode = "";
@@ -25,13 +24,11 @@
 	
 	//try to get the statistics. If there's an error, print it. If null is returned, it's the first page load
 	try{
-		dsBean = diagnoses.getDiagnosisStatistics(startDate, endDate, icdCode, zipCode);
+		dsBean = diagnoses.getDiagnosisStatistics(endDate, icdCode, zipCode);
 	} catch(FormValidationException e){
 		e.printHTML(pageContext.getOut());
 	}
-	
-	if (startDate == null)
-		startDate = "";
+
 	if (endDate == null)
 		endDate = "";
 	if (icdCode == null)
@@ -65,16 +62,11 @@
 		<td ><input name="zipCode" value="<%= StringEscapeUtils.escapeHtml(zipCode) %>" /></td>
 	</tr>
 	<tr class="subHeader">
-		<td>Start Date:</td>
-		<td>
-			<input name="startDate" value="<%= StringEscapeUtils.escapeHtml("" + (startDate)) %>" size="10">
-			<input type=button value="Select Date" onclick="displayDatePicker('startDate');">
-		</td>
-		<td>End Date:</td>
-		<td>
-			<input name="endDate" value="<%= StringEscapeUtils.escapeHtml("" + (endDate)) %>" size="10">
-			<input type=button value="Select Date" onclick="displayDatePicker('endDate');">
-		</td>
+        <td colspan="4" style="text-align: center;">End Date:
+            <input name="endDate" value="<%= StringEscapeUtils.escapeHtml("" + (endDate)) %>" size="10">
+            <input type=button value="Select Date" onclick="displayDatePicker('endDate');">
+        </td>
+    </tr>
 	</tr>
 	<tr>
 		<td colspan="4" style="text-align: center;"><input type="submit" id="select_diagnosis" value="View Statistics"></td>
@@ -103,7 +95,6 @@
 	<td><%= zipCode %></td>
 	<td><%= dsBean.getZipStats() %></td>
 	<td><%= dsBean.getRegionStats() %></td>
-	<td><%= startDate %></td>
 	<td><%= endDate %></td>
 </tr>
 

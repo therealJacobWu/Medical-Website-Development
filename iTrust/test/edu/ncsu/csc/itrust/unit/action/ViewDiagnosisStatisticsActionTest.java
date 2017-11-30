@@ -37,19 +37,19 @@ public class ViewDiagnosisStatisticsActionTest extends TestCase {
 	}
 	
 	public void testGetDiagnosisStatisticsValid() throws Exception {
-		DiagnosisStatisticsBean dsBean = action.getDiagnosisStatistics("06/28/2011", "09/28/2011", "487.00", "27606-1234");
+		DiagnosisStatisticsBean dsBean = action.getDiagnosisStatisticsInRange("06/28/2011", "09/28/2011", "487.00", "27606-1234");
 		assertEquals(2, dsBean.getZipStats());
 		assertEquals(5, dsBean.getRegionStats());
 	}
 	
 	public void testGetDiagnosisStatisticsValidNull() throws Exception {
-		DiagnosisStatisticsBean dsBean = action.getDiagnosisStatistics(null, null, "487.00", "27606");
+		DiagnosisStatisticsBean dsBean = action.getDiagnosisStatisticsInRange(null, null, "487.00", "27606");
 		assertEquals(null, dsBean);
 	}
 	
 	public void testGetDiagnosisStatisticsInvalidDate() throws Exception {
 		try {
-			action.getDiagnosisStatistics("06-28/2011", "09/28/2011", "487.00", "27606");
+			action.getDiagnosisStatisticsInRange("06-28/2011", "09/28/2011", "487.00", "27606");
 			fail("Should have failed but didn't");
 		} catch (FormValidationException e) {
 			assertEquals(1, e.getErrorList().size());
@@ -60,7 +60,7 @@ public class ViewDiagnosisStatisticsActionTest extends TestCase {
 	
 	public void testGetDiagnosisStatisticsReversedDates() throws Exception {
 		try {
-			action.getDiagnosisStatistics("09/28/2011", "06/28/2011", "487.00", "27606");
+			action.getDiagnosisStatisticsInRange("09/28/2011", "06/28/2011", "487.00", "27606");
 			fail("Should have failed but didn't");
 		} catch (FormValidationException e) {
 			assertEquals(1, e.getErrorList().size());
@@ -70,7 +70,7 @@ public class ViewDiagnosisStatisticsActionTest extends TestCase {
 	
 	public void testGetDiagnosisStatisticsInvalidZip() throws Exception {
 		try {
-			action.getDiagnosisStatistics("06/28/2011", "09/28/2011", "487.00", "2766");
+			action.getDiagnosisStatisticsInRange("06/28/2011", "09/28/2011", "487.00", "2766");
 			fail("Should have failed but didn't");
 		} catch (FormValidationException e) {
 			assertEquals(1, e.getErrorList().size());
@@ -80,7 +80,7 @@ public class ViewDiagnosisStatisticsActionTest extends TestCase {
 	
 	public void testGetDiagnosisStatisticsInvalidICDCode() throws Exception {
 		try {
-			action.getDiagnosisStatistics("06/28/2011", "09/28/2011", "11114.00", "27606");
+			action.getDiagnosisStatisticsInRange("06/28/2011", "09/28/2011", "11114.00", "27606");
 			fail("Should have failed but didn't");
 		} catch (FormValidationException e) {
 			assertEquals(1, e.getErrorList().size());
