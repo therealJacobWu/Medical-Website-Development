@@ -12,7 +12,7 @@
 <%
     pageTitle = "iTrust - Patient Visualization";
 
-    List<String> attributes = ImmutableList.of("age", "number of visits", "number of appointments", "icState",
+    List<String> attributes = ImmutableList.of("age", "number of visits", "icState",
                                                "CauseOfDeath", "BloodType", "Religion", "Language");
 
     String[] selectedAttributes = request.getParameterValues("attribute");
@@ -84,6 +84,19 @@
                     title: { text: 'Distribution of <%= selectedAttributes[i] %>' },
                     yAxis: { title: { text: 'Count' } },
                     xAxis: { title: { text: '<%= selectedAttributes[i] %>' } },
+                    plotOptions: {
+                        series: {
+                            cursor: 'pointer',
+                            point: {
+                                events: {
+                                    click: function() {
+                                        debugger;
+                                        window.location = "/iTrust/auth/hcp/viewPatientAttribute.jsp?attribute=" + this.series.xAxis.userOptions.title.text + "&value=" + this.series.userOptions.name;
+                                    }
+                                }
+                            }
+                        }
+                    },
                     series: <%= attributesDataString.get(i) %>
                 });
             </script>

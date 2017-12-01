@@ -1,6 +1,8 @@
 package edu.ncsu.csc.itrust.dao.mysql;
 
 import edu.ncsu.csc.itrust.DBUtil;
+import edu.ncsu.csc.itrust.beans.PatientBean;
+import edu.ncsu.csc.itrust.beans.loaders.PatientLoader;
 import edu.ncsu.csc.itrust.dao.DAOFactory;
 import edu.ncsu.csc.itrust.exception.DBException;
 
@@ -8,15 +10,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class PatientMetricVisualizationDAO {
     private DAOFactory factory;
+    private PatientLoader patientLoader;
 
     public PatientMetricVisualizationDAO(DAOFactory daoFactory) {
         this.factory = daoFactory;
+        this.patientLoader = new PatientLoader();
     }
 
     private Map<String, Integer> formatSQLResponse(ResultSet rs) throws SQLException {
@@ -41,6 +43,39 @@ public class PatientMetricVisualizationDAO {
             results.put(x.toString(), rs.getInt("y"));
         }
         return results;
+    }
+
+    public List<PatientBean> getAllPatientWithAttr(String attr, String value) throws DBException {
+        Connection conn = null;
+        PreparedStatement ps = null;
+
+        String query = "SELECT patients.* ";
+
+        if (attr.equals("age")) {
+            query += "FROM patients WHERE FLOOR(DATEDIFF(NOW(), DateOfBirth) / 365.25) = 67";
+        } else if (attr.equals("number of visits")) {
+            query += "FROM officevisits, patients WHERE patients.MID = officevisits.PatientID GROUP BY MID HAVING COUNT(*) = " + value;
+        } else {
+            query += "FROM patients WHERE " + attr + " = '" + value + "'";
+        }
+
+        try {
+            conn = factory.getConnection();
+            ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+            List<PatientBean> matchingPatients;
+            if (rs.next()) {
+                matchingPatients = patientLoader.loadList(rs);
+            } else {
+                matchingPatients = new ArrayList<PatientBean>();
+            }
+            ps.close();
+            return matchingPatients;
+        } catch (SQLException e) {
+            throw new DBException(e);
+        } finally {
+            DBUtil.closeConnection(conn, ps);
+        }
     }
 
     public Map<String, Integer> getAllPatientAges() throws DBException {
