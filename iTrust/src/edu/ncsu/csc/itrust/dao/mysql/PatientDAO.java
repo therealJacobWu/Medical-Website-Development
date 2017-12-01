@@ -220,6 +220,11 @@ public class PatientDAO {
 		}
 	}
 
+	/**
+	 * Get list of pre-registered patients
+	 * @return list of PatientBean
+	 * @throws DBException
+	 */
 	public List<PatientBean> getPrePatient() throws DBException {
 		Connection conn = null;
 		PreparedStatement ps = null;
@@ -238,6 +243,11 @@ public class PatientDAO {
 		}
 	}
 
+	/**
+	 * Activate a pre-registered patient, this will change the user attribute of this patient
+	 * @param mid pre-registered patient to be activated
+	 * @throws DBException
+	 */
 	public void activatePrePatient(long mid) throws DBException {
 		Connection conn = null;
 		PreparedStatement ps = null;
@@ -254,6 +264,11 @@ public class PatientDAO {
 		}
 	}
 
+	/**
+	 * Deactivate a pre-registered patient, this will remove all rows in `Patient`, `OfficeVisits` and `PersonalHealthInformation` related to this patient
+	 * @param mid pre-registered patient to be deactivated
+	 * @throws DBException
+	 */
 	public void deactivatePrePatient(long mid) throws DBException {
 		Connection conn = null;
 		PreparedStatement ps = null;
