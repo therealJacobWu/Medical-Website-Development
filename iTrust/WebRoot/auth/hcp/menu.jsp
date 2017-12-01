@@ -5,6 +5,7 @@
 	<div class="panel-body" id="info-menu">
 		<ul class="nav nav-sidebar">
 		    <li><a href="/iTrust/auth/hcp-uap/viewPatientOfficeVisitHistory.jsp">All Patients</a>
+			<li><a href="/iTrust/auth/hcp/viewPatientVisualization.jsp">Visualize Patient Metrics</a></li>
 			<li><a href="/iTrust/auth/hcp-uap/viewBasicHealth.jsp">Basic Health Information</a>
 			<li><a href="/iTrust/auth/hcp-uap/editPatient.jsp">Patient Information</a>
 			<li><a href="/iTrust/auth/hcp-uap/editPHR.jsp">PHR Information</a>
@@ -24,17 +25,6 @@
 			<li><a href="/iTrust/auth/hcp-fitness/viewExerciseDiaries.jsp">Patient Exercise Diaries</a>
 			<li><a href="/iTrust/auth/hcp/viewSleepDiaries.jsp">Patient Sleep Diaries</a>
 			<li><a href="/iTrust/auth/hcp/viewCauseOfDeath.jsp">Cause Of Death</a>
-		</ul>
-	</div>
-</div>
-
-<div class="panel panel-default">
-	<div class="panel-heading" anim-type="collapse" anim-target="#aggr-menu">
-		<h2 class="panel-title">Patient Info Visualizations</h2>
-	</div>
-	<div class="panel-body" id="aggr-menu">
-		<ul class="nav nav-sidebar">
-			<li><a href="/iTrust/auth/hcp/viewPatientVisualization.jsp">Histogram from one attribute</a></li>
 		</ul>
 	</div>
 </div>

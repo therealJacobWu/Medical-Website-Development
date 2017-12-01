@@ -76,13 +76,14 @@
     <% if (selectedAttributes != null && selectedAttributes.length != 0) { %>
         <div id="charts">
         </div>
-        <% for (int i = 0; i < attributesDataString.size(); i++) {
-            %>
+        <% for (int i = 0; i < attributesDataString.size(); i++) { %>
             <script type="text/javascript">
                 $('#charts').append("<div id='container<%= i %>'></div>");
                 $("#container<%= i %>").highcharts({
                     chart: { type: 'column' },
                     title: { text: 'Distribution of <%= selectedAttributes[i] %>' },
+                    yAxis: { title: { text: 'Count' } },
+                    xAxis: { title: { text: '<%= selectedAttributes[i] %>' } },
                     series: <%= attributesDataString.get(i) %>
                 });
             </script>

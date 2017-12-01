@@ -33,6 +33,11 @@ public class PatientMetricVisualizationDAO {
         });
         while (rs.next()) {
             Object x = rs.getObject("x");
+
+            // Set default value for column if none specified
+            if (x.toString().equals("")) {
+                x = "None";
+            }
             results.put(x.toString(), rs.getInt("y"));
         }
         return results;
@@ -130,7 +135,7 @@ public class PatientMetricVisualizationDAO {
         PreparedStatement ps = null;
         try {
             conn = factory.getConnection();
-            ps = conn.prepareStatement("SELECT Religion AS x, COUNT(*) AS y FROM patients WHERE Religion <> '' GROUP BY Religion");
+            ps = conn.prepareStatement("SELECT Religion AS x, COUNT(*) AS y FROM patients GROUP BY Religion");
             ResultSet rs = ps.executeQuery();
             Map<String, Integer> result = formatSQLResponse(rs);
             ps.close();
