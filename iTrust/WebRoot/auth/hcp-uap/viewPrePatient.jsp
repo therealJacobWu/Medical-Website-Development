@@ -19,13 +19,15 @@
 
     List<PatientBean> prePatients = prodDAO.getPatientDAO().getPrePatient();
 
-    Map<String, String[]> paras = request.getParameterMap();
+    /*Map<String, String[]> paras = request.getParameterMap();
     for(Map.Entry<String, String[]> pair: paras.entrySet()) {
         System.out.println("key: " +  pair.getKey().toString());
         for(String values : pair.getValue()) {
             System.out.println("values: " + values);
         }
-    }
+    }*/
+
+    //Process clicked "Activate" buttons
     if (request.getParameter("ACT") != null) {
         try {
             int index = Integer.parseInt(request.getParameter("ACT"));
@@ -34,10 +36,11 @@
             loggingAction.logEvent(TransactionType.ACTIVATE_PREREGISTERED_PATIENT, loggedInMID, mid, "");
 
         } catch (NumberFormatException e){
-            //e.printHTML(pageContext.getOut());
+            //Should not happen
         }
     }
 
+    //Process clicked "Deactivate" buttons
     if (request.getParameter("DEA") != null) {
         try {
             int index = Integer.parseInt(request.getParameter("DEA"));
@@ -45,7 +48,7 @@
             prodDAO.getPatientDAO().deactivatePrePatient(mid);
             loggingAction.logEvent(TransactionType.DEACTIVATE_PREREGISTERED_PATIENT, loggedInMID, mid, "");
         } catch (NumberFormatException e){
-            //e.printHTML(pageContext.getOut());
+            //Should not happen
         }
     }
 
@@ -118,7 +121,7 @@
         %>
         <tr>
             <td >
-                <a href="editPHR.jsp?patient=<%= StringEscapeUtils.escapeHtml("" + (index)) %>">
+                <a id="MID_<%= StringEscapeUtils.escapeHtml("" + (prePatient.getMID()))%>" href="editPHR.jsp?patient=<%= StringEscapeUtils.escapeHtml("" + (index)) %>">
 
 
                     <%= StringEscapeUtils.escapeHtml("" + (prePatient.getFirstName() + " " + prePatient.getLastName())) %>
@@ -137,10 +140,10 @@
                 %>
             </td>
             <td>
-                <button type="submit" value="<%= StringEscapeUtils.escapeHtml("" + (index))%>"  name="ACT">Activate</button>
+                <button id="ACT_<%= StringEscapeUtils.escapeHtml("" + (prePatient.getMID()))%>" type="submit" value="<%= StringEscapeUtils.escapeHtml("" + (index))%>"  name="ACT">Activate</button>
             </td>
             <td>
-                <button type="submit" value="<%= StringEscapeUtils.escapeHtml("" + (index)) %>" name="DEA">Deactivate</button>
+                <button id="DEA_<%= StringEscapeUtils.escapeHtml("" + (prePatient.getMID()))%>" type="submit" value="<%= StringEscapeUtils.escapeHtml("" + (index)) %>" name="DEA">Deactivate</button>
             </td>
         </tr>
         <%
