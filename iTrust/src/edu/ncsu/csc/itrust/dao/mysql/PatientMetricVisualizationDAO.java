@@ -51,10 +51,16 @@ public class PatientMetricVisualizationDAO {
 
         String query = "SELECT patients.* ";
 
+        if (value.equals("")) {
+            value = "";
+        }
+
         if (attr.equals("age")) {
             query += "FROM patients WHERE FLOOR(DATEDIFF(NOW(), DateOfBirth) / 365.25) = 67";
         } else if (attr.equals("number of visits")) {
             query += "FROM officevisits, patients WHERE patients.MID = officevisits.PatientID GROUP BY MID HAVING COUNT(*) = " + value;
+        } else if (attr.equals("CauseOfDeath")) {
+            query += "FROM patients WHERE CauseOfDeath IN (SELECT Code FROM icdcodes WHERE Description = '" + value + "')";
         } else {
             query += "FROM patients WHERE " + attr + " = '" + value + "'";
         }
@@ -63,11 +69,9 @@ public class PatientMetricVisualizationDAO {
             conn = factory.getConnection();
             ps = conn.prepareStatement(query);
             ResultSet rs = ps.executeQuery();
-            List<PatientBean> matchingPatients;
-            if (rs.next()) {
-                matchingPatients = patientLoader.loadList(rs);
-            } else {
-                matchingPatients = new ArrayList<PatientBean>();
+            List<PatientBean> matchingPatients = new ArrayList<PatientBean>();
+            while (rs.next()) {
+                matchingPatients.add(patientLoader.loadSingle(rs));
             }
             ps.close();
             return matchingPatients;

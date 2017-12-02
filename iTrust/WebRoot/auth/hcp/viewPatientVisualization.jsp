@@ -54,7 +54,7 @@
 <%@include file="/header.jsp"%>
 
 <div>
-    <form method="post">
+    <form method="post" id="viewPatientVisualization">
         <%
             for (String attr : attributes) {
                 %>
@@ -65,7 +65,7 @@
                 <%
             }
         %>
-        <button type="submit">View visualization</button>
+        <input type="submit" id="view_visualize">View visualization</input>
     </form>
 
 
