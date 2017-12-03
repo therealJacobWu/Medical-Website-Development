@@ -25,13 +25,13 @@
 
             Map<String, Integer> attributeData = new HashMap<>();
             if (attribute.equals("age")) {
-                attributeData = pmvDao.getAllPatientAges();
+                attributeData = pmvDao.getAllPatientsAges();
             } else if (attribute.equals("number of visits")) {
-                attributeData = pmvDao.getAllPatientVisits();
+                attributeData = pmvDao.getAllPatientsVisits();
             } else if (attribute.equals("icState")) {
-                attributeData = pmvDao.getAllPatientStates();
+                attributeData = pmvDao.getAllPatientsStates();
             } else if (attribute.equals("CauseOfDeath")) {
-                attributeData = pmvDao.getAllPatientDeath();
+                attributeData = pmvDao.getAllPatientsDeath();
             } else if (attribute.equals("Language")) {
                 attributeData = pmvDao.getAllPatientsLanguage();
             } else if (attribute.equals("BloodType")) {

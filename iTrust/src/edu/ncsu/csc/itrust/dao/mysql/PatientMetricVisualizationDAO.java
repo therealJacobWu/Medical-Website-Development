@@ -51,7 +51,7 @@ public class PatientMetricVisualizationDAO {
 
         String query = "SELECT patients.* ";
 
-        if (value.equals("")) {
+        if (value.equals("None")) {
             value = "";
         }
 
@@ -82,124 +82,87 @@ public class PatientMetricVisualizationDAO {
         }
     }
 
-    public Map<String, Integer> getAllPatientAges() throws DBException {
+    public Map<String, Integer> getAllPatientsAges() throws DBException, SQLException {
         Connection conn = null;
         PreparedStatement ps = null;
-        try {
-            conn = factory.getConnection();
-            ps = conn.prepareStatement("SELECT age AS x, COUNT(*) AS y FROM (SELECT MID, FLOOR(DATEDIFF(NOW(), DateOfBirth) / 365.25) AS age FROM patients) AS age_table WHERE age is NOT NULL GROUP BY age;");
-            ResultSet rs = ps.executeQuery();
-            Map<String, Integer> result = formatSQLResponse(rs);
-            ps.close();
-            return result;
-        } catch (SQLException e) {
-            throw new DBException(e);
-        } finally {
-            DBUtil.closeConnection(conn, ps);
-        }
+        conn = factory.getConnection();
+        ps = conn.prepareStatement("SELECT age AS x, COUNT(*) AS y FROM (SELECT MID, FLOOR(DATEDIFF(NOW(), DateOfBirth) / 365.25) AS age FROM patients) AS age_table WHERE age is NOT NULL GROUP BY age;");
+        ResultSet rs = ps.executeQuery();
+        Map<String, Integer> result = formatSQLResponse(rs);
+        ps.close();
+        DBUtil.closeConnection(conn, ps);
+        return result;
     }
 
-    public Map<String, Integer> getAllPatientVisits() throws DBException {
+    public Map<String, Integer> getAllPatientsVisits() throws DBException, SQLException {
         Connection conn = null;
         PreparedStatement ps = null;
-        try {
-            conn = factory.getConnection();
-            ps = conn.prepareStatement("SELECT num_office_visits AS x, COUNT(*) as y FROM (SELECT MID, COUNT(officevisits.PatientID) AS num_office_visits FROM officevisits, patients WHERE patients.MID = officevisits.PatientID GROUP BY MID) AS ii GROUP BY num_office_visits ORDER BY num_office_visits ASC");
-            ResultSet rs = ps.executeQuery();
-            Map<String, Integer> result = formatSQLResponse(rs);
-            ps.close();
-            return result;
-        } catch (SQLException e) {
-            throw new DBException(e);
-        } finally {
-            DBUtil.closeConnection(conn, ps);
-        }
+        conn = factory.getConnection();
+        ps = conn.prepareStatement("SELECT num_office_visits AS x, COUNT(*) as y FROM (SELECT MID, COUNT(officevisits.PatientID) AS num_office_visits FROM officevisits, patients WHERE patients.MID = officevisits.PatientID GROUP BY MID) AS ii GROUP BY num_office_visits ORDER BY num_office_visits ASC");
+        ResultSet rs = ps.executeQuery();
+        Map<String, Integer> result = formatSQLResponse(rs);
+        ps.close();
+        DBUtil.closeConnection(conn, ps);
+        return result;
     }
 
-
-
-    public Map<String, Integer> getAllPatientDeath() throws DBException {
+    public Map<String, Integer> getAllPatientsDeath() throws DBException, SQLException {
         Connection conn = null;
         PreparedStatement ps = null;
-        try {
-            conn = factory.getConnection();
-            ps = conn.prepareStatement("SELECT icdcodes.Description AS x, COUNT(*) AS y FROM patients, icdcodes WHERE CauseOfDeath <> '' AND icdcodes.Code = CauseOfDeath GROUP BY CauseOfDeath");
-            ResultSet rs = ps.executeQuery();
-            Map<String, Integer> result = formatSQLResponse(rs);
-            ps.close();
-            return result;
-        } catch (SQLException e) {
-            throw new DBException(e);
-        } finally {
-            DBUtil.closeConnection(conn, ps);
-        }
+        conn = factory.getConnection();
+        ps = conn.prepareStatement("SELECT icdcodes.Description AS x, COUNT(*) AS y FROM patients, icdcodes WHERE CauseOfDeath <> '' AND icdcodes.Code = CauseOfDeath GROUP BY CauseOfDeath");
+        ResultSet rs = ps.executeQuery();
+        Map<String, Integer> result = formatSQLResponse(rs);
+        ps.close();
+        DBUtil.closeConnection(conn, ps);
+        return result;
     }
 
-    public Map<String, Integer> getAllPatientStates() throws DBException {
+    public Map<String, Integer> getAllPatientsStates() throws DBException, SQLException {
         Connection conn = null;
         PreparedStatement ps = null;
-        try {
-            conn = factory.getConnection();
-            ps = conn.prepareStatement("SELECT icState AS x, COUNT(*) AS y FROM patients GROUP BY icState");
-            ResultSet rs = ps.executeQuery();
-            Map<String, Integer> result = formatSQLResponse(rs);
-            ps.close();
-            return result;
-        } catch (SQLException e) {
-            throw new DBException(e);
-        } finally {
-            DBUtil.closeConnection(conn, ps);
-        }
+        conn = factory.getConnection();
+        ps = conn.prepareStatement("SELECT icState AS x, COUNT(*) AS y FROM patients GROUP BY icState");
+        ResultSet rs = ps.executeQuery();
+        Map<String, Integer> result = formatSQLResponse(rs);
+        ps.close();
+        DBUtil.closeConnection(conn, ps);
+        return result;
     }
 
-    public Map<String, Integer> getAllPatientsBlood() throws DBException {
+    public Map<String, Integer> getAllPatientsBlood() throws DBException, SQLException {
         Connection conn = null;
         PreparedStatement ps = null;
-        try {
-            conn = factory.getConnection();
-            ps = conn.prepareStatement("SELECT BloodType AS x, COUNT(*) AS y FROM patients WHERE BloodType <> '' GROUP BY BloodType;");
-            ResultSet rs = ps.executeQuery();
-            Map<String, Integer> result = formatSQLResponse(rs);
-            ps.close();
-            return result;
-        } catch (SQLException e) {
-            throw new DBException(e);
-        } finally {
-            DBUtil.closeConnection(conn, ps);
-        }
+        conn = factory.getConnection();
+        ps = conn.prepareStatement("SELECT BloodType AS x, COUNT(*) AS y FROM patients WHERE BloodType <> '' GROUP BY BloodType;");
+        ResultSet rs = ps.executeQuery();
+        Map<String, Integer> result = formatSQLResponse(rs);
+        ps.close();
+        DBUtil.closeConnection(conn, ps);
+        return result;
     }
 
-    public Map<String, Integer> getAllPatientsReligion() throws DBException {
+    public Map<String, Integer> getAllPatientsReligion() throws DBException, SQLException {
         Connection conn = null;
         PreparedStatement ps = null;
-        try {
-            conn = factory.getConnection();
-            ps = conn.prepareStatement("SELECT Religion AS x, COUNT(*) AS y FROM patients GROUP BY Religion");
-            ResultSet rs = ps.executeQuery();
-            Map<String, Integer> result = formatSQLResponse(rs);
-            ps.close();
-            return result;
-        } catch (SQLException e) {
-            throw new DBException(e);
-        } finally {
-            DBUtil.closeConnection(conn, ps);
-        }
+        conn = factory.getConnection();
+        ps = conn.prepareStatement("SELECT Religion AS x, COUNT(*) AS y FROM patients GROUP BY Religion");
+        ResultSet rs = ps.executeQuery();
+        Map<String, Integer> result = formatSQLResponse(rs);
+        ps.close();
+        DBUtil.closeConnection(conn, ps);
+        return result;
     }
 
-    public Map<String, Integer> getAllPatientsLanguage() throws DBException {
+    public Map<String, Integer> getAllPatientsLanguage() throws DBException, SQLException {
         Connection conn = null;
         PreparedStatement ps = null;
-        try {
-            conn = factory.getConnection();
-            ps = conn.prepareStatement("SELECT Language AS x, COUNT(*) AS y FROM patients GROUP BY Language;");
-            ResultSet rs = ps.executeQuery();
-            Map<String, Integer> result = formatSQLResponse(rs);
-            ps.close();
-            return result;
-        } catch (SQLException e) {
-            throw new DBException(e);
-        } finally {
-            DBUtil.closeConnection(conn, ps);
-        }
+        conn = factory.getConnection();
+        ps = conn.prepareStatement("SELECT Language AS x, COUNT(*) AS y FROM patients GROUP BY Language;");
+        ResultSet rs = ps.executeQuery();
+        Map<String, Integer> result = formatSQLResponse(rs);
+        ps.close();
+        DBUtil.closeConnection(conn, ps);
+        return result;
     }
 }
