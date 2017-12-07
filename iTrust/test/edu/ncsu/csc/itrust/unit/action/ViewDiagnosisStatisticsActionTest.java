@@ -36,18 +36,18 @@ public class ViewDiagnosisStatisticsActionTest extends TestCase {
 		assertEquals(19, db.size());
 	}
 	
-	public void testGetDiagnosisStatisticsValid() throws Exception {
+	public void testGetDiagnosisStatisticsInRangeValid() throws Exception {
 		DiagnosisStatisticsBean dsBean = action.getDiagnosisStatisticsInRange("06/28/2011", "09/28/2011", "487.00", "27606-1234");
 		assertEquals(2, dsBean.getZipStats());
 		assertEquals(5, dsBean.getRegionStats());
 	}
 	
-	public void testGetDiagnosisStatisticsValidNull() throws Exception {
+	public void testGetDiagnosisStatisticsInRangeValidNull() throws Exception {
 		DiagnosisStatisticsBean dsBean = action.getDiagnosisStatisticsInRange(null, null, "487.00", "27606");
 		assertEquals(null, dsBean);
 	}
 	
-	public void testGetDiagnosisStatisticsInvalidDate() throws Exception {
+	public void testGetDiagnosisStatisticsInRangeInvalidDate() throws Exception {
 		try {
 			action.getDiagnosisStatisticsInRange("06-28/2011", "09/28/2011", "487.00", "27606");
 			fail("Should have failed but didn't");
@@ -58,7 +58,7 @@ public class ViewDiagnosisStatisticsActionTest extends TestCase {
 	}
 	
 	
-	public void testGetDiagnosisStatisticsReversedDates() throws Exception {
+	public void testGetDiagnosisStatisticsInRangeReversedDates() throws Exception {
 		try {
 			action.getDiagnosisStatisticsInRange("09/28/2011", "06/28/2011", "487.00", "27606");
 			fail("Should have failed but didn't");
@@ -68,7 +68,7 @@ public class ViewDiagnosisStatisticsActionTest extends TestCase {
 		}
 	}
 	
-	public void testGetDiagnosisStatisticsInvalidZip() throws Exception {
+	public void testGetDiagnosisStatisticsInRangeInvalidZip() throws Exception {
 		try {
 			action.getDiagnosisStatisticsInRange("06/28/2011", "09/28/2011", "487.00", "2766");
 			fail("Should have failed but didn't");
@@ -78,7 +78,7 @@ public class ViewDiagnosisStatisticsActionTest extends TestCase {
 		}
 	}
 	
-	public void testGetDiagnosisStatisticsInvalidICDCode() throws Exception {
+	public void testGetDiagnosisStatisticsInRangeInvalidICDCode() throws Exception {
 		try {
 			action.getDiagnosisStatisticsInRange("06/28/2011", "09/28/2011", "11114.00", "27606");
 			fail("Should have failed but didn't");
