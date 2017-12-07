@@ -71,17 +71,7 @@ public class ViewDiagnosisStatisticsAction {
 			if (lower.after(upper))
 				throw new FormValidationException("Start date must be before end date!");
 
-			if (!zip.matches("([0-9]{5})|([0-9]{5}-[0-9]{4})"))
-				throw new FormValidationException("Zip Code must be 5 digits!");
-
-			boolean validCode = false;
-			for(DiagnosisBean diag : getDiagnosisCodes()) {
-					if (diag.getICDCode().equals(icdCode))
-						validCode = true;
-			}
-			if (validCode == false) {
-				throw new FormValidationException("ICDCode must be valid diagnosis!");
-			}
+            validateZipAndICD(icdCode, zip);
 
 			dsBean = diagnosesDAO.getDiagnosisCounts(icdCode, zip, lower, upper);
 
@@ -92,53 +82,53 @@ public class ViewDiagnosisStatisticsAction {
 
 		return dsBean;
 	}
-    /**
-     * Gets the counts of local and regional diagnoses for the specified input
-     * For 8 weeks before the upper date.
-     *
-     * @param endDate The ending date for the time range
-     * @param icdCode The diagnosis code to examine
-     * @param zip The zip code to examine
-     * @return A bean containing the local and regional counts
-     * @throws FormValidationException
-     * @throws ITrustException
-     */
-    public DiagnosisStatisticsBean getDiagnosisStatistics(String endDate, String icdCode, String zip) throws FormValidationException, ITrustException {
-        DiagnosisStatisticsBean dsBean;
-        try {
-            if (endDate == null || icdCode == null)
-                return null;
-
-            Date end = new SimpleDateFormat("MM/dd/yyyy").parse(endDate);
-
-            if (!zip.matches("([0-9]{5})|([0-9]{5}-[0-9]{4})"))
-                throw new FormValidationException("Zip Code must be 5 digits!");
-
-            boolean validCode = false;
-            for(DiagnosisBean diag : getDiagnosisCodes()) {
-                if (diag.getICDCode().equals(icdCode))
-                    validCode = true;
-            }
-            if (validCode == false) {
-                throw new FormValidationException("ICDCode must be valid diagnosis!");
-            }
-
-            Calendar startDateCal = Calendar.getInstance();
-            startDateCal.setTime(end);
-            startDateCal.add(Calendar.DAY_OF_MONTH, -8*7);
-            Date start = startDateCal.getTime();
-
-            dsBean = diagnosesDAO.getDiagnosisCounts(icdCode, zip, start, end);
-
-        } catch (ParseException e) {
-            throw new FormValidationException("Enter dates in MM/dd/yyyy");
-        }
-
-
-        return dsBean;
-    }
-	
 	/**
+	 * Gets the counts of local and regional diagnoses for the specified input
+	 * For 8 weeks before the upper date.
+	 *
+	 * @param endDate The ending date for the time range
+	 * @param icdCode The diagnosis code to examine
+	 * @param zip The zip code to examine
+	 * @return A list of beans containing the local and regional counts by week
+	 * @throws FormValidationException
+	 * @throws ITrustException
+	 */
+	public ArrayList<DiagnosisStatisticsBean > getDiagnosisStatisticsByWeek(String endDate, String icdCode, String zip) throws FormValidationException, ITrustException {
+        ArrayList<DiagnosisStatisticsBean > dsBeans;
+		try {
+			if (endDate == null || icdCode == null)
+				return null;
+			Date end = new SimpleDateFormat("MM/dd/yyyy").parse(endDate);
+            validateZipAndICD(icdCode, zip);
+            Date start = getDateEightWeeksAgo(end);
+			dsBeans = diagnosesDAO.getWeeklyCounts(icdCode, zip, start, end);
+		} catch (ParseException e) {
+			throw new FormValidationException("Enter dates in MM/dd/yyyy");
+		}
+		return dsBeans;
+	}
+
+    private void validateZipAndICD(String icdCode, String zip) throws FormValidationException, ITrustException {
+        if (!zip.matches("([0-9]{5})|([0-9]{5}-[0-9]{4})"))
+            throw new FormValidationException("Zip Code must be 5 digits!");
+        boolean validCode = false;
+        for(DiagnosisBean diag : getDiagnosisCodes()) {
+            if (diag.getICDCode().equals(icdCode))
+                validCode = true;
+        }
+        if (validCode == false) {
+            throw new FormValidationException("ICDCode must be valid diagnosis!");
+        }
+    }
+
+    private Date getDateEightWeeksAgo(Date end) {
+        Calendar startDateCal = Calendar.getInstance();
+        startDateCal.setTime(end);
+        startDateCal.add(Calendar.DAY_OF_MONTH, -8*7);
+        return startDateCal.getTime();
+    }
+
+    /**
 	 * Gets the local and regional counts for the specified week and calculates the prior average.
 	 * 
 	 * @param startDate a date in the week to analyze
