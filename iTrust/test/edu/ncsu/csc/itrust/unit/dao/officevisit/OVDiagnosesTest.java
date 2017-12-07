@@ -90,6 +90,8 @@ public class OVDiagnosesTest extends TestCase {
 		DiagnosisStatisticsBean dsBean = diagDAO.getDiagnosisCounts("487.00", "27607", lower, upper);
 		assertEquals(3, dsBean.getZipStats());
 		assertEquals(5, dsBean.getRegionStats());
+		assertEquals(6,dsBean.getStateStats());
+		assertEquals(7, dsBean.getGlobalStats());
 	}
 	
 	/**

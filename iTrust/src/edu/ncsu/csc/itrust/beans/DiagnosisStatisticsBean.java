@@ -20,6 +20,10 @@ public class DiagnosisStatisticsBean {
 	long zipStats;
 	/** The diagnosis count for the region */
 	long regionStats;
+    /** The diagnosis count for the State */
+	long stateStats;
+    /** The diagnosis count for the global */
+	long globalStats;
 	/** The beginning of the time period covered */
 	Date startDate;
 	/** The end of the time period covered */
@@ -41,6 +45,7 @@ public class DiagnosisStatisticsBean {
 		this.zipCode = zipCode;
 		this.zipStats = zipStats;
 		this.regionStats = regionStats;
+
 		
 	}
 	
@@ -52,10 +57,12 @@ public class DiagnosisStatisticsBean {
 	 * @param startDate The beginning of the data's time period
 	 * @param endDate The end of the data's time period
 	 */
-	public DiagnosisStatisticsBean(String zipCode, long zipStats, long regionStats, Date startDate, Date endDate) {
+	public DiagnosisStatisticsBean(String zipCode, long zipStats, long regionStats, long stateStats, long globalStats, Date startDate, Date endDate) {
 		this.zipCode = zipCode;
 		this.zipStats = zipStats;
 		this.regionStats = regionStats;
+		this.stateStats = stateStats;
+		this.globalStats = globalStats;
 		this.startDate = (Date) startDate.clone();
 		this.endDate = (Date) endDate.clone();
 	}
@@ -99,7 +106,16 @@ public class DiagnosisStatisticsBean {
 	public long getRegionStats() {
 		return regionStats;
 	}
-
+    /**
+     * Getter for State count
+     * @return The count of diagnoses for the state
+     */
+	public long getStateStats(){return stateStats;}
+    /**
+     * Getter for Global count
+     * @return The count of diagnoses for the global
+     */
+	public long getGlobalStats(){return  globalStats;}
 	/**
 	 * Setter for Region count
 	 * @param regionStats The count of regional diagnoses to be stored

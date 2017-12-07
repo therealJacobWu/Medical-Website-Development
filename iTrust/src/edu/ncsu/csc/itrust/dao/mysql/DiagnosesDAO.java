@@ -90,8 +90,10 @@ public class DiagnosesDAO {
 			ps = conn.prepareStatement("SELECT * FROM ovdiagnosis INNER JOIN officevisits ON ovdiagnosis.VisitID=officevisits.ID INNER JOIN patients ON officevisits.PatientID=patients.MID WHERE ICDCode=? AND zip LIKE ? AND visitDate >= ? AND visitDate <= ? ");
 			int local = getDiagnosisStatisticsForArea(ps, icdCode, zipCode, lower, upper);
 			int region = getDiagnosisStatisticsForArea(ps, icdCode,zipCode.substring(0,3) + "%", lower, upper);
+			int state = getDiagnosisStatisticsForArea(ps, icdCode,zipCode.substring(0,2) + "%", lower, upper);
+            int global = getDiagnosisStatisticsForArea(ps, icdCode,"%", lower, upper);
 			ps.close();
-			dsBean = new DiagnosisStatisticsBean(zipCode, local, region, lower, upper);
+			dsBean = new DiagnosisStatisticsBean(zipCode, local, region, state, global, lower, upper);
 			return dsBean;
 		} catch (SQLException e) {
 			throw new DBException(e);
@@ -100,6 +102,7 @@ public class DiagnosesDAO {
 		}
 		
 	}
+
 	public int getDiagnosisStatisticsForArea(PreparedStatement ps, String icdCode, String zipCodeExpression,java.util.Date lower,java.util.Date upper) throws SQLException{
         ps.setString(1, icdCode);
         ps.setString(2, zipCodeExpression);

@@ -1,5 +1,8 @@
 
 
+INSERT INTO patients(MID, zip)
+VALUES (411, '27006'),(412,'14905');
+
 INSERT INTO officevisits(ID, visitDate, HCPID, notes, PatientID, HospitalID)
 VALUES
 (107, '2007-03-09', 9000000004, 'Diagnose Echovirus', 2, '1'),
@@ -21,7 +24,12 @@ VALUES
 
 (122, '2011-08-25', 9000000000, 'Diagnose Mumps', 2, '1'),
 (123, '2011-09-09', 9000000000, 'Diagnose Mumps', 3, '1'),
-(124, '2011-09-12', 9000000000, 'Diagnose Mumps', 25, '1')
+(124, '2011-09-12', 9000000000, 'Diagnose Mumps', 25, '1'),
+
+(125, '2011-09-11', 9000000000, 'Diagnose Mumps', 411, '1'),
+(126, '2011-08-11', 9000000000, 'Diagnose Mumps', 412, '1')
+
+
 
 ON DUPLICATE KEY UPDATE id = id;
 
@@ -46,7 +54,10 @@ VALUES
 
 (122, 122, 72.00),
 (123, 123, 72.00),
-(124, 124, 72.00)
+(124, 124, 72.00),
+
+(125, 125, 487.00),
+(126, 126, 487.00)
 ON DUPLICATE KEY UPDATE VisitID = VALUES(VisitID), ICDCode = VALUES(ICDCode);
 
 INSERT INTO labprocedure (PatientMID, LaboratoryProcedureCode, Rights, Status, Commentary, Results, OfficeVisitID, UpdatedDate,
