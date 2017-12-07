@@ -36,13 +36,19 @@ public class PreregisterTest extends iTrustSeleniumTest{
     /*
      * Set up a Preregister instance.
      */
-    protected WebDriver setUp2() {
+    protected WebDriver setUp2() throws Exception{
         WebDriver driver = new HtmlUnitDriver();
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         driver.get(ADDRESS);
 
         // Fill in the prepatient form
-        driver.findElement(By.xpath("//input[@name='firstName']")).sendKeys("testFirstName");
+        try {
+            fillForm(driver, "", 1);
+        }
+        catch (Exception e){
+            throw new Exception(e);
+        }
+        /*driver.findElement(By.xpath("//input[@name='firstName']")).sendKeys("testFirstName");
         driver.findElement(By.xpath("//input[@name='lastName']")).sendKeys("testLastName");
         driver.findElement(By.xpath("//input[@name='email']")).sendKeys("test@gg.com");
         driver.findElement(By.xpath("//input[@name='password']")).sendKeys("1234");
@@ -57,7 +63,7 @@ public class PreregisterTest extends iTrustSeleniumTest{
         driver.findElement(By.xpath("//input[@name='height']")).sendKeys("123");
         driver.findElement(By.xpath("//input[@name='weight']")).sendKeys("321");
         driver.findElement(By.id("smoker1Choice")).click();
-        driver.findElement(By.id("preregistSubmit")).click();
+        driver.findElement(By.id("preregistSubmit")).click();*/
         // Preregister test
         assertTrue(driver.getPageSource().contains("You have pre-registered."));
         return driver;
@@ -69,7 +75,8 @@ public class PreregisterTest extends iTrustSeleniumTest{
 
         driver.get(ADDRESS);
         // Fill in the prepatient form with the same email address
-        driver.findElement(By.xpath("//input[@name='firstName']")).sendKeys("testFirstName~");
+        fillForm(driver, "~",1);
+        /*driver.findElement(By.xpath("//input[@name='firstName']")).sendKeys("testFirstName~");
         driver.findElement(By.xpath("//input[@name='lastName']")).sendKeys("testLastName~");
         driver.findElement(By.xpath("//input[@name='email']")).sendKeys("test@gg.com");
         driver.findElement(By.xpath("//input[@name='password']")).sendKeys("1234");
@@ -84,7 +91,7 @@ public class PreregisterTest extends iTrustSeleniumTest{
         driver.findElement(By.xpath("//input[@name='height']")).sendKeys("123");
         driver.findElement(By.xpath("//input[@name='weight']")).sendKeys("321");
         driver.findElement(By.id("smoker1Choice")).click();
-        driver.findElement(By.id("preregistSubmit")).click();
+        driver.findElement(By.id("preregistSubmit")).click();*/
         // Duplicate Email test
         assertTrue(driver.getPageSource().contains("A login already exists with that email"));
     }
@@ -96,7 +103,8 @@ public class PreregisterTest extends iTrustSeleniumTest{
         driver.get(ADDRESS);
 
         // Fill in the prepatient form with different password
-        driver.findElement(By.xpath("//input[@name='firstName']")).sendKeys("testFirstName");
+        fillForm(driver,"",1);
+        /*driver.findElement(By.xpath("//input[@name='firstName']")).sendKeys("testFirstName");
         driver.findElement(By.xpath("//input[@name='lastName']")).sendKeys("testLastName");
         driver.findElement(By.xpath("//input[@name='email']")).sendKeys("test@gg.com");
         driver.findElement(By.xpath("//input[@name='password']")).sendKeys("1234");
@@ -111,9 +119,35 @@ public class PreregisterTest extends iTrustSeleniumTest{
         driver.findElement(By.xpath("//input[@name='height']")).sendKeys("123");
         driver.findElement(By.xpath("//input[@name='weight']")).sendKeys("321");
         driver.findElement(By.id("smoker1Choice")).click();
-        driver.findElement(By.id("preregistSubmit")).click();
+        driver.findElement(By.id("preregistSubmit")).click();*/
         // Password Match test
         assertTrue(driver.getPageSource().contains("Passwords do not match. Please try again."));
+    }
+    private void fillForm(WebDriver driver, String app, int access) throws  Exception {
+        try {
+            driver.findElement(By.xpath("//input[@name='firstName']")).sendKeys("testFirstName" + app);
+            driver.findElement(By.xpath("//input[@name='lastName']")).sendKeys("testLastName" + app);
+            driver.findElement(By.xpath("//input[@name='email']")).sendKeys("test@gg.com");
+            driver.findElement(By.xpath("//input[@name='password']")).sendKeys("1234");
+            driver.findElement(By.xpath("//input[@name='confirmPassword']")).sendKeys("1234");
+            if (access == 1) {
+                driver.findElement(By.xpath("//input[@name='streetAddress1']")).sendKeys("testAddr1" + app);
+                driver.findElement(By.xpath("//input[@name='streetAddress2']")).sendKeys("testAddr2" + app);
+                driver.findElement(By.xpath("//input[@name='phone']")).sendKeys("5005005000");
+                driver.findElement(By.xpath("//input[@name='icName']")).sendKeys("testicName" + app);
+                driver.findElement(By.xpath("//input[@name='icAddress1']")).sendKeys("testicAddr1" + app);
+                driver.findElement(By.xpath("//input[@name='icAddress2']")).sendKeys("testicAddr2" + app);
+                driver.findElement(By.xpath("//input[@name='icPhone']")).sendKeys("6006006000");
+                driver.findElement(By.xpath("//input[@name='height']")).sendKeys("123");
+                driver.findElement(By.xpath("//input[@name='weight']")).sendKeys("321");
+                driver.findElement(By.id("smoker1Choice")).click();
+            }
+            driver.findElement(By.id("preregistSubmit")).click();
+        }
+        catch (Exception e){
+            throw new Exception(e);
+        }
+
     }
 
     @Test
@@ -159,12 +193,13 @@ public class PreregisterTest extends iTrustSeleniumTest{
         driver.get(ADDRESS);
 
         // Fill in the prepatient form with only required fields.
-        driver.findElement(By.xpath("//input[@name='firstName']")).sendKeys("testFirstName");
+        fillForm(driver, "", 0);
+        /*driver.findElement(By.xpath("//input[@name='firstName']")).sendKeys("testFirstName");
         driver.findElement(By.xpath("//input[@name='lastName']")).sendKeys("testLastName");
         driver.findElement(By.xpath("//input[@name='email']")).sendKeys("test@gg.com");
         driver.findElement(By.xpath("//input[@name='password']")).sendKeys("1234");
         driver.findElement(By.xpath("//input[@name='confirmPassword']")).sendKeys("1234");
-        driver.findElement(By.id("preregistSubmit")).click();
+        driver.findElement(By.id("preregistSubmit")).click();*/
         assertTrue(driver.getPageSource().contains("You have pre-registered."));
 
         PatientDAO testPatientDao = new PatientDAO(factory);
