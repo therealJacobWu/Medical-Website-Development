@@ -82,44 +82,37 @@ public class DiagnosesDAO {
 	 */
 	public DiagnosisStatisticsBean getDiagnosisCounts(String icdCode, String zipCode, java.util.Date lower, java.util.Date upper) throws DBException {
 		Connection conn = null;
-		PreparedStatement ps = null;
+        PreparedStatement ps = null;
 		DiagnosisStatisticsBean dsBean = null;
+
 		try {
 			conn = factory.getConnection();
-			ps = conn.prepareStatement("SELECT * FROM ovdiagnosis INNER JOIN officevisits ON ovdiagnosis.VisitID=officevisits.ID INNER JOIN patients ON officevisits.PatientID=patients.MID WHERE ICDCode=? AND zip=? AND visitDate >= ? AND visitDate <= ? ");
-			ps.setString(1, icdCode);
-			ps.setString(2, zipCode);
-			ps.setTimestamp(3, new Timestamp(lower.getTime()));
-			// add 1 day's worth to include the upper
-			ps.setTimestamp(4, new Timestamp(upper.getTime() + 1000L * 60L * 60 * 24L));
-			
-			ResultSet rs = ps.executeQuery();
-			rs.last();
-			int local = rs.getRow();
-			ps.close();
 			ps = conn.prepareStatement("SELECT * FROM ovdiagnosis INNER JOIN officevisits ON ovdiagnosis.VisitID=officevisits.ID INNER JOIN patients ON officevisits.PatientID=patients.MID WHERE ICDCode=? AND zip LIKE ? AND visitDate >= ? AND visitDate <= ? ");
-			ps.setString(1, icdCode);
-			ps.setString(2, zipCode.substring(0, 3) + "%");
-			ps.setTimestamp(3, new Timestamp(lower.getTime()));
-			// add 1 day's worth to include the upper
-			ps.setTimestamp(4, new Timestamp(upper.getTime() + 1000L * 60L * 60 * 24L));
-			
-			rs = ps.executeQuery();
-			rs.last();
-			int region = rs.getRow();
-			
-			dsBean = new DiagnosisStatisticsBean(zipCode, local, region, lower, upper);
-			rs.close();
+			int local = getDiagnosisStatisticsForArea(ps, icdCode, zipCode, lower, upper);
+			int region = getDiagnosisStatisticsForArea(ps, icdCode,zipCode.substring(0,3) + "%", lower, upper);
 			ps.close();
+			dsBean = new DiagnosisStatisticsBean(zipCode, local, region, lower, upper);
 			return dsBean;
 		} catch (SQLException e) {
-			
 			throw new DBException(e);
 		} finally {
 			DBUtil.closeConnection(conn, ps);
 		}
 		
 	}
+	public int getDiagnosisStatisticsForArea(PreparedStatement ps, String icdCode, String zipCodeExpression,java.util.Date lower,java.util.Date upper) throws SQLException{
+        ps.setString(1, icdCode);
+        ps.setString(2, zipCodeExpression);
+        ps.setTimestamp(3, new Timestamp(lower.getTime()));
+        // add 1 day's worth to include the upper
+        ps.setTimestamp(4, new Timestamp(upper.getTime() + 1000L * 60L * 60 * 24L));
+        ResultSet rs = ps.executeQuery();
+        rs.last();
+        int diagnoses = rs.getRow();
+        rs.close();
+        return diagnoses;
+    }
+
 	
 	/**
 	 * Gets a weekly local zip code count and regional count of a specified diagnosis code over a time period
