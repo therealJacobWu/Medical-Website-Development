@@ -174,7 +174,7 @@ public class ViewDiagnosisStatisticsAction {
 			throw new FormValidationException("Zip Code must be 5 digits!");
 		
 		DiagnosisStatisticsBean dbWeek = diagnosesDAO.getCountForWeekOf(icdCode, zip, lower);
-		DiagnosisStatisticsBean dbAvg = new DiagnosisStatisticsBean(zip, 0, 0, lower, lower);
+		DiagnosisStatisticsBean dbAvg = new DiagnosisStatisticsBean(zip, 0, 0, 0,0, lower, lower);
 		
 		Calendar cal = Calendar.getInstance();
 		
