@@ -18,9 +18,9 @@
 
     for (int weekNumb = dsBeans.size()-1; weekNumb >= 0 ; weekNumb--) {
         xAxisLabels.add("week - "+ (weekNumb + 1));
-        regionData.add(dsBeans.get(weekNumb).getRegionStats());
-        stateData.add(dsBeans.get(weekNumb).getStateStats());
-        globalData.add(dsBeans.get(weekNumb).getGlobalStats());
+        regionData.add(dsBeans.get(7-weekNumb).getRegionStats());
+        stateData.add(dsBeans.get(7-weekNumb).getStateStats());
+        globalData.add(dsBeans.get(7-weekNumb).getGlobalStats());
     }
 %>
 
