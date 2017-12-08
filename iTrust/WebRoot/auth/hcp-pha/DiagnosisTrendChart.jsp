@@ -16,8 +16,8 @@
     List<Long> stateData = new ArrayList<>();
     List<Long> globalData = new ArrayList<>();
 
-    for (int weekNumb = dsBeans.size()-1; weekNumb > 0 ; weekNumb--) {
-        xAxisLabels.add("week - "+ weekNumb);
+    for (int weekNumb = dsBeans.size()-1; weekNumb >= 0 ; weekNumb--) {
+        xAxisLabels.add("week - "+ (weekNumb + 1));
         regionData.add(dsBeans.get(weekNumb).getRegionStats());
         stateData.add(dsBeans.get(weekNumb).getStateStats());
         globalData.add(dsBeans.get(weekNumb).getGlobalStats());

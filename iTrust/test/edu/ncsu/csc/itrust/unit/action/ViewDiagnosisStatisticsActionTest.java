@@ -87,6 +87,11 @@ public class ViewDiagnosisStatisticsActionTest extends TestCase {
 			assertEquals("ICDCode must be valid diagnosis!", e.getErrorList().get(0));
 		}
 	}
+
+	public void testGetDiagnosisStatisticsByWeek() throws Exception{
+	    ArrayList<DiagnosisStatisticsBean> d = action.getDiagnosisStatisticsByWeek("09/28/2011", "487.00", "27606");;
+	    assertEquals(8,d.size());
+    }
 	
 	public void testIsMalariaEpidemic() throws Exception {
 		gen.malaria_epidemic();
