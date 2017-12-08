@@ -76,67 +76,8 @@ public class TestDataGenerator {
 				+ "/hospitalAssignmentsReset.sql");
 	}
 
-	public void foreignKeyTest(String a) throws FileNotFoundException, IOException,
-			SQLException {
-		new DBBuilder(factory).executeSQLFile(DIR + "/foreignKeyTest.sql");
-	}
-
-	public void ovReactionOverride(String a) throws FileNotFoundException, IOException,
-			SQLException {
-		new DBBuilder(factory).executeSQLFile(DIR + "/ovReactionOverrides.sql");
-	}
-
-	public void drugInteractions2(String a) throws FileNotFoundException, IOException,
-			SQLException {
-		new DBBuilder(factory).executeSQLFile(DIR + "/drugInteractions2.sql");
-	}
-
 	public void er4() throws SQLException, FileNotFoundException, IOException {
 		new DBBuilder(factory).executeSQLFile(DIR + "/er6.sql");
-	}
-
-	public void hcp10(String a) throws FileNotFoundException, SQLException, IOException {
-		new DBBuilder(factory).executeSQLFile(DIR + "/hcp10.sql");
-	}
-
-	public void officeVisit0Multiple() throws SQLException,
-			FileNotFoundException, IOException {
-		new DBBuilder(factory).executeSQLFile(DIR + "/ov0Multiple.sql");
-	}
-
-	public void officeVisit2(String a) throws SQLException, FileNotFoundException,
-			IOException {
-		new DBBuilder(factory).executeSQLFile(DIR + "/ov2.sql");
-	}
-
-	public void officeVisit3(String a) throws SQLException, FileNotFoundException,
-			IOException {
-		new DBBuilder(factory).executeSQLFile(DIR + "/ov3.sql");
-	}
-
-	public void officeVisit6(String a) throws SQLException, FileNotFoundException,
-			IOException {
-		new DBBuilder(factory).executeSQLFile(DIR + "/ov6.sql");
-	}
-
-	public void officeVisit7(String a) throws SQLException, FileNotFoundException,
-			IOException {
-		new DBBuilder(factory).executeSQLFile(DIR + "/ov7.sql");
-	}
-
-	public void officeVisit8(String a) throws SQLException, FileNotFoundException,
-			IOException {
-		new DBBuilder(factory).executeSQLFile(DIR + "/ov8.sql");
-	}
-
-	public void clearProfilePhotos() throws FileNotFoundException, IOException,
-			SQLException {
-		new DBBuilder(factory).executeSQLFile(DIR + "/clearphotos.sql");
-	}
-
-	public void patient15() throws FileNotFoundException, SQLException,
-			IOException {
-		new DBBuilder(factory).executeSQLFile(DIR + "/patient15.sql");
 	}
 
 	public void patient1000s() throws FileNotFoundException, SQLException, IOException {
@@ -145,34 +86,6 @@ public class TestDataGenerator {
 		new DBBuilder(factory).executeSQLFile(DIR + "/patient1003.sql");
 		new DBBuilder(factory).executeSQLFile(DIR + "/patient1004.sql");
 		new DBBuilder(factory).executeSQLFile(DIR + "/patient1005.sql");
-	}
-
-	public void immunization_data() throws FileNotFoundException, IOException,
-			SQLException {
-		new DBBuilder(factory).executeSQLFile(DIR + "/immunization.sql");
-	}
-
-	public void remoteMonitoringAdditional() throws FileNotFoundException,
-			IOException, SQLException {
-		new DBBuilder(factory).executeSQLFile(DIR
-				+ "/remoteMonitoringAdditional.sql");
-	}
-
-	public void remoteMonitoringPresentation() throws FileNotFoundException,
-			IOException, SQLException {
-		new DBBuilder(factory).executeSQLFile(DIR
-				+ "/remoteMonitoringPresentation.sql");
-	}
-
-	public void adverseEventPresentation() throws FileNotFoundException,
-			IOException, SQLException {
-		new DBBuilder(factory).executeSQLFile(DIR
-				+ "/adverseEventPresentation.sql");
-	}
-
-	public void testExpertSearch() throws FileNotFoundException, SQLException,
-			IOException {
-		new DBBuilder(factory).executeSQLFile(DIR + "/testExpertSearch.sql");
 	}
 
 	public void viewAccessLogTestData() throws SQLException,
