@@ -36,7 +36,6 @@ import edu.ncsu.csc.itrust.unit.testutils.TestDAOFactory;
 public class TestDataGenerator {
 	public static void main(String[] args) throws IOException, SQLException {
 		TestDataGenerator gen = new TestDataGenerator();
-		DBBuilder.rebuildAll();
 		gen.clearAllTables();
 		gen.standardData();
 		// Put it here so that actual iTrust runs can see cause of death data of patients
