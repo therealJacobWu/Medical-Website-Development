@@ -12,6 +12,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
+/**
+ * A DAO for aggregating patient metrics by their various attributes.
+ */
 public class PatientMetricVisualizationDAO {
     private DAOFactory factory;
     private PatientLoader patientLoader;
@@ -45,6 +48,14 @@ public class PatientMetricVisualizationDAO {
         return results;
     }
 
+    /**
+     * Gets all patients that have a certain attribute
+     *
+     * @param attr an attribute name
+     * @param value the value of the attribute
+     * @return a list of {@link PatientBean} objectse
+     * @throws DBException
+     */
     public List<PatientBean> getAllPatientWithAttr(String attr, String value) throws DBException {
         Connection conn = null;
         PreparedStatement ps = null;
@@ -82,6 +93,13 @@ public class PatientMetricVisualizationDAO {
         }
     }
 
+    /**
+     * Get all patient by their ages
+     *
+     * @return a map of ages and counts
+     * @throws DBException
+     * @throws SQLException
+     */
     public Map<String, Integer> getAllPatientsAges() throws DBException, SQLException {
         Connection conn = null;
         PreparedStatement ps = null;
@@ -94,6 +112,13 @@ public class PatientMetricVisualizationDAO {
         return result;
     }
 
+    /**
+     * Get all patients by their visits
+     *
+     * @return a map of office visits and counts
+     * @throws DBException
+     * @throws SQLException
+     */
     public Map<String, Integer> getAllPatientsVisits() throws DBException, SQLException {
         Connection conn = null;
         PreparedStatement ps = null;
@@ -106,6 +131,13 @@ public class PatientMetricVisualizationDAO {
         return result;
     }
 
+    /**
+     * Get all patients by their deaths
+     *
+     * @return a map of patient deaths and counts
+     * @throws DBException
+     * @throws SQLException
+     */
     public Map<String, Integer> getAllPatientsDeath() throws DBException, SQLException {
         Connection conn = null;
         PreparedStatement ps = null;
@@ -118,6 +150,13 @@ public class PatientMetricVisualizationDAO {
         return result;
     }
 
+    /**
+     * Get all patients by their states
+     *
+     * @return a map of states and counts
+     * @throws DBException
+     * @throws SQLException
+     */
     public Map<String, Integer> getAllPatientsStates() throws DBException, SQLException {
         Connection conn = null;
         PreparedStatement ps = null;
@@ -130,6 +169,13 @@ public class PatientMetricVisualizationDAO {
         return result;
     }
 
+    /**
+     * Get all patients by their blood type
+     *
+     * @return a map of blood type and counts
+     * @throws DBException
+     * @throws SQLException
+     */
     public Map<String, Integer> getAllPatientsBlood() throws DBException, SQLException {
         Connection conn = null;
         PreparedStatement ps = null;
@@ -142,6 +188,13 @@ public class PatientMetricVisualizationDAO {
         return result;
     }
 
+    /**
+     * Get all patients by their religions
+     *
+     * @return a map of religions and counts
+     * @throws DBException
+     * @throws SQLException
+     */
     public Map<String, Integer> getAllPatientsReligion() throws DBException, SQLException {
         Connection conn = null;
         PreparedStatement ps = null;
@@ -154,6 +207,13 @@ public class PatientMetricVisualizationDAO {
         return result;
     }
 
+    /**
+     * Get all patients by their languages
+     *
+     * @return a map of languages and counts
+     * @throws DBException
+     * @throws SQLException
+     */
     public Map<String, Integer> getAllPatientsLanguage() throws DBException, SQLException {
         Connection conn = null;
         PreparedStatement ps = null;

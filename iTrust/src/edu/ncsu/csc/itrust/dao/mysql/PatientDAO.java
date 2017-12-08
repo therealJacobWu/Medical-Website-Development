@@ -4,8 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 import edu.ncsu.csc.itrust.DBUtil;
 import edu.ncsu.csc.itrust.beans.DiagnosisBean;
 import edu.ncsu.csc.itrust.beans.PatientBean;
@@ -23,7 +24,6 @@ import edu.ncsu.csc.itrust.enums.Gender;
 import edu.ncsu.csc.itrust.exception.DBException;
 import edu.ncsu.csc.itrust.exception.ITrustException;
 import edu.ncsu.csc.itrust.DateUtil;
-import org.apache.commons.collections.OrderedMap;
 
 import javax.annotation.Nullable;
 import static edu.ncsu.csc.itrust.enums.Gender.Female;

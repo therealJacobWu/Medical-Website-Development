@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Created by thechaseduncan on 12/3/17.
+ * Tests {@link PatientMetricVisualizationDAO}
  */
 public class PatientMetricVisualizationDAOTest extends TestCase {
     private TestDataGenerator gen = new TestDataGenerator();
