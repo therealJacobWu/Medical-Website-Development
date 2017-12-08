@@ -43,6 +43,7 @@ public class PreregisterTest extends iTrustSeleniumTest{
 
         // Fill in the prepatient form
         fillForm(driver, "", 1);
+        driver.findElement(By.id("preregistSubmit")).click();
         assertTrue(driver.getPageSource().contains("You have pre-registered."));
         return driver;
     }
@@ -54,6 +55,7 @@ public class PreregisterTest extends iTrustSeleniumTest{
         driver.get(ADDRESS);
         // Fill in the prepatient form with the same email address
         fillForm(driver, "~",1);
+        driver.findElement(By.id("preregistSubmit")).click();
         // Duplicate Email test
         assertTrue(driver.getPageSource().contains("A login already exists with that email"));
     }
@@ -66,6 +68,8 @@ public class PreregisterTest extends iTrustSeleniumTest{
 
         // Fill in the prepatient form with different password
         fillForm(driver,"",1);
+        driver.findElement(By.xpath("//input[@name='confirmPassword']")).sendKeys("differentpassword");
+        driver.findElement(By.id("preregistSubmit")).click();
         // Password Match test
         assertTrue(driver.getPageSource().contains("Passwords do not match. Please try again."));
     }
@@ -88,8 +92,6 @@ public class PreregisterTest extends iTrustSeleniumTest{
                 driver.findElement(By.xpath("//input[@name='weight']")).sendKeys("321");
                 driver.findElement(By.id("smoker1Choice")).click();
             }
-            driver.findElement(By.id("preregistSubmit")).click();
-
     }
 
     @Test
@@ -136,12 +138,7 @@ public class PreregisterTest extends iTrustSeleniumTest{
 
         // Fill in the prepatient form with only required fields.
         fillForm(driver, "", 0);
-        /*driver.findElement(By.xpath("//input[@name='firstName']")).sendKeys("testFirstName");
-        driver.findElement(By.xpath("//input[@name='lastName']")).sendKeys("testLastName");
-        driver.findElement(By.xpath("//input[@name='email']")).sendKeys("test@gg.com");
-        driver.findElement(By.xpath("//input[@name='password']")).sendKeys("1234");
-        driver.findElement(By.xpath("//input[@name='confirmPassword']")).sendKeys("1234");
-        driver.findElement(By.id("preregistSubmit")).click();*/
+        driver.findElement(By.id("preregistSubmit")).click();
         assertTrue(driver.getPageSource().contains("You have pre-registered."));
 
         PatientDAO testPatientDao = new PatientDAO(factory);
