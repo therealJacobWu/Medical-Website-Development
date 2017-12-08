@@ -96,7 +96,7 @@ public class MessagingUseCaseTest extends iTrustSeleniumTest {
 	}
 	
 	public void testPatientSendMessageMultiRecipients() throws Exception {
-		gen.loadSQLFile("messagingCcs'");
+		gen.loadSQLFile("messagingCcs");
 		driver = login("1", "pw");
 		assertLogged(TransactionType.HOME_VIEW, 1L, 0L, "");
 		driver.findElement(By.linkText("Compose a Message")).click();
