@@ -22,7 +22,7 @@ public class ViewSurveyResultsActionTest extends TestCase {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
 		gen.standardData();
-		gen.surveyResults();
+		gen.loadSQLFile("surveyResults");
 	}
 
 	public void testGetResultsByZipAndSpecialty() throws Exception {

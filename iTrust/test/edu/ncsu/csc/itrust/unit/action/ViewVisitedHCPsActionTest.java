@@ -27,7 +27,7 @@ public class ViewVisitedHCPsActionTest extends TestCase {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
 		gen.standardData();
-		gen.patient_hcp_vists();
+		gen.loadSQLFile("patient_hcp_visits");
 		action = new ViewVisitedHCPsAction(factory, 2L);
 		action2 = new ViewVisitedHCPsAction(factory, 1L);
 	}

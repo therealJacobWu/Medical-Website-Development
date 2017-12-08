@@ -19,7 +19,7 @@ public class PrescriptionInteractionAndAllergyTest extends iTrustSeleniumTest {
 		Logger logger = Logger.getLogger("");
 		logger.setLevel(Level.OFF);
 		gen.clearAllTables();
-		gen.hcp0();
+		gen.loadSQLFile("hcp0");
 		gen.standardData();
 		driver = new HtmlUnitDriver();
 		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
@@ -194,11 +194,11 @@ public class PrescriptionInteractionAndAllergyTest extends iTrustSeleniumTest {
 	public void testInteractionAndAllergyPrescribe() throws Exception {
 
 		// From old test.
-		gen.patient2();
-		gen.officeVisit4();
-		gen.ndCodes1();
-		gen.drugInteractions3();
-		gen.ORCodes();
+		gen.loadSQLFile("patient2");
+		gen.loadSQLFile("ov4");
+		gen.loadSQLFile("ndCodes1");
+		gen.loadSQLFile("drugInteractions3");
+		gen.loadSQLFile("ORCodes");
 
 		driver.get("http://localhost:8080/iTrust/");
 		driver.findElement(By.id("j_username")).sendKeys("9000000000");
@@ -255,11 +255,11 @@ public class PrescriptionInteractionAndAllergyTest extends iTrustSeleniumTest {
 	@Test
 	public void testAllergicPrescribeOverride() throws Exception {
 		// From old test
-		gen.patient2();
-		gen.officeVisit4();
-		gen.ndCodes1();
-		gen.drugInteractions3();
-		gen.ORCodes();
+		gen.loadSQLFile("patient2");
+		gen.loadSQLFile("ov4");
+		gen.loadSQLFile("ndCodes1");
+		gen.loadSQLFile("drugInteractions3");
+		gen.loadSQLFile("ORCodes");
 
 		driver.get("http://localhost:8080/iTrust/");
 		driver.findElement(By.id("j_username")).sendKeys("9000000000");

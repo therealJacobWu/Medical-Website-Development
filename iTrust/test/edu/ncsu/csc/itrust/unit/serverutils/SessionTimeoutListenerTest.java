@@ -13,7 +13,7 @@ public class SessionTimeoutListenerTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
-		gen.timeout();
+		gen.loadSQLFile("timeout");
 	}
 
 	// This uses a rudimentary mock object system - where we create these objects that are

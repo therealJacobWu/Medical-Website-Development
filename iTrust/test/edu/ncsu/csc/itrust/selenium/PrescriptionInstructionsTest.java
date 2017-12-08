@@ -14,11 +14,11 @@ public class PrescriptionInstructionsTest extends iTrustSeleniumTest {
 	protected void setUp() throws Exception {
 		super.setUp();
 		gen.clearAllTables();
-		gen.hcp0();
-		gen.ndCodes();
-		gen.patient1();
-		gen.patient2();
-		gen.patient4();
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("ndCodes");
+		gen.loadSQLFile("patient1");
+		gen.loadSQLFile("patient2");
+		gen.loadSQLFile("patient4");
 		
 	}
 	
@@ -126,8 +126,8 @@ public class PrescriptionInstructionsTest extends iTrustSeleniumTest {
 	@Test
 	public void testUC29() throws Exception {
 		gen.standardData();
-		gen.patient_hcp_vists();
-		gen.hcp_diagnosis_data();
+		gen.loadSQLFile("patient_hcp_visits");
+		gen.loadSQLFile("hcp_diagnosis_data");
 		
 		// Create an instance of the html unit driver
 		WebDriver driver = new HtmlUnitDriver();

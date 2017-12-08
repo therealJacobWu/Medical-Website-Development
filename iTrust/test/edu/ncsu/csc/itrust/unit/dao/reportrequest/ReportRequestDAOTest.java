@@ -24,7 +24,7 @@ public class ReportRequestDAOTest extends TestCase {
 	protected void setUp() throws Exception {
 		TestDataGenerator gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.reportRequests();
+		gen.loadSQLFile("reportRequests");
 		
 	}
 

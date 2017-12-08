@@ -39,8 +39,8 @@ public class NotificationAreaTest extends iTrustSeleniumTest {
 		SimpleDateFormat formatter = new SimpleDateFormat();
 		formatter.applyPattern("MM/dd/yyyy");
 		//String tomorrow = formatter.format(new Date((new Date()).getTime() + 86400000));
-		gen.appointmentCase3();
-		gen.remoteMonitoring3();
+		gen.loadSQLFile("appointmentCase3");
+		gen.loadSQLFile("remoteMonitoring3");
 		driver = login("9000000000", "pw");
 		assertEquals(driver.getTitle(), "iTrust - HCP Home");
 		assertTrue(driver.getPageSource().contains("3 physiological status reports"));
@@ -51,7 +51,7 @@ public class NotificationAreaTest extends iTrustSeleniumTest {
 		SimpleDateFormat formatter = new SimpleDateFormat();
 		formatter.applyPattern("MM/dd/yyyy");
 		String tomorrow = formatter.format(new Date((new Date()).getTime() + 86400000));
-		gen.appointmentCase3();
+		gen.loadSQLFile("appointmentCase3");
 		driver = login("1", "pw");
 		assertEquals(driver.getTitle(), "iTrust - Patient Home");
 		driver.findElement(By.linkText(tomorrow)).click();

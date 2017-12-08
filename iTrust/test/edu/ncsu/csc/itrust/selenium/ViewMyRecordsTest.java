@@ -12,15 +12,15 @@ public class ViewMyRecordsTest extends iTrustSeleniumTest {
 	public void setUp() throws Exception {
 		super.setUp();
 		gen.clearAllTables();
-		gen.icd9cmCodes();
-		gen.ndCodes();
-		gen.uap1();
-		gen.patient2();
-		gen.patient1();
-		gen.patient4();
-		gen.hcp0();
-		gen.clearLoginFailures();
-		gen.hcp3();
+		gen.loadSQLFile("icd9cmCodes");
+		gen.loadSQLFile("ndCodes");
+		gen.loadSQLFile("uap1");
+		gen.loadSQLFile("patient2");
+		gen.loadSQLFile("patient1");
+		gen.loadSQLFile("patient4");
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("loginFailures");
+		gen.loadSQLFile("hcp3");
 	}
 	
 	/*

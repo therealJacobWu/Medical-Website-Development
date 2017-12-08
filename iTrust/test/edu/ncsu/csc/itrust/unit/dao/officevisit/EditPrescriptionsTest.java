@@ -20,9 +20,9 @@ public class EditPrescriptionsTest extends TestCase {
 	protected void setUp() throws Exception {
 		TestDataGenerator gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.ndCodes();
-		gen.hcp0();
-		gen.patient2();
+		gen.loadSQLFile("ndCodes");
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("patient2");
 		epa = new EditPrescriptionsAction(TestDAOFactory.getTestInstance(), 9000000000L, "2", "955");
 
 	}

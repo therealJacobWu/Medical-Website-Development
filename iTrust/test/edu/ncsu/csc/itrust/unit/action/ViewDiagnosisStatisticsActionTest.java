@@ -25,8 +25,8 @@ public class ViewDiagnosisStatisticsActionTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen.clearAllTables();
 		gen.standardData();
-		gen.patient_hcp_vists();
-		gen.hcp_diagnosis_data();
+		gen.loadSQLFile("patient_hcp_visits");
+		gen.loadSQLFile("hcp_diagnosis_data");
 		
 		action = new ViewDiagnosisStatisticsAction(TestDAOFactory.getTestInstance());
 	}
@@ -89,13 +89,13 @@ public class ViewDiagnosisStatisticsActionTest extends TestCase {
 	}
 	
 	public void testIsMalariaEpidemic() throws Exception {
-		gen.malaria_epidemic();
+		gen.loadSQLFile("malariaEpidemic");
 		assertTrue(action.isMalariaEpidemic("11/02/" + thisYear, "27606", "110"));
 		assertFalse(action.isMalariaEpidemic("11/16/" + thisYear, "27606", "110"));
 	}
 	
 	public void testIsFluEpidemic() throws Exception {
-		gen.influenza_epidemic();
+		gen.loadSQLFile("influenzaEpidemic");
 		assertTrue(action.isFluEpidemic("11/02/" + thisYear, "27606"));
 		assertFalse(action.isFluEpidemic("11/16/" + thisYear, "27606"));
 	}

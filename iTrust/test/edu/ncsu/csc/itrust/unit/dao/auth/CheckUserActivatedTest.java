@@ -14,7 +14,7 @@ public class CheckUserActivatedTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen.clearAllTables();
 		gen.standardData();
-		gen.patientDeactivate();
+		gen.loadSQLFile("patientDeactivate");
 	}
 
 	public void testActivatedUser() throws Exception {

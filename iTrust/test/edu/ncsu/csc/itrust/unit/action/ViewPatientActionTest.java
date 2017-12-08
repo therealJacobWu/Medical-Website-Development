@@ -23,7 +23,7 @@ public class ViewPatientActionTest {
 	@Before
 	public void setUp() throws Exception {
 		gen.clearAllTables();
-		gen.patient2();
+		gen.loadSQLFile("patient2");
 		action = new ViewPatientAction(factory, 2L, "2");
 	}
 

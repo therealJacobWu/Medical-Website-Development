@@ -28,7 +28,7 @@ public class HealthDataTest extends TestCase {
 		chart = new HealthData();
 		gen.clearAllTables();
 		gen.standardData();
-		gen.healthData();
+		gen.loadSQLFile("healthData");
 	}
 	
 	/**

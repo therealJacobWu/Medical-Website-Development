@@ -26,7 +26,7 @@ public class AddEditHospitalDAOTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		gen.clearAllTables();
-		gen.hospitals();
+		gen.loadSQLFile("hospitals0");
 	}
 
 	private void clearHospitals() throws SQLException {

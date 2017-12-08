@@ -22,11 +22,11 @@ public class ViewMyReportRequestsActionTest extends TestCase {
 	protected void setUp() throws Exception {
 		TestDataGenerator gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.patient2();
-		gen.hcp0();
-		gen.admin1();
-		gen.fakeEmail();
-		gen.reportRequests();
+		gen.loadSQLFile("patient2");
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("admin1");
+		gen.loadSQLFile("fakeEmail");
+		gen.loadSQLFile("reportRequests");
 	}
 
 
@@ -104,7 +104,7 @@ public class ViewMyReportRequestsActionTest extends TestCase {
 	public void testGetLongStatus() throws Exception {
 		ViewMyReportRequestsAction action = new ViewMyReportRequestsAction(factory, 2L);
 		TestDataGenerator gen = new TestDataGenerator();
-		gen.admin1();
+		gen.loadSQLFile("admin1");
 		assertEquals("Request was requested on 01/01/2008 12:00 by Kelly Doctor", action.getLongStatus(1L));
 		assertEquals("Request was requested on 01/04/2008 12:00 by Kelly Doctor, and viewed on 03/04/2008 12:00 by Kelly Doctor", action.getLongStatus(4L));
 	}

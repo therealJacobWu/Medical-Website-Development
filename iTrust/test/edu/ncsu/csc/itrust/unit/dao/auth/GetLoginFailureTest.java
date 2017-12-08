@@ -20,7 +20,7 @@ public class GetLoginFailureTest extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		gen.clearLoginFailures();
+		gen.loadSQLFile("loginFailures");
 	}
 
 	public void testGetLoginFailuresNoEntry() throws Exception {

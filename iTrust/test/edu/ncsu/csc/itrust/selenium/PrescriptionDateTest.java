@@ -15,11 +15,11 @@ public class PrescriptionDateTest extends iTrustSeleniumTest {
 	{
 		super.setUp();
 		gen.clearAllTables();
-		gen.hcp0();
-		gen.ndCodes();
-		gen.patient1();
-		gen.patient2();
-		gen.patient4();
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("ndCodes");
+		gen.loadSQLFile("patient1");
+		gen.loadSQLFile("patient2");
+		gen.loadSQLFile("patient4");
 	}
 	
 	/**ADDRESS*/

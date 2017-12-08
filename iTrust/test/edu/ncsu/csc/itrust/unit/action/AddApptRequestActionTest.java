@@ -24,7 +24,7 @@ public class AddApptRequestActionTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen.clearAllTables();
 		gen.standardData();
-		gen.apptRequestConflicts();
+		gen.loadSQLFile("apptRequestConflicts");
 		action = new AddApptRequestAction(TestDAOFactory.getTestInstance());
 	}
 

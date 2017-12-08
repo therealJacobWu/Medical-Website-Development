@@ -13,9 +13,9 @@ public class AddOfficeVisitTest extends TestCase {
 	protected void setUp() throws Exception {
 		TestDataGenerator gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.hcp0();
-		gen.patient1();
-		gen.officeVisit1();
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("patient1");
+		gen.loadSQLFile("ov1");
 	}
 
 	public void testAddNewOfficeVisit() throws Exception {

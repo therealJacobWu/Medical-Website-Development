@@ -20,10 +20,10 @@ public class OphthalmologyOfficeVisitTest extends iTrustSeleniumTest{
 	protected void setUp() throws Exception{
 		super.setUp();
 		gen.clearAllTables();
-		gen.hcp0();
-		gen.hcp11();
-		gen.patient27();
-		gen.patient28();
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("hcp11");
+		gen.loadSQLFile("patient27");
+		gen.loadSQLFile("patient28");
 	}
 	
 	/**
@@ -178,7 +178,7 @@ public class OphthalmologyOfficeVisitTest extends iTrustSeleniumTest{
 	 */
 	public void testGenericHCPCreateOphthalmologyOfficeVisit() throws Exception{
 		//Set up the outcome of Scenario 1
-		gen.ophthalmologyScenario1();
+		gen.loadSQLFile("ophthalmologyScenario1");
 		
 		//Login as Kelly Doctor
 		HtmlUnitDriver driver = (HtmlUnitDriver)login("9000000000", "pw");
@@ -228,7 +228,7 @@ public class OphthalmologyOfficeVisitTest extends iTrustSeleniumTest{
 	 */
 	public void testEditOphthalmologyOfficeVisit() throws Exception{
 		//Set up the outcome of Scenario 2
-		gen.ophthalmologyScenario2();
+		gen.loadSQLFile("ophthalmologyScenario2");
 		
 		//Login as Brooke Tran
 		HtmlUnitDriver driver = (HtmlUnitDriver)login("9000000085", "pw");
@@ -270,7 +270,7 @@ public class OphthalmologyOfficeVisitTest extends iTrustSeleniumTest{
 	 */
 	public void testPatientViewOfOphthalmologyOfficeVisit() throws Exception{
 		//Set up the outcome of Scenario 1
-		gen.ophthalmologyScenario1();
+		gen.loadSQLFile("ophthalmologyScenario1");
 		
 		//Login as Brody Franco
 		HtmlUnitDriver driver = (HtmlUnitDriver)login("407", "pw");
@@ -304,7 +304,7 @@ public class OphthalmologyOfficeVisitTest extends iTrustSeleniumTest{
 	 */
 	public void testPatientViewOfEditedOfficeVisit() throws Exception{
 		//Set up the outcome of Scenario 2
-		gen.ophthalmologyScenario2();
+		gen.loadSQLFile("ophthalmologyScenario2");
 		
 		//Login as Freya Chandler
 		HtmlUnitDriver driver = (HtmlUnitDriver)login("408", "pw");
@@ -401,9 +401,9 @@ public class OphthalmologyOfficeVisitTest extends iTrustSeleniumTest{
 	 */
 	public void testPatientViewOfDependentOfficeVisit() throws Exception{
 		//Make sure that Brittany Franco is in the system
-		gen.patient29();
+		gen.loadSQLFile("patient29");
 		//Set up the outcome of Scenario 1
-		gen.ophthalmologyScenario3();
+		gen.loadSQLFile("ophthalmologyScenario3");
 
 		
 		//Login as Brody Franco
@@ -446,11 +446,11 @@ public class OphthalmologyOfficeVisitTest extends iTrustSeleniumTest{
 	 */
 	public void testPatientViewOfMultipleDependentsOfficeVisit() throws Exception{
 		//Make sure that Brittany Franco is in the system.
-		gen.patient29();
+		gen.loadSQLFile("patient29");
 		//Make sure that James Franco is in the system.
-		gen.patient30();
+		gen.loadSQLFile("patient30");
 		//Set up the outcome of Scenario 1
-		gen.ophthalmologyScenario3();
+		gen.loadSQLFile("ophthalmologyScenario3");
 
 		//Login as Brody Franco
 		HtmlUnitDriver driver = (HtmlUnitDriver)login("407", "pw");

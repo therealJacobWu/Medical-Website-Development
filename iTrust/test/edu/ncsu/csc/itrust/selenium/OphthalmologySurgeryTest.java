@@ -22,11 +22,11 @@ public class OphthalmologySurgeryTest extends iTrustSeleniumTest{
 	protected void setUp() throws Exception{
 		super.setUp();
 		gen.clearAllTables();
-		gen.hcp0();
-		gen.hcp11();
-		gen.hcp12();
-		gen.patient27();
-		gen.patient28();
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("hcp11");
+		gen.loadSQLFile("hcp12");
+		gen.loadSQLFile("patient27");
+		gen.loadSQLFile("patient28");
 	}
 	
 	/**
@@ -189,7 +189,7 @@ public class OphthalmologySurgeryTest extends iTrustSeleniumTest{
 	 */
 	public void testOptometristCreateOphthalmologySurgery() throws Exception{
 		//Set up the outcome of Scenario 1
-		gen.ophthalmologyScenario1();
+		gen.loadSQLFile("ophthalmologyScenario1");
 		
 		//Login as Brooke Tran
 		HtmlUnitDriver driver = (HtmlUnitDriver)login("9000000085", "pw");
