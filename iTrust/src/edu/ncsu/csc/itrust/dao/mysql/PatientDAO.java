@@ -492,6 +492,20 @@ public class PatientDAO {
 		}
 	}
 
+	private String getCauseOfDeathSQLForGender(@Nullable Gender gender) {
+		String genderFilter = (gender == null) ? "" : "AND Gender = ?";
+		return (
+			"SELECT Description, COUNT(CauseOfDeath) " +
+			"FROM Patients, officevisits, Icdcodes " +
+			"WHERE CauseOfDeath IS NOT NULL AND CauseOfDeath <> '' AND Code = CauseOfDeath " + genderFilter +
+			"AND Patients.Mid = officevisits.PatientID AND officevisits.HCPID = ?  " +
+			"AND DateOfDeath > ? AND DateOfDeath < ?" +
+			"GROUP BY CauseOfDeath, Description " +
+			"ORDER BY COUNT(CauseOfDeath) DESC, Description ASC " +
+			"LIMIT 2"
+		);
+	}
+
 	/**
 	 * Return the top two cause of death of given hcp patients
 	 *
@@ -509,15 +523,7 @@ public class PatientDAO {
 		try {
 			conn = factory.getConnection();
 			if (gender == Male || gender == Female) {
-				ps = conn.prepareStatement(
-						"SELECT Description, COUNT(CauseOfDeath) " +
-						"FROM Patients, officevisits, Icdcodes " +
-						"WHERE CauseOfDeath IS NOT NULL AND CauseOfDeath <> '' AND Code = CauseOfDeath AND Gender = ? " +
-								"AND Patients.Mid = officevisits.PatientID AND officevisits.HCPID = ?  " +
-								"AND DateOfDeath > ? AND DateOfDeath < ?" +
-						"GROUP BY CauseOfDeath, Description " +
-						"ORDER BY COUNT(CauseOfDeath) DESC, Description ASC " +
-						"LIMIT 2");
+				ps = conn.prepareStatement(getCauseOfDeathSQLForGender(gender));
 				ps.setString(1, gender.toString());
 				ps.setLong(2, hcpid);
 				ps.setString(3, start);
@@ -550,15 +556,7 @@ public class PatientDAO {
 		PreparedStatement ps = null;
 		try {
 			conn = factory.getConnection();
-			ps = conn.prepareStatement(
-							"SELECT Description, COUNT(CauseOfDeath) " +
-								"FROM Patients, officevisits, Icdcodes " +
-								"WHERE CauseOfDeath IS NOT NULL AND CauseOfDeath <> '' AND Code = CauseOfDeath " +
-									"AND Patients.Mid = officevisits.PatientID AND officevisits.HCPID = ?  " +
-									"AND DateOfDeath > ? AND DateOfDeath < ? " +
-								"GROUP BY CauseOfDeath, Description " +
-								"ORDER BY COUNT(CauseOfDeath) DESC, Description ASC " +
-								"LIMIT 2");
+			ps = conn.prepareStatement(getCauseOfDeathSQLForGender(null));
 			ps.setLong(1, hcpid);
 			ps.setString(2, start);
 			ps.setString(3, end);
