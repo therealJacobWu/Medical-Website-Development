@@ -12,12 +12,13 @@
 	loggingAction.logEvent(TransactionType.DIAGNOSIS_TRENDS_VIEW, loggedInMID.longValue(), 0, "");
 
 	ViewDiagnosisStatisticsAction diagnoses = new ViewDiagnosisStatisticsAction(prodDAO);
-	DiagnosisStatisticsBean dsBean = null;
+	ArrayList<DiagnosisStatisticsBean> dsBeans = null;
 
 	//get form data
 	String endDate = request.getParameter("endDate");
 
 	String zipCode = request.getParameter("zipCode");
+
 	if (zipCode == null)
 		zipCode = "";
 	
@@ -25,7 +26,8 @@
 	
 	//try to get the statistics. If there's an error, print it. If null is returned, it's the first page load
 	try{
-		dsBean = diagnoses.getDiagnosisStatistics(endDate, icdCode, zipCode);
+		dsBeans = diagnoses.getDiagnosisStatisticsByWeek(endDate, icdCode, zipCode);
+
 	} catch(FormValidationException e){
 		e.printHTML(pageContext.getOut());
 	}
@@ -78,29 +80,7 @@
 
 <br />
 
-<% if (dsBean != null) { %>
-
-
-
-<table class="fTable" align="center" id="diagnosisStatisticsTable">
-<tr>
-	<th>Diagnosis code</th>
-	<th>Complete Zip</th>
-	<th>Cases in Zip</th>
-	<th>Cases in Region</th>
-	<th>Start Date</th>
-	<th>End Date</th>
-</tr>
-<tr style="text-align:center;">
-	<td><%= icdCode %></td>
-	<td><%= zipCode %></td>
-	<td><%= dsBean.getZipStats() %></td>
-	<td><%= dsBean.getRegionStats() %></td>
-    <td><%=new SimpleDateFormat("MM/dd/YYYY").format(dsBean.getStartDate())%></td>
-	<td><%= endDate %></td>
-</tr>
-
-</table>
+<% if (dsBeans != null) { %>
 
 <br />
 
