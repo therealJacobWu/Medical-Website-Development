@@ -10,8 +10,8 @@ public class CreateHCPTest extends iTrustSeleniumTest {
 		super.setUp();
 		gen.clearAllTables();
 		gen.loadSQLFile("admin1");
-		gen.hcp0("hcp0");
-		gen.cptCodes("cptCodes");
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("cptCodes");
 	}
 	
 

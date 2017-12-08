@@ -31,7 +31,7 @@ public class ChangeSessionTimeoutActionTest extends TestCase {
 
 	public void testFullChange() throws Exception {
 		TestDataGenerator gen = new TestDataGenerator();
-		gen.timeout("timeout");
+		gen.loadSQLFile("timeout");
 		assertEquals(20, action.getSessionTimeout());
 		action.changeSessionTimeout("21");
 		assertEquals(21, action.getSessionTimeout());

@@ -10,7 +10,7 @@ public class DesignateAndViewHCPUseCaseTest extends iTrustSeleniumTest {
 		super.setUp();
 		gen.clearAllTables();
 		gen.standardData();
-		gen.patient_hcp_vists("patient_hcp_vists");
+		gen.loadSQLFile("patient_hcp_visits");
 	}
 	
 	public void testReportSeenHCPs0() throws Exception {

@@ -15,12 +15,12 @@ public class GetUserNameTest extends TestCase {
 	}
 	
 	public void testHCP0() throws Exception {
-		gen.hcp0("hcp0");
+		gen.loadSQLFile("hcp0");
 		assertEquals("HCP 0", "Kelly Doctor", authDAO.getUserName(9000000000L));
 	}
 
 	public void testPatient1() throws Exception {
-		gen.patient1("patient1");
+		gen.loadSQLFile("patient1");
 		assertEquals("Patient 1", "Random Person", authDAO.getUserName(1L));
 	}
 

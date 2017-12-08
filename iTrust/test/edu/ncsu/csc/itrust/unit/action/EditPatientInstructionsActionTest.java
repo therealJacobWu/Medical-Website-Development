@@ -23,7 +23,7 @@ public class EditPatientInstructionsActionTest extends TestCase {
 		super.setUp();
 		gen.clearAllTables();
 		gen.standardData();
-		gen.hcp4("hcp4");
+		gen.loadSQLFile("hcp4");
 	}
 
 	public void testGetPatientInstructions() throws Exception {
@@ -74,7 +74,7 @@ public class EditPatientInstructionsActionTest extends TestCase {
 		}
 
 		// Try editing patient specific instructions.
-		gen.uc44_acceptance_scenario_2("uc44_acceptance_scenario_2");
+		gen.loadSQLFile("uc44_acceptance_scenario_2");
 		action = new EditPatientInstructionsAction(factory, 9000000004L, "1", "44100");
 		assertEquals(1, action.getPatientInstructions().size());
 		bean = action.getPatientInstructions().get(0);
@@ -99,7 +99,7 @@ public class EditPatientInstructionsActionTest extends TestCase {
 		}
 
 		// Try deleting patient specific instructions.
-		gen.uc44_acceptance_scenario_2("uc44_acceptance_scenario_2");
+		gen.loadSQLFile("uc44_acceptance_scenario_2");
 		action = new EditPatientInstructionsAction(factory, 9000000004L, "1", "44100");
 		assertEquals(1, action.getPatientInstructions().size());
 		bean.setId(44100);
@@ -122,7 +122,7 @@ public class EditPatientInstructionsActionTest extends TestCase {
 		}
 		
 		// Try validating patient specific instructions.
-		gen.uc44_acceptance_scenario_2("uc44_acceptance_scenario_2");
+		gen.loadSQLFile("uc44_acceptance_scenario_2");
 		action = new EditPatientInstructionsAction(factory, 9000000004L, "1", "44100");
 		bean.setName("This is an instruction name.");
 		bean.setComment("This is an instruction comment.");

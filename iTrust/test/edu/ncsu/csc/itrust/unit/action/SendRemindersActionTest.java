@@ -46,8 +46,8 @@ public class SendRemindersActionTest extends TestCase {
         super.setUp();
         gen = new TestDataGenerator();
         gen.clearAllTables();
-        gen.hcp0("hcp0");
-        gen.appointmentType("appointmentType");
+        gen.loadSQLFile("hcp0");
+        gen.loadSQLFile("appointmentType");
 
 
         this.factory = TestDAOFactory.getTestInstance();

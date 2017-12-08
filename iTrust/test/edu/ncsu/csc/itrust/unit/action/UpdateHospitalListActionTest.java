@@ -22,7 +22,7 @@ public class UpdateHospitalListActionTest extends TestCase {
 		action = new UpdateHospitalListAction(factory, performingAdmin);
 		gen.clearAllTables();
 		gen.loadSQLFile("admin1");
-		gen.hospitals("hospitals");
+		gen.loadSQLFile("hospitals0");
 	}
 
 	private String getAddHospitalSuccessString(HospitalBean proc) {

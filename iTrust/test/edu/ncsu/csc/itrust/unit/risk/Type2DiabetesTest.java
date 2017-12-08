@@ -21,8 +21,8 @@ public class Type2DiabetesTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.patient1("patient1");
-		gen.patient2("patient2");
+		gen.loadSQLFile("patient1");
+		gen.loadSQLFile("patient2");
 	}
 	public void testPatient2() throws Exception {
 		checker = new Type2DiabetesRisks(factory, 2L);

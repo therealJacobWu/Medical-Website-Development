@@ -16,17 +16,17 @@ public class SendEmailNotificationTest extends iTrustSeleniumTest{
 	public void setUp() throws Exception {
 		super.setUp();
 		gen.clearAllTables();
-		gen.icd9cmCodes("icd9cmCodes");
-		gen.ndCodes("ndCodes");
-		gen.hospitals("hospitals");
-		gen.hcp1("hcp1");
-		gen.hcp2("hcp2");
-		gen.hcp3("hcp3");
+		gen.loadSQLFile("icd9cmCodes");
+		gen.loadSQLFile("ndCodes");
+		gen.loadSQLFile("hospitals0");
+		gen.loadSQLFile("hcp1");
+		gen.loadSQLFile("hcp2");
+		gen.loadSQLFile("hcp3");
 		gen.er4();
-		gen.patient9("patient9");
+		gen.loadSQLFile("patient9");
 			
-		gen.UC32Acceptance("UC32Acceptance");
-		gen.clearLoginFailures("clearLoginFailures");
+		gen.loadSQLFile("UC32Acceptance");
+		gen.loadSQLFile("loginFailures");
 		driver = new HtmlUnitDriver();
 	}
 	

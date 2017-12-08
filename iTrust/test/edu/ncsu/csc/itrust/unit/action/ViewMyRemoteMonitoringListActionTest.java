@@ -21,8 +21,8 @@ public class ViewMyRemoteMonitoringListActionTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.hcp0("hcp0");
-		gen.patient1("patient1");
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("patient1");
 		action = new ViewMyRemoteMonitoringListAction(TestDAOFactory.getTestInstance(), 9000000000L);
 	}
 
@@ -31,7 +31,7 @@ public class ViewMyRemoteMonitoringListActionTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testGetPatientData() throws Exception {
-		gen.remoteMonitoring3("remoteMonitoring3");
+		gen.loadSQLFile("remoteMonitoring3");
 		List<RemoteMonitoringDataBean> data = action.getPatientsData();
 		
 		assertEquals(1L, data.get(0).getPatientMID());
@@ -58,7 +58,7 @@ public class ViewMyRemoteMonitoringListActionTest extends TestCase {
 		assertEquals(0, data.get(3).getGlucoseLevel());
 		assertNull(data.get(3).getTime());
 		
-		gen.remoteMonitoring3("remoteMonitoring3");
+		gen.loadSQLFile("remoteMonitoring3");
 		data = action.getPatientDataWithoutLogging();
 		
 		assertEquals(1L, data.get(0).getPatientMID());
@@ -92,7 +92,7 @@ public class ViewMyRemoteMonitoringListActionTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testGetPatientDataByDate() throws Exception {
-		gen.remoteMonitoring3("remoteMonitoring3");
+		gen.loadSQLFile("remoteMonitoring3");
 		DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
         java.util.Date date = new java.util.Date();
         String currentDate = dateFormat.format(date);
@@ -125,7 +125,7 @@ public class ViewMyRemoteMonitoringListActionTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testGetPatientDataByType() throws Exception {
-		gen.remoteMonitoring5("remoteMonitoring5");
+		gen.loadSQLFile("remoteMonitoring5");
 		List<RemoteMonitoringDataBean> data = action.getPatientDataByType(1L, "weight");
 		
 		assertEquals(1L, data.get(0).getPatientMID());

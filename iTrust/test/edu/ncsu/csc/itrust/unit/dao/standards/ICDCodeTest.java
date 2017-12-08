@@ -15,7 +15,7 @@ public class ICDCodeTest extends TestCase{
 	protected void setUp() throws Exception {
 		TestDataGenerator gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.icd9cmCodes("icd9cmCodes");
+		gen.loadSQLFile("icd9cmCodes");
 	}
 	
 	public void testGetAllICD() throws Exception {

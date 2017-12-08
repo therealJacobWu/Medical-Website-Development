@@ -24,8 +24,8 @@ public class AddPatientActionTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		
-		gen.transactionLog("transactionLog");
-		gen.hcp0("hcp0");
+		gen.loadSQLFile("transactionLog");
+		gen.loadSQLFile("hcp0");
 		action = new AddPatientAction(factory, 9000000000L);
 	}
 

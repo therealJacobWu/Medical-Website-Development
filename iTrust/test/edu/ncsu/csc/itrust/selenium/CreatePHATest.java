@@ -16,7 +16,7 @@ public class CreatePHATest extends iTrustSeleniumTest {
 		super.setUp();
 		gen.clearAllTables();
 		gen.loadSQLFile("admin1");
-		gen.cptCodes("cptCodes");
+		gen.loadSQLFile("cptCodes");
 	}
 
 

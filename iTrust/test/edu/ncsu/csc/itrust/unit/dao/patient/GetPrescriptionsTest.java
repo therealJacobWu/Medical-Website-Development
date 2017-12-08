@@ -17,9 +17,9 @@ public class GetPrescriptionsTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.icd9cmCodes("icd9cmCodes");
-		gen.ndCodes("ndCodes");
-		gen.patient2("patient2");
+		gen.loadSQLFile("icd9cmCodes");
+		gen.loadSQLFile("ndCodes");
+		gen.loadSQLFile("patient2");
 	}
 
 	public void testGetPatient2() throws Exception {

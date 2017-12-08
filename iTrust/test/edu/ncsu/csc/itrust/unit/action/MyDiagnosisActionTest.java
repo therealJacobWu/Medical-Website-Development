@@ -23,8 +23,8 @@ public class MyDiagnosisActionTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen.clearAllTables();
 		gen.standardData();
-		gen.patient_hcp_vists("patient_hcp_vists");
-		gen.hcp_diagnosis_data("hcp_diagnosis_data");
+		gen.loadSQLFile("patient_hcp_visits");
+		gen.loadSQLFile("hcp_diagnosis_data");
 		
 	}
 

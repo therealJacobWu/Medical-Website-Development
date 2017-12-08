@@ -31,7 +31,7 @@ public class DrugInteractionActionTest extends TestCase {
 	}
 
 	public void testReportInteraction() throws Exception {
-		gen.ndCodes("ndCodes");
+		gen.loadSQLFile("ndCodes");
 		String response = action.reportInteraction("548684985", "081096", "May potentiate the risk of bleeding in patients.");
 		assertSame(response, "Interaction recorded successfully");		
 	}
@@ -41,7 +41,7 @@ public class DrugInteractionActionTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testDeleteInteraction() throws Exception{
-		gen.drugInteractions("drugInteractions");
+		gen.loadSQLFile("drugInteractions");
 		String response = action.deleteInteraction("009042407", "548680955");
 		assertSame(response, "Interaction deleted successfully");
 	}
@@ -51,7 +51,7 @@ public class DrugInteractionActionTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testGetInteractions() throws Exception {
-		gen.drugInteractions("drugInteractions");
+		gen.loadSQLFile("drugInteractions");
 		List<DrugInteractionBean> beans = action.getInteractions("009042407");
 		assertEquals(beans.size(), 1);
 		assertTrue(beans.get(0).getDescription().equals("May increase the risk of pseudotumor cerebri, or benign intracranial hypertension."));
@@ -85,7 +85,7 @@ public class DrugInteractionActionTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testReportSameDrugsInteraction() throws Exception {
-		gen.ndCodes("ndCodes");
+		gen.loadSQLFile("ndCodes");
 		String response = action.reportInteraction("548684985", "548684985", "Double dose");
 		assertEquals("Interactions can only be recorded between two different drugs", response);
 	}
@@ -95,7 +95,7 @@ public class DrugInteractionActionTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testReportAlreadyAdded() throws Exception {
-		gen.ndCodes("ndCodes");
+		gen.loadSQLFile("ndCodes");
 		try {
 			String response = action.reportInteraction("548684985", "081096", "May potentiate the risk of bleeding in patients.");
 			assertSame(response, "Interaction recorded successfully");
@@ -112,7 +112,7 @@ public class DrugInteractionActionTest extends TestCase {
 	 */
 	public void testEvilDAOFactory() throws Exception {
 		DrugInteractionAction actionEvil = new DrugInteractionAction(evilFactory);
-		gen.drugInteractions("drugInteractions");
+		gen.loadSQLFile("drugInteractions");
 		try {
 			actionEvil.deleteInteraction("009042407", "548680955");
 			fail();

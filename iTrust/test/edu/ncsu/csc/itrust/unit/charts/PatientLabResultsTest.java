@@ -26,7 +26,7 @@ public class PatientLabResultsTest extends TestCase {
 		chart = new PatientLabResults();
 		gen.clearAllTables();
 		gen.standardData();
-		gen.patientLabProc("patientLabProc");
+		gen.loadSQLFile("patientLabProc");
 	}
 	
 	public void testProduceDataset()

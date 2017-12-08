@@ -24,12 +24,12 @@ public class ViewAccessLogTest extends iTrustSeleniumTest {
 	    driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 	    super.setUp();
 		gen.clearAllTables();
-		gen.uap1("uap1");
-		gen.patient2("patient2");
-		gen.patient1("patient1");
-		gen.patient4("patient4");
-		gen.hcp0("hcp0");
-		gen.hcp3("hcp3");
+		gen.loadSQLFile("uap1");
+		gen.loadSQLFile("patient2");
+		gen.loadSQLFile("patient1");
+		gen.loadSQLFile("patient4");
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("hcp3");
 		gen.er4();
 	  }
 
@@ -74,7 +74,7 @@ public class ViewAccessLogTest extends iTrustSeleniumTest {
 	  @Test
 	  public void testViewaccesslog2() throws Exception {
 		// clear operational profile
-		gen.transactionLog("transactionLog");
+		gen.loadSQLFile("transactionLog");
 		
 		//This logs us into iTrust and returns the HtmlUnitDriver for use in this case
 		HtmlUnitDriver driver = (HtmlUnitDriver)login("2", "pw");
@@ -98,7 +98,7 @@ public class ViewAccessLogTest extends iTrustSeleniumTest {
 	  @Test
 	  public void testViewAccessLog3() throws Exception {
 		// clear operational profile
-		gen.transactionLog("transactionLog");
+		gen.loadSQLFile("transactionLog");
 		
 		//This logs us into iTrust and returns the HtmlUnitDriver for use in this case
 		HtmlUnitDriver driver = (HtmlUnitDriver)login("1", "pw");
@@ -114,7 +114,7 @@ public class ViewAccessLogTest extends iTrustSeleniumTest {
 	  
 	  @Test
 	  public void testViewAccessLogByDate() throws Exception {
-		gen.transactionLog2("transactionLog2");
+		gen.loadSQLFile("transactionLog2");
 		
 		//This logs us into iTrust and returns the HtmlUnitDriver for use in this case
 		HtmlUnitDriver driver = (HtmlUnitDriver)login("2", "pw");
@@ -136,7 +136,7 @@ public class ViewAccessLogTest extends iTrustSeleniumTest {
 	  
 	  @Test
 	  public void testViewAccessLogByRole() throws Exception {
-		gen.transactionLog3("transactionLog3");
+		gen.loadSQLFile("transactionLog3");
 		
 		//This logs us into iTrust and returns the HtmlUnitDriver for use in this case
 		HtmlUnitDriver driver = (HtmlUnitDriver)login("1", "pw");

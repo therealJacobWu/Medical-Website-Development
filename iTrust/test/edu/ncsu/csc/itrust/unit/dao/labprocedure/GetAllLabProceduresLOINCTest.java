@@ -18,7 +18,7 @@ public class GetAllLabProceduresLOINCTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.labProcedures("labProcedures");
+		gen.loadSQLFile("labprocedures");
 	}
 
 	/**

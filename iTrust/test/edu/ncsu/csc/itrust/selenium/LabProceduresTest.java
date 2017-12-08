@@ -103,7 +103,7 @@ public class LabProceduresTest extends iTrustSeleniumTest {
 	}
 	
 	public void testPatient_LabProcedureView() throws Exception {
-		gen.patientLabProc("patientLabProc");
+		gen.loadSQLFile("patientLabProc");
 		
 		driver = login("2", "pw");
 		assertEquals(driver.getTitle(), "iTrust - Patient Home");
@@ -122,7 +122,7 @@ public class LabProceduresTest extends iTrustSeleniumTest {
 	}
 	
 	public void testPatient_LabProcedureView2() throws Exception {
-		gen.patientLabProc("patientLabProc");
+		gen.loadSQLFile("patientLabProc");
 		
 		driver = login("1", "pw");
 		assertEquals(driver.getTitle(), "iTrust - Patient Home");
@@ -141,7 +141,7 @@ public class LabProceduresTest extends iTrustSeleniumTest {
 	}
 	
 	public void testPatient_LabProcedureViewChart() throws Exception {
-		gen.patientLabProc("patientLabProc");
+		gen.loadSQLFile("patientLabProc");
 		
 		driver = login("21", "pw");
 		assertEquals(driver.getTitle(), "iTrust - Patient Home");

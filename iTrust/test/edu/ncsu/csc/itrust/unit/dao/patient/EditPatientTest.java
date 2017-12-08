@@ -21,7 +21,7 @@ public class EditPatientTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		gen.clearAllTables();
-		gen.patient2("patient2");
+		gen.loadSQLFile("patient2");
 	}
 
 	public void testGetPatient2() throws Exception {
@@ -138,8 +138,8 @@ public class EditPatientTest extends TestCase {
 	
 	public void testRemoveAllRepresented() throws Exception {
 		//2 represents 1, but not 4
-		gen.patient1("patient1");
-		gen.patient4("patient4");
+		gen.loadSQLFile("patient1");
+		gen.loadSQLFile("patient4");
 		
 		//Add patient 4 to be represented by patient 2
 		patientDAO.addRepresentative(2L, 4L);

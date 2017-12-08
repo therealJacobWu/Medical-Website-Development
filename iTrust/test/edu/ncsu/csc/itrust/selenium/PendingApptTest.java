@@ -24,7 +24,7 @@ public class PendingApptTest extends iTrustSeleniumTest {
 		super.setUp();
 		gen.clearAllTables();
 		gen.standardData();
-		gen.pendingAppointmentAlert("pendingAppointmentAlert");
+		gen.loadSQLFile("pendingAppointmentAlert");
 		driver = new HtmlUnitDriver();
 		baseUrl = "http://localhost:8080";
 		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
@@ -44,7 +44,7 @@ public class PendingApptTest extends iTrustSeleniumTest {
 	public void testAcceptAnAppointment() throws Exception {
 		gen.clearAllTables();
 		gen.standardData();
-		gen.pendingAppointmentAlert("pendingAppointmentAlert");
+		gen.loadSQLFile("pendingAppointmentAlert");
 
 		driver.get(baseUrl + "/iTrust/auth/forwardUser.jsp");
 		driver.findElement(By.id("j_username")).clear();
@@ -63,7 +63,7 @@ public class PendingApptTest extends iTrustSeleniumTest {
 	public void testConflictingAppt() throws Exception {
 		gen.clearAllTables();
 		gen.standardData();
-		gen.pendingAppointmentConflict("pendingAppointmentConflict");
+		gen.loadSQLFile("pendingAppointmentConflict");
 
 		driver.get(baseUrl + "/iTrust/auth/forwardUser.jsp");
 		driver.findElement(By.id("j_username")).clear();
@@ -83,7 +83,7 @@ public class PendingApptTest extends iTrustSeleniumTest {
 	public void testDeclineAnAppointment() throws Exception {
 		gen.clearAllTables();
 		gen.standardData();
-		gen.pendingAppointmentAlert("pendingAppointmentAlert");
+		gen.loadSQLFile("pendingAppointmentAlert");
 
 		driver.get(baseUrl + "/iTrust/auth/forwardUser.jsp");
 		driver.findElement(By.id("j_username")).clear();

@@ -50,7 +50,7 @@ public class EditPersonnelActionTest extends TestCase {
 
 	public void testWrongFormat() throws Exception {
 		try {
-			gen.hcp0("hcp0");
+			gen.loadSQLFile("hcp0");
 			personnelEditor = new EditPersonnelAction(factory, 0L, "hello!");
 			fail("exception should have been thrown");
 		} catch (ITrustException e) {
@@ -60,7 +60,7 @@ public class EditPersonnelActionTest extends TestCase {
 
 	public void testNull() throws Exception {
 		try {
-			gen.hcp0("hcp0");
+			gen.loadSQLFile("hcp0");
 			personnelEditor = new EditPersonnelAction(factory, 0L, null);
 			fail("exception should have been thrown");
 		} catch (ITrustException e) {
@@ -69,7 +69,7 @@ public class EditPersonnelActionTest extends TestCase {
 	}
 	
 	public void testUpdateInformation() throws Exception {
-		gen.uap1("uap1");
+		gen.loadSQLFile("uap1");
 		personnelEditor = new EditPersonnelAction(factory, 8000000009L, "8000000009");
 		PersonnelBean j = factory.getPersonnelDAO().getPersonnel(8000000009l);
 		j.setStreetAddress2("second line");
@@ -79,7 +79,7 @@ public class EditPersonnelActionTest extends TestCase {
 	}
 
 	public void testEditMessageFilter()throws Exception{
-		gen.uap1("uap1");
+		gen.loadSQLFile("uap1");
 		personnelEditor = new EditPersonnelAction(factory, 8000000009L, "8000000009");
 		personnelEditor.editMessageFilter("Kelly Doctor");
 		assertEquals("Kelly Doctor", factory.getPersonnelDAO().getPersonnel(8000000009l).getMessageFilter());

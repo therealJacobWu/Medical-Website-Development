@@ -25,7 +25,7 @@ public class SmokingFactorTest extends TestCase {
 		factor = new SmokingFactor(factory, 2L);
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.patient2("patient2");
+		gen.loadSQLFile("patient2");
 	}
 
 	/**

@@ -21,16 +21,16 @@ public class ViewMyAccessLogActionTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.hcp0("hcp0");
-		gen.hcp3("hcp3");
-		gen.hcp8("hcp8");
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("hcp3");
+		gen.loadSQLFile("hcp8");
 		gen.er4();
-		gen.uap1("uap1");
+		gen.loadSQLFile("uap1");
 		gen.loadSQLFile("admin1");
-		gen.patient1("patient1");
-		gen.patient2("patient2");
-		gen.patient23("patient23");
-		gen.patient24("patient24");
+		gen.loadSQLFile("patient1");
+		gen.loadSQLFile("patient2");
+		gen.loadSQLFile("patient23");
+		gen.loadSQLFile("patient24");
 		action = new ViewMyAccessLogAction(TestDAOFactory.getTestInstance(), 2L);
 	}
 
@@ -61,7 +61,7 @@ public class ViewMyAccessLogActionTest extends TestCase {
 	}
 	
 	public void testGetAccessesBadData() throws Exception {
-		gen.transactionLog("transactionLog");
+		gen.loadSQLFile("transactionLog");
 		List<TransactionBean> accesses = action.getAccesses(null, null, null, false);
 		assertEquals(5, accesses.size());
 		for (TransactionBean t : accesses) {
@@ -80,7 +80,7 @@ public class ViewMyAccessLogActionTest extends TestCase {
 	}
 	
 	public void testGetAccessesByRole() throws Exception {
-		gen.transactionLog3("transactionLog3");
+		gen.loadSQLFile("transactionLog3");
 		action = new ViewMyAccessLogAction(TestDAOFactory.getTestInstance(), 1L);
 		List<TransactionBean> accesses = action.getAccesses(null, null, null, true);
 		assertEquals("Emergency Responder", accesses.get(0).getRole());
@@ -97,7 +97,7 @@ public class ViewMyAccessLogActionTest extends TestCase {
 	 */
 	public void testDLHCPAccessesHidden() throws Exception
 	{
-		gen.transactionLog3("transactionLog3");
+		gen.loadSQLFile("transactionLog3");
 		action = new ViewMyAccessLogAction(TestDAOFactory.getTestInstance(), 1L);
 		List<TransactionBean> accesses = action.getAccesses(null, null, null, true);
 		

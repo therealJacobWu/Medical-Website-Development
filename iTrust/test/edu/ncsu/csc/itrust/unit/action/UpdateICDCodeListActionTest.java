@@ -58,7 +58,7 @@ public class UpdateICDCodeListActionTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testAddICDCode() throws Exception {
-		gen.icd9cmCodes("icd9cmCodes");
+		gen.loadSQLFile("icd9cmCodes");
 		final String code = "999.99";
 		final String desc = "testAddICDCode";
 		final String classification = "Long Term";
@@ -73,7 +73,7 @@ public class UpdateICDCodeListActionTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testAddICDCodeURL() throws Exception {
-		gen.icd9cmCodes("icd9cmCodes");
+		gen.loadSQLFile("icd9cmCodes");
 		final String code = "999.99";
 		final String desc = "testAddICDCode";
 		final String classification = "Long Term";
@@ -89,7 +89,7 @@ public class UpdateICDCodeListActionTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testAddDuplicate() throws Exception {
-		gen.icd9cmCodes("icd9cmCodes");
+		gen.loadSQLFile("icd9cmCodes");
 		final String code = "000.00";
 		final String descrip0 = "description 0";
 		DiagnosisBean proc = new DiagnosisBean(code, descrip0, "Short Term");
@@ -122,7 +122,7 @@ public class UpdateICDCodeListActionTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testUpdateNonExistent() throws Exception {
-		gen.icd9cmCodes("icd9cmCodes");
+		gen.loadSQLFile("icd9cmCodes");
 		DiagnosisBean proc = new DiagnosisBean("999.99", "shouldnt be here", "Long Term");
 		assertEquals("Error: Code not found.", action.updateInformation(proc));
 		assertEquals(null, factory.getICDCodesDAO().getICDCode("999.99"));
@@ -134,7 +134,7 @@ public class UpdateICDCodeListActionTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testUpdateNonExistentAllCodes1() throws Exception {
-		gen.icd9cmCodes("icd9cmCodes");
+		gen.loadSQLFile("icd9cmCodes");
 		DiagnosisBean proc = new DiagnosisBean("999.99", "shouldnt be here", "Long Term");
 		assertEquals("Error: Code not found.", action.updateInformation(proc));
 		assertEquals(null, factory.getICDCodesDAO().getICDCode("999.99"));

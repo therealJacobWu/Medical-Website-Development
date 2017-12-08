@@ -17,7 +17,7 @@ public class AddAllergiesTest extends TestCase {
 	protected void setUp() throws Exception {
 		TestDataGenerator gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.patient2("patient2");
+		gen.loadSQLFile("patient2");
 	}
 
 	/*

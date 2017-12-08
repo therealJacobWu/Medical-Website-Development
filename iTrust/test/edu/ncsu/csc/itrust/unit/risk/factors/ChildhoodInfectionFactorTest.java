@@ -27,9 +27,9 @@ public class ChildhoodInfectionFactorTest extends TestCase {
 		factor = new ChildhoodInfectionFactor(factory, 2L, 250.3, 487);
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.hospitals("hospitals");
-		gen.hcp0("hcp0");
-		gen.patient2("patient2");
+		gen.loadSQLFile("hospitals0");
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("patient2");
 		p = factory.getPatientDAO().getPatient(2L);
 	}
 

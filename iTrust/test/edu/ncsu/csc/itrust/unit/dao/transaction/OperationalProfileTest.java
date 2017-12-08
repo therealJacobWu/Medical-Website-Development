@@ -20,8 +20,8 @@ public class OperationalProfileTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.operationalProfile("operationalProfile");
-		gen.tester("tester");
+		gen.loadSQLFile("operationalProfile");
+		gen.loadSQLFile("tester");
 	}
 
 	/**

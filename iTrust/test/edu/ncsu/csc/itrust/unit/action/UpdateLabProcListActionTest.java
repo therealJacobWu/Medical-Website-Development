@@ -32,7 +32,7 @@ public class UpdateLabProcListActionTest extends TestCase {
 		action = new UpdateLOINCListAction(factory);
 		gen.clearAllTables();
 		gen.loadSQLFile("admin1");
-		gen.loincs("loincs");
+		gen.loadSQLFile("loincs");
 
 	}
 

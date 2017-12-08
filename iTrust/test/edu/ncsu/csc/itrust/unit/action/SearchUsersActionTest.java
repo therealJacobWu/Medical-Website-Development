@@ -23,7 +23,7 @@ public class SearchUsersActionTest extends TestCase {
 	public void setUp() throws Exception {
 		gen.clearAllTables();
 		gen.standardData();
-		gen.patientDeactivate("patientDeactivate");
+		gen.loadSQLFile("patientDeactivate");
 	}
 	
 	/**

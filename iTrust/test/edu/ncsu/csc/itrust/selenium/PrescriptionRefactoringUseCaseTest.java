@@ -18,7 +18,7 @@ public class PrescriptionRefactoringUseCaseTest extends iTrustSeleniumTest {
 		super.setUp();
 		gen.clearAllTables();
 		gen.standardData();
-		gen.hcp4("hcp4");
+		gen.loadSQLFile("hcp4");
 
 		driver = new Driver();
 
@@ -195,7 +195,7 @@ public class PrescriptionRefactoringUseCaseTest extends iTrustSeleniumTest {
 
 	@Test
 	public void testAcceptanceScenario5() throws Exception {
-		gen.hcp5("hcp5");
+		gen.loadSQLFile("hcp5");
 		driver.get("http://localhost:8080/iTrust/");
 		driver.findElement(By.id("j_username")).sendKeys("9000000005");
 		driver.findElement(By.id("j_password")).clear();

@@ -12,8 +12,8 @@ public class PatientExistsTest extends TestCase {
 	protected void setUp() throws Exception {
 		TestDataGenerator gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.patient1("patient1");
-		gen.patient2("patient2");
+		gen.loadSQLFile("patient1");
+		gen.loadSQLFile("patient2");
 	}
 
 	public void testGetPatient2() throws Exception {

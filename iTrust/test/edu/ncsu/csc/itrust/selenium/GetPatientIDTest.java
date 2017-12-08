@@ -29,9 +29,9 @@ public class GetPatientIDTest extends iTrustSeleniumTest {
 	 */
 	public void testSelectPatientButton() throws Exception {
 		
-		gen.hcp4("hcp4");
-		gen.hcp5("hcp5");
-		gen.referral_sort_testdata("referral_sort_testdata");
+		gen.loadSQLFile("hcp4");
+		gen.loadSQLFile("hcp5");
+		gen.loadSQLFile("referral_sort_testdata");
 		
 		WebElement element;
 		

@@ -22,7 +22,7 @@ public class CalendarTest extends iTrustSeleniumTest {
 		gen.clearAllTables();
 		gen.standardData();
 		//gen.officeVisit5();
-		gen.officeVisits("officeVisits");
+		gen.loadSQLFile("officeVisits");
 	}
 
 	@Override

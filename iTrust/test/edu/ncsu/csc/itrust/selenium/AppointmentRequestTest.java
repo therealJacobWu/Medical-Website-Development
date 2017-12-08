@@ -19,8 +19,8 @@ public class AppointmentRequestTest  extends iTrustSeleniumTest{
 		super.setUp(); 
 		gen.clearAllTables();
 		gen.standardData();
-		gen.hcp9("hcp9");
-		gen.apptRequestConflicts("apptRequestConflicts");
+		gen.loadSQLFile("hcp9");
+		gen.loadSQLFile("apptRequestConflicts");
 	}
 	
 	public void testAppointmnetRequestExpire() throws Exception {

@@ -25,7 +25,7 @@ public class ViewNumberOfPendingAppointmentsActionTest extends TestCase {
 		gen.clearAllTables();
 		gen.standardData();
 		
-		gen.pendingAppointmentAlert("pendingAppointmentAlert");
+		gen.loadSQLFile("pendingAppointmentAlert");
 		this.factory = TestDAOFactory.getTestInstance();
 		this.action = new ViewApptRequestsAction( this.hcpId, this.factory);
 	}

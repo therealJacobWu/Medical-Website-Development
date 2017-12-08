@@ -23,9 +23,9 @@ public class PatientDataTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.patient2("patient2");
-		gen.hcp0("hcp0");
-		gen.remoteMonitoring1("remoteMonitoring1");
+		gen.loadSQLFile("patient2");
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("remoteMonitoring1");
 	}
 
 	/**
@@ -50,7 +50,7 @@ public class PatientDataTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testGetMonitoringHCPs() throws Exception {
-		gen.remoteMonitoring5("remoteMonitoring5");
+		gen.loadSQLFile("remoteMonitoring5");
 		assertTrue(rmDAO.getMonitoringHCPs(1).size() == 1);
 	}
 	

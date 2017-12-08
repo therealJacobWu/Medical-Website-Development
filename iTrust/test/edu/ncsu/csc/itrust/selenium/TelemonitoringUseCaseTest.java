@@ -57,7 +57,7 @@ public class TelemonitoringUseCaseTest extends iTrustSeleniumTest {
 	 */
 	public void testRemovePatientsToMonitor() throws Exception {
 		//Add patient 1 to HCP 9000000000's monitoring list
-		gen.remoteMonitoring2("remoteMonitoring2");
+		gen.loadSQLFile("remoteMonitoring2");
 		// login HCP
 		HtmlUnitDriver driver = (HtmlUnitDriver) login("9000000000", "pw");
 		assertEquals("iTrust - HCP Home", driver.getTitle());
@@ -81,7 +81,7 @@ public class TelemonitoringUseCaseTest extends iTrustSeleniumTest {
 	 */
 	public void testReportPatientStatus() throws Exception {
 		//Add patient 1 to HCP 9000000000's monitoring list
-		gen.remoteMonitoring2("remoteMonitoring2");
+		gen.loadSQLFile("remoteMonitoring2");
 		// login Patient
 		WebDriver driver = login("1", "pw");
 		assertEquals("iTrust - Patient Home", driver.getTitle());
@@ -105,7 +105,7 @@ public class TelemonitoringUseCaseTest extends iTrustSeleniumTest {
 	 */
 	public void testReportPatientWeightAndPedometer () throws Exception {
 		//Add patient 1 to HCP 9000000000's monitoring list
-		gen.remoteMonitoring2("remoteMonitoring2");
+		gen.loadSQLFile("remoteMonitoring2");
 		
 		// login Patient
 		WebDriver driver = login("1", "pw");
@@ -130,7 +130,7 @@ public class TelemonitoringUseCaseTest extends iTrustSeleniumTest {
 	 */
 	public void testViewMonitoringList() throws Exception {
 		//Sets up all preconditions listed in acceptance test
-		gen.remoteMonitoring3("remoteMonitoring3");
+		gen.loadSQLFile("remoteMonitoring3");
 		// login HCP
 		WebDriver driver = login("9000000000", "pw");
 		assertEquals("iTrust - HCP Home", driver.getTitle());
@@ -187,7 +187,7 @@ public class TelemonitoringUseCaseTest extends iTrustSeleniumTest {
 	 */
 	public void testViewWeightAndPedometerReports () throws Exception {
 		//Sets up all preconditions listed in acceptance test
-		gen.remoteMonitoring5("remoteMonitoring5");
+		gen.loadSQLFile("remoteMonitoring5");
 		// login HCP
 		WebDriver driver = login("9000000000", "pw");
 		assertEquals("iTrust - HCP Home", driver.getTitle());
@@ -216,7 +216,7 @@ public class TelemonitoringUseCaseTest extends iTrustSeleniumTest {
 	 * @throws Exception
 	 */
 	public void testUAPReportPatientStatus() throws Exception{
-		gen.remoteMonitoringUAP("remoteMonitoringUAP");
+		gen.loadSQLFile("remoteMonitoringUAP");
 		WebDriver driver = login("8000000009", "uappass1");
 		assertEquals("iTrust - UAP Home", driver.getTitle());
 		assertLogged(TransactionType.HOME_VIEW, 8000000009L, 0L, "");
@@ -242,7 +242,7 @@ public class TelemonitoringUseCaseTest extends iTrustSeleniumTest {
 	 * @throws Exception
 	 */
 	public void testRepresentativeReportPatientStatus() throws Exception {
-		gen.remoteMonitoring4("remoteMonitoring4");
+		gen.loadSQLFile("remoteMonitoring4");
 		HtmlUnitDriver driver = (HtmlUnitDriver)login("2", "pw");
 		assertEquals("iTrust - Patient Home", driver.getTitle());
 		assertLogged(TransactionType.HOME_VIEW, 2L, 0L, "");
@@ -268,7 +268,7 @@ public class TelemonitoringUseCaseTest extends iTrustSeleniumTest {
 	public void testRepresentativeReportWeight() throws Exception {
 		//Add patient 1 to HCP 9000000000's monitoring list
 		//Also add three reports
-		gen.remoteMonitoring2("remoteMonitoring2");
+		gen.loadSQLFile("remoteMonitoring2");
 		// login Patient
 		HtmlUnitDriver driver = (HtmlUnitDriver) login("2", "pw");
 		assertEquals("iTrust - Patient Home", driver.getTitle());
@@ -297,8 +297,8 @@ public class TelemonitoringUseCaseTest extends iTrustSeleniumTest {
 	public void testUAPReportPatientPedometerReading () throws Exception {
 		//Add patient 1 to HCP 9000000000's monitoring list
 		//Also add three reports
-		gen.remoteMonitoring2("remoteMonitoring2");
-		gen.remoteMonitoringUAP("remoteMonitoringUAP");
+		gen.loadSQLFile("remoteMonitoring2");
+		gen.loadSQLFile("remoteMonitoringUAP");
 		// login Patient
 		HtmlUnitDriver driver = (HtmlUnitDriver) login("8000000009", "uappass1");
 		assertEquals("iTrust - UAP Home", driver.getTitle());
@@ -346,7 +346,7 @@ public class TelemonitoringUseCaseTest extends iTrustSeleniumTest {
 	 * @throws Exception
 	 */
 	public void testUAPAddHCPMonitor() throws Exception{
-		gen.remoteMonitoring8("remoteMonitoring8");
+		gen.loadSQLFile("remoteMonitoring8");
 		HtmlUnitDriver driver = (HtmlUnitDriver) login("8000000009", "uappass1");
 		assertEquals("iTrust - UAP Home", driver.getTitle());
 		assertLogged(TransactionType.HOME_VIEW, 8000000009L, 0L, "");
@@ -395,7 +395,7 @@ public class TelemonitoringUseCaseTest extends iTrustSeleniumTest {
 	 * @throws Exception
 	 */
 	public void testUAPAddReportDeleteCannotReport() throws Exception{
-		gen.remoteMonitoring8("remoteMonitoring8");
+		gen.loadSQLFile("remoteMonitoring8");
 		//log in to iTrust
 		HtmlUnitDriver driver = (HtmlUnitDriver) login("8000000009", "uappass1");
 		assertEquals("iTrust - UAP Home", driver.getTitle());
@@ -436,7 +436,7 @@ public class TelemonitoringUseCaseTest extends iTrustSeleniumTest {
 	 * @throws Exception
 	 */
 	public void testWeightHighlighting() throws Exception{
-		gen.remoteMonitoring6("remoteMonitoring6");
+		gen.loadSQLFile("remoteMonitoring6");
 		HtmlUnitDriver driver = (HtmlUnitDriver) login("9000000000", "pw");
 		assertEquals("iTrust - HCP Home", driver.getTitle());
 		assertLogged(TransactionType.HOME_VIEW, 9000000000L, 0L, "");
@@ -465,7 +465,7 @@ public class TelemonitoringUseCaseTest extends iTrustSeleniumTest {
 	 * @throws Exception
 	 */
 	public void testDetailedExternalData() throws Exception {
-		gen.remoteMonitoring6("remoteMonitoring6");
+		gen.loadSQLFile("remoteMonitoring6");
 		HtmlUnitDriver driver = (HtmlUnitDriver) login("9000000000", "pw");
 		assertEquals("iTrust - HCP Home", driver.getTitle());
 		assertLogged(TransactionType.HOME_VIEW, 9000000000L, 0L, "");
@@ -515,7 +515,7 @@ public class TelemonitoringUseCaseTest extends iTrustSeleniumTest {
 	 * @throws Exception
 	 */
 	public void testReportPatientHeight() throws Exception {
-		gen.remoteMonitoring7("remoteMonitoring7");
+		gen.loadSQLFile("remoteMonitoring7");
 		HtmlUnitDriver driver = (HtmlUnitDriver) login("1", "pw");
 		assertEquals("iTrust - Patient Home", driver.getTitle());
 		assertLogged(TransactionType.HOME_VIEW, 1L, 0L, "");

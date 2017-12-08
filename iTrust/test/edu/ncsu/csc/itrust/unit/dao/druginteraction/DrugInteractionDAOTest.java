@@ -28,7 +28,7 @@ public class DrugInteractionDAOTest extends TestCase {
 	}
 	
 	public void testReportInteractionThatExists() throws Exception {
-		gen.drugInteractions("drugInteractions");
+		gen.loadSQLFile("drugInteractions");
 		try{
 			interactionDAO.reportInteraction("009042407", "548680955", "This is not allowed.");
 			fail("Drug interaction already exists for these drugs.");
@@ -38,7 +38,7 @@ public class DrugInteractionDAOTest extends TestCase {
 	}
 	
 	public void testReportInteractionThatExistsReverseOrder() throws Exception {
-		gen.drugInteractions("drugInteractions");
+		gen.loadSQLFile("drugInteractions");
 		try{
 			interactionDAO.reportInteraction("548680955", "009042407", "This is not allowed.");
 			fail("Drug interaction already exists for these drugs.");
@@ -48,7 +48,7 @@ public class DrugInteractionDAOTest extends TestCase {
 	}
 	
 	public void testDeleteInteraction() throws Exception {
-		gen.drugInteractions("drugInteractions");
+		gen.loadSQLFile("drugInteractions");
 		interactionDAO.deleteInteraction("009042407", "548680955");
 		List<DrugInteractionBean> testList = interactionDAO.getInteractions("548680955");
 		assertTrue(testList.isEmpty());

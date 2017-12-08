@@ -20,11 +20,11 @@ public class PHIRecordTest extends iTrustSeleniumTest{
   @Before
   public void setUp() throws Exception {
 	super.setUp();
-	gen.uap1("uap1");
-	gen.patient2("patient2");
-	gen.patient1("patient1");
-	gen.patient4("patient4");
-	gen.hcp0("hcp0");
+	gen.loadSQLFile("uap1");
+	gen.loadSQLFile("patient2");
+	gen.loadSQLFile("patient1");
+	gen.loadSQLFile("patient4");
+	gen.loadSQLFile("hcp0");
     driver = new Driver();
     // Implicitly wait at most 2 seconds for each element to load
     driver.manage().timeouts().implicitlyWait(DEFAULT_TIMEOUT, TimeUnit.SECONDS);

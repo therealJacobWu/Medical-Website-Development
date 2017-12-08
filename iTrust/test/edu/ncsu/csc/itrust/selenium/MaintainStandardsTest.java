@@ -19,7 +19,7 @@ public class MaintainStandardsTest extends iTrustSeleniumTest {
 		super.setUp();
 		gen.clearAllTables();
 		gen.loadSQLFile("admin1");
-		gen.cptCodes("cptCodes");
+		gen.loadSQLFile("cptCodes");
 		// turn off htmlunit warnings
 	    java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.OFF);
 	    java.util.logging.Logger.getLogger("org.apache.http").setLevel(java.util.logging.Level.OFF);

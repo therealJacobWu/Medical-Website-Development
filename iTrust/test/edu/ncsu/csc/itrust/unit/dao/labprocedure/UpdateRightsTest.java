@@ -19,7 +19,7 @@ public class UpdateRightsTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
-		gen.labProcedures("labProcedures");
+		gen.loadSQLFile("labprocedures");
 		l = new LabProcedureBean();
 		l.setPid(1L);
 		l.setOvID(905L);

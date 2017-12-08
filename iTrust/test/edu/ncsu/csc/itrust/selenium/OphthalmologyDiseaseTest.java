@@ -19,11 +19,11 @@ public class OphthalmologyDiseaseTest extends iTrustSeleniumTest{
 	protected void setUp() throws Exception{
 		super.setUp();
 		gen.clearAllTables();
-		gen.hcp0("hcp0");
-		gen.hcp11("hcp11");
-		gen.patient27("patient27");
-		gen.patient28("patient28");
-		gen.icd9cmCodes("icd9cmCodes");
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("hcp11");
+		gen.loadSQLFile("patient27");
+		gen.loadSQLFile("patient28");
+		gen.loadSQLFile("icd9cmCodes");
 	}
 	
 	/**

@@ -28,14 +28,14 @@ public class LabProcHCPActionTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.transactionLog("transactionLog");
-		gen.patient1("patient1");
-		gen.patient2("patient2");
-		gen.patient3("patient3");
-		gen.patient4("patient4");
-		gen.hcp0("hcp0");
-		gen.hcp3("hcp3");
-		gen.labProcedures("labProcedures");
+		gen.loadSQLFile("transactionLog");
+		gen.loadSQLFile("patient1");
+		gen.loadSQLFile("patient2");
+		gen.loadSQLFile("patient3");
+		gen.loadSQLFile("patient4");
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("hcp3");
+		gen.loadSQLFile("labprocedures");
 		action = new LabProcHCPAction(factory, 9000000000L);
 	}
 
@@ -52,7 +52,7 @@ public class LabProcHCPActionTest extends TestCase {
 		lp.setProcedureID(id);
 		lp.statusComplete();
 		lp.setResults("No abnormal results");
-		gen.fakeEmail("fakeEmail");
+		gen.loadSQLFile("fakeEmail");
 		action.updateProcedure(lp);
 		LabProcedureBean procedures = lpDAO.getLabProcedure(id);
 		assertEquals(LabProcedureBean.Completed, procedures.getStatus());

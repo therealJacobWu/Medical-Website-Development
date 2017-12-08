@@ -19,9 +19,9 @@ public class DeclareHCPActionTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		gen.clearAllTables();
-		gen.patient2("patient2");
-		gen.hcp0("hcp0");
-		gen.hcp3("hcp3");
+		gen.loadSQLFile("patient2");
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("hcp3");
 		action = new DeclareHCPAction(factory, 2L);
 	}
 

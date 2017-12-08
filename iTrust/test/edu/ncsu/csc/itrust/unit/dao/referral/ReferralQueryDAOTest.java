@@ -18,14 +18,14 @@ public class ReferralQueryDAOTest extends TestCase {
 		super.setUp();
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.hcp0("hcp0");
-		gen.hcp3("hcp3");
-		gen.hcp4("hcp4");
-		gen.hcp5("hcp5");
-		gen.patient1("patient1");
-		gen.patient2("patient2");
-		gen.patient5("patient5");
-		gen.referral_query_testdata("referral_query_testdata");
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("hcp3");
+		gen.loadSQLFile("hcp4");
+		gen.loadSQLFile("hcp5");
+		gen.loadSQLFile("patient1");
+		gen.loadSQLFile("patient2");
+		gen.loadSQLFile("patient5");
+		gen.loadSQLFile("referral_query_testdata");
 	}
 
 	public void testSenderQueryPatientSort() throws Exception {

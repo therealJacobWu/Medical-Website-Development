@@ -65,7 +65,7 @@ public class AddApptActionTest extends TestCase {
 	}
 	public void testAddConflicts() throws SQLException, FormValidationException, FileNotFoundException, IOException, DBException{
 		gen.clearAllTables();
-		gen.appointmentType("appointmentType");
+		gen.loadSQLFile("appointmentType");
 		ApptBean a = new ApptBean();
 		a.setApptType("General Checkup");
 		a.setHcp(hcpId);
@@ -92,7 +92,7 @@ public class AddApptActionTest extends TestCase {
 	
 	public void testGetConflicts() throws SQLException, FormValidationException, FileNotFoundException, IOException, DBException{
 		gen.clearAllTables();
-		gen.appointmentType("appointmentType");
+		gen.loadSQLFile("appointmentType");
 		ApptBean a = new ApptBean();
 		a.setApptType("General Checkup");
 		a.setHcp(hcpId);

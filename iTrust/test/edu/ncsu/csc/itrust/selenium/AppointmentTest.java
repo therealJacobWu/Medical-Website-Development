@@ -45,7 +45,7 @@ public class AppointmentTest extends iTrustSeleniumTest{
 	
 	public void testEditApptConflictCancel() throws Exception {
 		//Login as HCP Kelly Doctor
-		gen.UC22("UC22");
+		gen.loadSQLFile("UC22");
 		HtmlUnitDriver driver = (HtmlUnitDriver)login("9000000000", "pw");
 		driver.setJavascriptEnabled(true);
 		assertLogged(TransactionType.HOME_VIEW, 9000000000L, 0L, "");
@@ -111,7 +111,7 @@ public class AppointmentTest extends iTrustSeleniumTest{
 	}
 	
 	public void testAddApptConflictNoOverride() throws Exception {
-		gen.UC22("UC22");
+		gen.loadSQLFile("UC22");
 		//Login
 		WebDriver driver = login("9000000000", "pw");
 		assertLogged(TransactionType.HOME_VIEW, 9000000000L, 0L, "");
@@ -153,7 +153,7 @@ public class AppointmentTest extends iTrustSeleniumTest{
 	}
 	
 	public void testViewApptWithConflicts() throws Exception{
-		gen.UC22("UC22");
+		gen.loadSQLFile("UC22");
 		//Login
 		WebDriver driver = login("100", "pw");
 		assertLogged(TransactionType.HOME_VIEW, 100L, 0L, "");
@@ -170,7 +170,7 @@ public class AppointmentTest extends iTrustSeleniumTest{
 	}
 	
 	public void testAddApptSameEndStartTimes() throws Exception{
-		gen.UC22("UC22");
+		gen.loadSQLFile("UC22");
 		//Login
 		WebDriver driver = login("9000000000", "pw");
 		assertLogged(TransactionType.HOME_VIEW, 9000000000L, 0L, "");
@@ -212,7 +212,7 @@ public class AppointmentTest extends iTrustSeleniumTest{
 	}
 	
 	public void testAddApptInvalidDate() throws Exception {
-		gen.UC22("UC22");
+		gen.loadSQLFile("UC22");
 		//Login
 		WebDriver driver = login("9000000000", "pw");
 		assertLogged(TransactionType.HOME_VIEW, 9000000000L, 0L, "");

@@ -12,7 +12,7 @@ public class AuditPatientTest extends iTrustSeleniumTest {
 		super.setUp();
 		gen.clearAllTables();
 		gen.standardData();
-		gen.patientDeactivate("patientDeactivate");
+		gen.loadSQLFile("patientDeactivate");
 	}
 	
 	@Test

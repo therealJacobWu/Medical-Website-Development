@@ -18,10 +18,10 @@ public class ReportAdverseImmuEventTest extends iTrustSeleniumTest {
   public void setUp() throws Exception {
 		super.setUp();
 		gen.clearAllTables();
-		gen.hcp0("hcp0");
-		gen.cptCodes("cptCodes");
-		gen.ovImmune();
-		gen.patient1("patient1");
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("cptCodes");
+		gen.loadSQLFile("ovImmune");
+		gen.loadSQLFile("patient1");
 	    driver = new HtmlUnitDriver();
     driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
   }

@@ -22,11 +22,11 @@ public class ViewMyReportRequestsActionTest extends TestCase {
 	protected void setUp() throws Exception {
 		TestDataGenerator gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.patient2("patient2");
-		gen.hcp0("hcp0");
+		gen.loadSQLFile("patient2");
+		gen.loadSQLFile("hcp0");
 		gen.loadSQLFile("admin1");
-		gen.fakeEmail("fakeEmail");
-		gen.reportRequests("reportRequests");
+		gen.loadSQLFile("fakeEmail");
+		gen.loadSQLFile("reportRequests");
 	}
 
 

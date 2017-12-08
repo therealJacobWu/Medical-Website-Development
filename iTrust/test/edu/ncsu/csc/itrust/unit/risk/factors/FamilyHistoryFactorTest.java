@@ -17,10 +17,10 @@ public class FamilyHistoryFactorTest extends TestCase {
 		factor = new FamilyHistoryFactor(factory, 3L, 250.0, 251.0);
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.hospitals("hospitals");
-		gen.hcp0("hcp0");
-		gen.icd9cmCodes("icd9cmCodes");
-		gen.family("family");
+		gen.loadSQLFile("hospitals0");
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("icd9cmCodes");
+		gen.loadSQLFile("family");
 	}
 
 	public void testJustMom() throws Exception {

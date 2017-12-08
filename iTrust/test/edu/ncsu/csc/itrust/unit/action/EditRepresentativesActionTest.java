@@ -20,9 +20,9 @@ public class EditRepresentativesActionTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		gen.clearAllTables();
-		gen.patient1("patient1"); // 2 represents 1, but not 4
-		gen.patient2("patient2");
-		gen.patient4("patient4");
+		gen.loadSQLFile("patient1"); // 2 represents 1, but not 4
+		gen.loadSQLFile("patient2");
+		gen.loadSQLFile("patient4");
 		gen.uc68();//Daniel Rice added on 2/17/15 to test no patients add rep
 	}
 

@@ -13,8 +13,8 @@ public class GetHCPPendingCountTest extends TestCase {
     protected void setUp() throws Exception {
         gen = new TestDataGenerator();
         gen.clearAllTables();
-        gen.patient1("patient1");
-        gen.labProcedures("labProcedures");
+        gen.loadSQLFile("patient1");
+        gen.loadSQLFile("labprocedures");
     }
 
     public void testGetHCPPendingCount() throws Exception {

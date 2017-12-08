@@ -25,12 +25,12 @@ public class LabProcLTActionTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.transactionLog("transactionLog");
-		gen.lt0("lt0");
-		gen.lt1("lt1");
-		gen.lt2("lt2");
-		gen.hcp0("hcp0");
-		gen.labProcedures("labProcedures");
+		gen.loadSQLFile("transactionLog");
+		gen.loadSQLFile("lt0");
+		gen.loadSQLFile("lt1");
+		gen.loadSQLFile("lt2");
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("labprocedures");
 		action = new LabProcLTAction(factory);
 	}
 

@@ -13,7 +13,7 @@ public class GetUserRoleTest extends TestCase{
 	}
 	
 	public void testHCPMeganHunt() throws Exception {
-		gen.hcp0("hcp0");
+		gen.loadSQLFile("hcp0");
 		assertEquals("HCP 90..0", "hcp", TestDAOFactory.getTestInstance().getAuthDAO().getUserRole(9000000000L).getUserRolesString());
 	}
 	

@@ -17,7 +17,7 @@ public class GetLabProceduresForPatientTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.labProcedures("labProcedures");
+		gen.loadSQLFile("labprocedures");
 	}
 
 	public void testGetAllLabProceduresForDocOV() throws Exception {

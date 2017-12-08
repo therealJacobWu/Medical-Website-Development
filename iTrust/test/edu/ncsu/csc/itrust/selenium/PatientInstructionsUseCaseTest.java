@@ -29,7 +29,7 @@ public class PatientInstructionsUseCaseTest extends iTrustSeleniumTest {
 	public void testSelectPatientFromSearch() throws Exception {
 		driver = new HtmlUnitDriver();
 		driver.setJavascriptEnabled(true);
-		gen.hcp4("hcp4");
+		gen.loadSQLFile("hcp4");
 		driver = (HtmlUnitDriver)login("9000000004", "pw");
 		driver.get(ADDRESS + "auth/getPatientID.jsp");
 		// search for patient 1 by MID.
@@ -44,7 +44,7 @@ public class PatientInstructionsUseCaseTest extends iTrustSeleniumTest {
 	 */
 	@Test
 	public void testAcceptanceScenario1() throws Exception {
-		gen.hcp4("hcp4");
+		gen.loadSQLFile("hcp4");
 
 		driver = (HtmlUnitDriver)login("9000000004", "pw");
 		assertEquals("iTrust - HCP Home", driver.getTitle());
@@ -97,7 +97,7 @@ public class PatientInstructionsUseCaseTest extends iTrustSeleniumTest {
 	 * @see <a href="http://www.ietf.org/rfc/rfc1738.txt">URL Spec</a>
 	 */
 	public void testStripLeadingWhitespace() throws Exception {
-		gen.hcp4("hcp4");
+		gen.loadSQLFile("hcp4");
 
 		driver = (HtmlUnitDriver)login("9000000004", "pw");
 		assertEquals("iTrust - HCP Home", driver.getTitle());
@@ -150,7 +150,7 @@ public class PatientInstructionsUseCaseTest extends iTrustSeleniumTest {
 	 * @see <a href="http://www.ietf.org/rfc/rfc1738.txt">URL Spec</a>
 	 */
 	public void testStripTrailingWhitespace() throws Exception {
-		gen.hcp4("hcp4");
+		gen.loadSQLFile("hcp4");
 
 		driver = (HtmlUnitDriver)login("9000000004", "pw");
 		assertEquals("iTrust - HCP Home", driver.getTitle());
@@ -203,8 +203,8 @@ public class PatientInstructionsUseCaseTest extends iTrustSeleniumTest {
 	public void testAcceptanceScenario2() throws Exception {
 		driver = new HtmlUnitDriver();
 		driver.setJavascriptEnabled(true);
-		gen.hcp4("hcp4");
-		gen.uc44_acceptance_scenario_2("uc44_acceptance_scenario_2");
+		gen.loadSQLFile("hcp4");
+		gen.loadSQLFile("uc44_acceptance_scenario_2");
 		
 		driver = (HtmlUnitDriver)login("9000000004", "pw");
 		assertEquals("iTrust - HCP Home", driver.getTitle());
@@ -253,7 +253,7 @@ public class PatientInstructionsUseCaseTest extends iTrustSeleniumTest {
 		driver.setJavascriptEnabled(true);
 		gen.clearAllTables();
 		gen.standardData();
-		gen.uc44_acceptance_scenario_3("uc44_acceptance_scenario_3");
+		gen.loadSQLFile("uc44_acceptance_scenario_3");
 		
 		driver = (HtmlUnitDriver)login("9000000003", "pw");
 		assertEquals("iTrust - HCP Home", driver.getTitle());
@@ -294,7 +294,7 @@ public class PatientInstructionsUseCaseTest extends iTrustSeleniumTest {
 	public void testAcceptanceScenario4() throws Exception {
 		driver = new HtmlUnitDriver();
 		driver.setJavascriptEnabled(true);
-		gen.hcp4("hcp4");
+		gen.loadSQLFile("hcp4");
 
 		driver = (HtmlUnitDriver)login("9000000004", "pw");
 		assertEquals("iTrust - HCP Home",  driver.getTitle());
@@ -348,8 +348,8 @@ public class PatientInstructionsUseCaseTest extends iTrustSeleniumTest {
 	public void testAcceptanceScenario5() throws Exception {
 		driver = new HtmlUnitDriver();
 		driver.setJavascriptEnabled(true);
-		gen.hcp5("hcp5");
-		gen.uc44_acceptance_scenario_5("uc44_acceptance_scenario_5");
+		gen.loadSQLFile("hcp5");
+		gen.loadSQLFile("uc44_acceptance_scenario_5");
 		
 		driver = (HtmlUnitDriver)login("2", "pw");
 		assertEquals("iTrust - Patient Home",  driver.getTitle());
@@ -403,8 +403,8 @@ public class PatientInstructionsUseCaseTest extends iTrustSeleniumTest {
 	 */
 	@Test
 	public void testLinkToOfficeVisit() throws Exception {
-		gen.hcp4("hcp4");
-		gen.uc44_acceptance_scenario_2("uc44_acceptance_scenario_2");
+		gen.loadSQLFile("hcp4");
+		gen.loadSQLFile("uc44_acceptance_scenario_2");
 		
 		driver = (HtmlUnitDriver)login("1", "pw");
 		assertEquals("iTrust - Patient Home",  driver.getTitle());
@@ -426,7 +426,7 @@ public class PatientInstructionsUseCaseTest extends iTrustSeleniumTest {
 	public void testMissingField() throws Exception {
 		driver = new HtmlUnitDriver();
 		driver.setJavascriptEnabled(true);
-		gen.hcp4("hcp4");
+		gen.loadSQLFile("hcp4");
 
 		driver = (HtmlUnitDriver)login("9000000004", "pw");
 		assertEquals("iTrust - HCP Home", driver.getTitle());
@@ -479,7 +479,7 @@ public class PatientInstructionsUseCaseTest extends iTrustSeleniumTest {
 	public void testTooManyCharacters() throws Exception {
 		driver = new HtmlUnitDriver();
 		driver.setJavascriptEnabled(true);
-		gen.hcp4("hcp4");
+		gen.loadSQLFile("hcp4");
 
 		driver = (HtmlUnitDriver)login("9000000004", "pw");
 		assertEquals("iTrust - HCP Home", driver.getTitle());
@@ -533,8 +533,8 @@ public class PatientInstructionsUseCaseTest extends iTrustSeleniumTest {
 	public void testModifiedDate() throws Exception {
 		driver = new HtmlUnitDriver();
 		driver.setJavascriptEnabled(true);
-		gen.hcp4("hcp4");
-		gen.uc44_acceptance_scenario_2("uc44_acceptance_scenario_2");
+		gen.loadSQLFile("hcp4");
+		gen.loadSQLFile("uc44_acceptance_scenario_2");
 		
 		driver = (HtmlUnitDriver)login("9000000004", "pw");
 		assertEquals("iTrust - HCP Home", driver.getTitle());
@@ -593,8 +593,8 @@ public class PatientInstructionsUseCaseTest extends iTrustSeleniumTest {
 	public void testSecondEntry() throws Exception {
 		driver = new HtmlUnitDriver();
 		driver.setJavascriptEnabled(true);
-		gen.hcp4("hcp4");
-		gen.uc44_acceptance_scenario_2("uc44_acceptance_scenario_2");
+		gen.loadSQLFile("hcp4");
+		gen.loadSQLFile("uc44_acceptance_scenario_2");
 		
 		driver = (HtmlUnitDriver)login("9000000004", "pw");
 		assertEquals("iTrust - HCP Home", driver.getTitle());

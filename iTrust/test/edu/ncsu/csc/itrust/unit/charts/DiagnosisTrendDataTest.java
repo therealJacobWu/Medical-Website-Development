@@ -21,8 +21,8 @@ public class DiagnosisTrendDataTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen.clearAllTables();
 		gen.standardData();
-		gen.influenzaEpidemic("influenzaEpidemic");
-		gen.malariaEpidemic("malariaEpidemic");
+		gen.loadSQLFile("influenzaEpidemic");
+		gen.loadSQLFile("malariaEpidemic");
 	}
 	
 	public void testProduceDataset() {

@@ -12,11 +12,11 @@ public class OfficeVisitExistsTest extends TestCase {
 	protected void setUp() throws Exception {
 		TestDataGenerator gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.patient2("patient2");
+		gen.loadSQLFile("patient2");
 	}
 	
 	public void testExists() throws Exception {
-		new TestDataGenerator().officeVisit1("ov1");
+		new TestDataGenerator().loadSQLFile("ov1");
 		assertTrue(ovDAO.checkOfficeVisitExists(1, 1));
 		// wrong patient
 		assertFalse(ovDAO.checkOfficeVisitExists(1, 2));

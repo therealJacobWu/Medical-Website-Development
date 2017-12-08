@@ -15,8 +15,8 @@ public class DrugInteractionTest extends iTrustSeleniumTest{
   public void setUp() throws Exception {
 	super.setUp();
 	gen.loadSQLFile("admin1");
-	gen.ndCodes2("ndCodes2");
-	gen.drugInteractions("drugInteractions");
+	gen.loadSQLFile("ndCodes2");
+	gen.loadSQLFile("drugInteractions");
     driver = new HtmlUnitDriver();
     driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
   }
@@ -59,7 +59,7 @@ public class DrugInteractionTest extends iTrustSeleniumTest{
   
   @Test
   public void testEditOverrideReason() throws Exception {
-	  gen.ORCodes("ORCodes'");
+	  gen.loadSQLFile("ORCodes");
 	  driver = login("9000000001", "pw");
     assertEquals("iTrust - Admin Home", driver.getTitle());
     driver.findElement(By.xpath("//div[@id='iTrustMenu']/div/div[2]/div/h2")).click();

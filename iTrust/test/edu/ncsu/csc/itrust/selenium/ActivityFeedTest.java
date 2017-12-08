@@ -25,7 +25,7 @@ public class ActivityFeedTest extends iTrustSeleniumTest {
 	 * @throws Exception
 	 */
 	public void testOlderActivities() throws Exception {
-		gen.transactionLog6("transactionLog6");
+		gen.loadSQLFile("transactionLog6");
 		
 		//Login
 		driver = login("2", "pw");
@@ -58,7 +58,7 @@ public class ActivityFeedTest extends iTrustSeleniumTest {
 	 * @throws Exception
 	 */
 	public void testUpdateActivityFeed() throws Exception {
-		gen.transactionLog6("transactionLog6");
+		gen.loadSQLFile("transactionLog6");
 		
 		//Login
 		driver = login("2", "pw");
@@ -83,7 +83,7 @@ public class ActivityFeedTest extends iTrustSeleniumTest {
 	 * @throws Exception
 	 */
 	public void testViewActivityFeed() throws Exception {
-		gen.transactionLog5("transactionLog5");
+		gen.loadSQLFile("transactionLog5");
 
 		//Login
 		driver = login("1", "pw");

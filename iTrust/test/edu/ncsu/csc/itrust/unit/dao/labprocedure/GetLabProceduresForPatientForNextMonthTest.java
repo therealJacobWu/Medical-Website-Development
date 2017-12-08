@@ -19,7 +19,7 @@ public class GetLabProceduresForPatientForNextMonthTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.labProcedures("labProcedures");
+		gen.loadSQLFile("labprocedures");
 		// first procedure
 		l1 = new LabProcedureBean();
 		l1.setPid(3L);

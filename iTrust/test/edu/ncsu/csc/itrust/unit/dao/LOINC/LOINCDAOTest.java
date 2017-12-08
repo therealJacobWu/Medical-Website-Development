@@ -17,7 +17,7 @@ public class LOINCDAOTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.loincs("loincs");
+		gen.loadSQLFile("loincs");
 	}
 
 	public void testAddLOINC() throws Exception {

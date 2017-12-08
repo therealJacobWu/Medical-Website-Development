@@ -19,8 +19,8 @@ public class OVProceduresTest extends TestCase{
 	protected void setUp() throws Exception {
 		TestDataGenerator gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.cptCodes("cptCodes");
-		gen.officeVisit1("ov1");
+		gen.loadSQLFile("cptCodes");
+		gen.loadSQLFile("ov1");
 	}
 	
 	/**

@@ -16,7 +16,7 @@ public class ChronicDiseaseRiskActionTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		gen.clearAllTables();
-		gen.patient2("patient2");
+		gen.loadSQLFile("patient2");
 	}
 
 	public void testGetPatient2() throws Exception {

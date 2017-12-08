@@ -24,7 +24,7 @@ public class SurveyResultsTest extends TestCase {
 		TestDataGenerator gen = new TestDataGenerator();
 		gen.clearAllTables();
 		gen.standardData();
-		gen.surveyResults("surveyResults");
+		gen.loadSQLFile("surveyResults");
 	}
 	
 	public void testSurveyResults1() throws Exception {

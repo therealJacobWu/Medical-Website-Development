@@ -23,7 +23,7 @@ public class GetVisitRemindersTest extends iTrustSeleniumTest {
 	@Before
 	protected void setUp() throws Exception  {
 		super.setUp();
-		gen.hcp0("hcp0");
+		gen.loadSQLFile("hcp0");
 		gen.standardData();
 		driver = new Driver();
 		// Implicitly wait at most 2 seconds for each element to load

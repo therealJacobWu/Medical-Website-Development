@@ -47,8 +47,8 @@ public class GetVisitRemindersActionTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testGetVisitReminders_AlivePatients() throws Exception {
-		gen.hcp0("hcp0");
-		gen.aliveRecurringPatients("aliveRecurringPatients");
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("aliveRecurringPatients");
 		action = new GetVisitRemindersAction(factory, 9000000000L);
 
 		assertEquals(1, action.getVisitReminders(ReminderType.FLU_SHOT_NEEDERS).size());
@@ -61,8 +61,8 @@ public class GetVisitRemindersActionTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testGetVisitReminders_DeadPatients() throws Exception {
-		gen.hcp0("hcp0");
-		gen.deadRecurringPatients("deadRecurringPatients");
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("deadRecurringPatients");
 		action = new GetVisitRemindersAction(factory, 9000000000L);
 
 		assertEquals(0, action.getVisitReminders(ReminderType.FLU_SHOT_NEEDERS).size());
@@ -75,8 +75,8 @@ public class GetVisitRemindersActionTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testGetVisitReminders_Diagnosed_OldAndRecentVisit() throws Exception {
-		gen.hcp0("hcp0");
-		gen.diagnosedPatient_OldAndNewVisit("diagnosedPatient_OldAndNewVisit");
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("diagnosedPatient_OldAndNewVisit");
 		action = new GetVisitRemindersAction(factory, 9000000000L);
 		
 		//Patient had a visit over a year ago. Make sure that he isn't given a reminder for this year
@@ -89,8 +89,8 @@ public class GetVisitRemindersActionTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testGetVisitReminders_CorrectDateOfRecentVisit() throws Exception {
-		gen.hcp0("hcp0");
-		gen.aliveRecurringPatients("aliveRecurringPatients");
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("aliveRecurringPatients");
 		action = new GetVisitRemindersAction(factory, 9000000000L);
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");

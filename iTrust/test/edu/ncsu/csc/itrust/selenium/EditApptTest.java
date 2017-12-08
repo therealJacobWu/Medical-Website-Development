@@ -24,7 +24,7 @@ public class EditApptTest extends iTrustSeleniumTest{
 
   @Test
   public void testSetPassedDate() throws Exception {
-	  gen.UC22("UC22");
+	  gen.loadSQLFile("UC22");
 	  driver = (HtmlUnitDriver)login("9000000000", "pw");
 	  driver.setJavascriptEnabled(true);
 	  assertEquals("iTrust - HCP Home", driver.getTitle());
@@ -41,7 +41,7 @@ public class EditApptTest extends iTrustSeleniumTest{
 
   @Test
   public void testRemoveAppt() throws Exception {
-	  gen.UC22("UC22");
+	  gen.loadSQLFile("UC22");
 	  driver = (HtmlUnitDriver)login("9000000000", "pw");
 	  driver.setJavascriptEnabled(true);
 	  assertEquals("iTrust - HCP Home", driver.getTitle());

@@ -24,7 +24,7 @@ public class UpdateReasonCodeListActionTest extends TestCase {
 		action = new UpdateNDCodeListAction(factory, performingAdmin);
 		gen.clearAllTables();
 		gen.loadSQLFile("admin1");
-		gen.ndCodes("ndCodes");
+		gen.loadSQLFile("ndCodes");
 	}
 
 	private String getAddCodeSuccessString(MedicationBean proc) {

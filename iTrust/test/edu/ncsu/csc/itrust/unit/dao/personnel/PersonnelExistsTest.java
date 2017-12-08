@@ -19,7 +19,7 @@ public class PersonnelExistsTest extends TestCase {
 	}
 
 	public void testGetPersonnel2() throws Exception {
-		gen.uap1("uap1");
+		gen.loadSQLFile("uap1");
 		assertTrue(personnelDAO.checkPersonnelExists(8000000009l));
 		assertFalse(personnelDAO.checkPersonnelExists(8999999999l));
 	}
