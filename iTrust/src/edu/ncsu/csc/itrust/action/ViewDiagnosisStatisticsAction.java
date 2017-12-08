@@ -124,7 +124,7 @@ public class ViewDiagnosisStatisticsAction {
     private Date getDateEightWeeksAgo(Date end) {
         Calendar startDateCal = Calendar.getInstance();
         startDateCal.setTime(end);
-        startDateCal.add(Calendar.DAY_OF_MONTH, -8*7);
+        startDateCal.add(Calendar.DAY_OF_MONTH, -7*7);
         return startDateCal.getTime();
     }
 
