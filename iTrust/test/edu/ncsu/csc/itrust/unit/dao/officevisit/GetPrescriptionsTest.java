@@ -20,10 +20,10 @@ public class GetPrescriptionsTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.patient2();
-		gen.hcp0();
-		gen.hospitals();
-		gen.ndCodes();
+		gen.patient2("patient2");
+		gen.hcp0("hcp0");
+		gen.hospitals("hospitals");
+		gen.ndCodes("ndCodes");
 	}
 
 	/**

@@ -15,8 +15,8 @@ public class CreatePHATest extends iTrustSeleniumTest {
 	protected void setUp() throws Exception {
 		super.setUp();
 		gen.clearAllTables();
-		gen.admin1();
-		gen.cptCodes();
+		gen.loadSQLFile("admin1");
+		gen.cptCodes("cptCodes");
 	}
 
 

@@ -14,9 +14,9 @@ public class ObstetricsTest extends iTrustSeleniumTest{
 		super.setUp();
 		gen.clearAllTables();
 		gen.uc64();
-		gen.hcp0();
-		gen.patient21();
-		gen.patient22();
+		gen.hcp0("hcp0");
+		gen.patient21("patient21");
+		gen.patient22("patient22");
 	}
 	/**
 	 * test adding an initial record for a patient w/ no prior pregs

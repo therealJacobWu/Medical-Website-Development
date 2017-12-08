@@ -22,7 +22,7 @@ public class NDCodeTest extends TestCase {
 	protected void setUp() throws Exception {
 		TestDataGenerator gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.ndCodes();
+		gen.ndCodes("ndCodes");
 	}
 
 	// order by code asc but field isn't numerical, so codes will NOT be

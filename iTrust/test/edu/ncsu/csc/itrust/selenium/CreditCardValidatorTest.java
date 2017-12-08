@@ -13,8 +13,8 @@ public class CreditCardValidatorTest extends iTrustSeleniumTest {
 	protected void setUp() throws Exception {
 		super.setUp();
 		gen.clearAllTables();
-		gen.patient1();
-		gen.clearLoginFailures();
+		gen.patient1("patient1");
+		gen.clearLoginFailures("clearLoginFailures");
 	}
 
 

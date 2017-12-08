@@ -17,8 +17,8 @@ public class ExperiencedLHCPsUseCaseTest extends iTrustSeleniumTest{
 	super.setUp();
     driver = new HtmlUnitDriver();
     gen.standardData();
-    gen.patient_hcp_vists();
-    gen.hcp_diagnosis_data();
+    gen.patient_hcp_vists("patient_hcp_vists");
+    gen.hcp_diagnosis_data("hcp_diagnosis_data");
   }
 
   @Test

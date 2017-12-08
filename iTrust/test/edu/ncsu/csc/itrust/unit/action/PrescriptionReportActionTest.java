@@ -22,10 +22,10 @@ public class PrescriptionReportActionTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.ndCodes();
-		gen.hcp0();
-		gen.patient2();		
-		gen.officeVisit1();
+		gen.ndCodes("ndCodes");
+		gen.hcp0("hcp0");
+		gen.patient2("patient2");
+		gen.officeVisit1("ov1");
 		gen.additionalOfficeVisits();
 	}
 

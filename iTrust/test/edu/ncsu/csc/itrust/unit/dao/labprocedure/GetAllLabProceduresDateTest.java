@@ -17,7 +17,7 @@ public class GetAllLabProceduresDateTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.labProcedures();
+		gen.labProcedures("labProcedures");
 	}
 
 	public void testGetAllLabProcedures() throws Exception {

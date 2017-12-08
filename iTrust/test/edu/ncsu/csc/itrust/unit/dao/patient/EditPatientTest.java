@@ -9,7 +9,6 @@ import edu.ncsu.csc.itrust.dao.mysql.PatientDAO;
 import edu.ncsu.csc.itrust.enums.Ethnicity;
 import edu.ncsu.csc.itrust.enums.Gender;
 import edu.ncsu.csc.itrust.exception.DBException;
-import edu.ncsu.csc.itrust.exception.ITrustException;
 import edu.ncsu.csc.itrust.unit.datagenerators.TestDataGenerator;
 import edu.ncsu.csc.itrust.unit.testutils.EvilDAOFactory;
 import edu.ncsu.csc.itrust.unit.testutils.TestDAOFactory;
@@ -22,7 +21,7 @@ public class EditPatientTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		gen.clearAllTables();
-		gen.patient2();
+		gen.patient2("patient2");
 	}
 
 	public void testGetPatient2() throws Exception {
@@ -139,8 +138,8 @@ public class EditPatientTest extends TestCase {
 	
 	public void testRemoveAllRepresented() throws Exception {
 		//2 represents 1, but not 4
-		gen.patient1();
-		gen.patient4();
+		gen.patient1("patient1");
+		gen.patient4("patient4");
 		
 		//Add patient 4 to be represented by patient 2
 		patientDAO.addRepresentative(2L, 4L);

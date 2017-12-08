@@ -17,9 +17,9 @@ public class AddPHRTest extends TestCase {
 	protected void setUp() throws Exception {
 		TestDataGenerator gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.patient1();
-		gen.patient2();
-		gen.hcp0();
+		gen.patient1("patient1");
+		gen.patient2("patient2");
+		gen.hcp0("hcp0");
 	}
 
 	public void testAddSimple() throws Exception {

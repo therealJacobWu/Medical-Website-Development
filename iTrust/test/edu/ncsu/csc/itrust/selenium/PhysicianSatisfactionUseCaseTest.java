@@ -75,7 +75,7 @@ public class PhysicianSatisfactionUseCaseTest extends iTrustSeleniumTest {
 	
 	
 	public void testSearchForHCPSurveyResults2() throws Exception {
-		gen.surveyResults();
+		gen.surveyResults("surveyResults");
 		
 		// Create a new instance of the html unit driver
         // Notice that the remainder of the code relies on the interface, 
@@ -122,7 +122,7 @@ public class PhysicianSatisfactionUseCaseTest extends iTrustSeleniumTest {
 	
 	
 	public void testSearchForHCPSurveyResults3() throws Exception {		
-		gen.surveyResults();
+		gen.surveyResults("surveyResults");
 		
 		// Create a new instance of the html unit driver
         // Notice that the remainder of the code relies on the interface, 
@@ -174,7 +174,7 @@ public class PhysicianSatisfactionUseCaseTest extends iTrustSeleniumTest {
 	}
 	
 	public void testSearchByHospitalSurveyResults1() throws Exception {
-		gen.surveyResults();
+		gen.surveyResults("surveyResults");
 
 		// Create a new instance of the html unit driver
         // Notice that the remainder of the code relies on the interface, 
@@ -213,7 +213,7 @@ public class PhysicianSatisfactionUseCaseTest extends iTrustSeleniumTest {
 	}
 	
 	public void testSearchByHospitalSurveyResults2() throws Exception {
-		gen.surveyResults();
+		gen.surveyResults("surveyResults");
 
 		// Create a new instance of the html unit driver
         // Notice that the remainder of the code relies on the interface, 
@@ -250,7 +250,7 @@ public class PhysicianSatisfactionUseCaseTest extends iTrustSeleniumTest {
 	}
 	
 	public void testSearchByHospitalSurveyResults3() throws Exception {
-		gen.surveyResults();
+		gen.surveyResults("surveyResults");
 
 		// Create a new instance of the html unit driver
         // Notice that the remainder of the code relies on the interface, 

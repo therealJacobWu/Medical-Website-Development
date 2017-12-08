@@ -24,7 +24,7 @@ public class MessageDAOTest extends TestCase {
     protected void setUp() throws Exception {
         TestDataGenerator gen = new TestDataGenerator();
         gen.clearAllTables();
-        gen.messages();
+        gen.messages("messages");
 
         // month is zero-based
         GregorianCalendar cal1 = new GregorianCalendar(2010, 1, 2, 13, 3, 0);

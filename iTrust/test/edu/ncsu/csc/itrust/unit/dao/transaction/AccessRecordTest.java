@@ -17,7 +17,7 @@ public class AccessRecordTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.transactionLog();
+		gen.transactionLog("transactionLog");
 	}
 
 	// note - testing the actual loader is done elsewhere. Just check that we're getting the right

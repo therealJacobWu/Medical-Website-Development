@@ -32,7 +32,7 @@ public class ApptDAOTest extends TestCase {
     protected void setUp() throws Exception {
         TestDataGenerator gen = new TestDataGenerator();
         gen.clearAllTables();
-        gen.appointmentType();
+        gen.appointmentType("appointmentType");
 
         Date date = new Date();
         // Round down to the nearest second since SQL only stores to that precision

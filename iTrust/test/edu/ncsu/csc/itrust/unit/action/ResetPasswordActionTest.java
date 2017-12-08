@@ -29,8 +29,8 @@ public class ResetPasswordActionTest extends TestCase {
 	}
 
 	public void testCheckMID() throws Exception {
-		gen.patient1();
-		gen.hcp0();
+		gen.patient1("patient1");
+		gen.hcp0("hcp0");
 		assertEquals("empty", 0, action.checkMID(""));
 		assertEquals("null", 0, action.checkMID(null));
 		assertEquals("not a number", 0, action.checkMID("a"));
@@ -50,13 +50,13 @@ public class ResetPasswordActionTest extends TestCase {
 	}
 
 	public void testCheckRole() throws Exception {
-		gen.pre_patient1();
-		gen.patient2();
-		gen.hcp0();
-		gen.uap1();
+		gen.pre_patient1("pre_patient1");
+		gen.patient2("patient2");
+		gen.hcp0("hcp0");
+		gen.uap1("uap1");
 		gen.er4();
-		gen.pha0();
-		gen.ltData0();
+		gen.loadSQLFile("pha0");
+		gen.lt0("lt0");
 		assertEquals("pre_patient", action.checkRole(1L, "pre_patient"));
 		assertEquals("patient", action.checkRole(2L, "patient"));
 		assertEquals("hcp", action.checkRole(9000000000L, "hcp"));
@@ -85,8 +85,8 @@ public class ResetPasswordActionTest extends TestCase {
 	}
 
 	public void testGetSecurityQuestion() throws Exception {
-		gen.patient1();
-		gen.hcp0();
+		gen.patient1("patient1");
+		gen.hcp0("hcp0");
 		assertEquals("what is your favorite color?", action.getSecurityQuestion(1l));
 		assertEquals("first letter?", action.getSecurityQuestion(9000000000L));
 		assertEquals("first letter?", action.getSecurityQuestion(9000000000L));
@@ -99,8 +99,8 @@ public class ResetPasswordActionTest extends TestCase {
 	}
 
 	public void testResetPassword() throws Exception {
-		gen.patient1();
-		gen.hcp0();
+		gen.patient1("patient1");
+		gen.hcp0("hcp0");
 		assertEquals("Answer did not match", action.resetPassword(1L, "patient", "wrong", "12345678",
 				"12345678", "127.0.0.1"));
 		assertEquals("Answer did not match", action.resetPassword(9000000000L, "hcp", "wrong", "12345678",
@@ -119,7 +119,7 @@ public class ResetPasswordActionTest extends TestCase {
 	}
 
 	public void testResetForHCP() throws Exception {
-		gen.hcp0();
+		gen.hcp0("hcp0");
 		assertEquals("Password changed", action.resetPassword(9000000000L, "hcp", "a", "12345678",
 				"12345678", "127.0.0.1"));
 		List<Email> list = feDAO.getAllEmails();
@@ -128,7 +128,7 @@ public class ResetPasswordActionTest extends TestCase {
 	}
 
 	public void testValidatePasswordNull() throws Exception {
-		gen.patient1();
+		gen.patient1("patient1");
 		try {
 			action.resetPassword(1L, "patient", "blue", null, "12345678", "127.0.0.1");
 			fail("exception should have been thrown");
@@ -139,7 +139,7 @@ public class ResetPasswordActionTest extends TestCase {
 	}
 
 	public void testValidatePasswordEmpty() throws Exception {
-		gen.patient1();
+		gen.patient1("patient1");
 		try {
 			action.resetPassword(1L, "patient", "blue", "", "12345678", "127.0.0.1");
 			fail("exception should have been thrown");
@@ -150,7 +150,7 @@ public class ResetPasswordActionTest extends TestCase {
 	}
 
 	public void testValidatePasswordWrong() throws Exception {
-		gen.patient1();
+		gen.patient1("patient1");
 		try {
 			action.resetPassword(1L, "patient", "blue", "1234567", "12345678", "127.0.0.1");
 			fail("exception should have been thrown");

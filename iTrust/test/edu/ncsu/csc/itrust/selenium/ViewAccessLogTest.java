@@ -13,7 +13,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import edu.ncsu.csc.itrust.enums.TransactionType;
-import edu.ncsu.csc.itrust.selenium.iTrustSeleniumTest;
 
 public class ViewAccessLogTest extends iTrustSeleniumTest {
 	  private WebDriver driver;
@@ -25,12 +24,12 @@ public class ViewAccessLogTest extends iTrustSeleniumTest {
 	    driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 	    super.setUp();
 		gen.clearAllTables();
-		gen.uap1();
-		gen.patient2();
-		gen.patient1();
-		gen.patient4();
-		gen.hcp0();
-		gen.hcp3();
+		gen.uap1("uap1");
+		gen.patient2("patient2");
+		gen.patient1("patient1");
+		gen.patient4("patient4");
+		gen.hcp0("hcp0");
+		gen.hcp3("hcp3");
 		gen.er4();
 	  }
 
@@ -75,7 +74,7 @@ public class ViewAccessLogTest extends iTrustSeleniumTest {
 	  @Test
 	  public void testViewaccesslog2() throws Exception {
 		// clear operational profile
-		gen.transactionLog();
+		gen.transactionLog("transactionLog");
 		
 		//This logs us into iTrust and returns the HtmlUnitDriver for use in this case
 		HtmlUnitDriver driver = (HtmlUnitDriver)login("2", "pw");
@@ -99,7 +98,7 @@ public class ViewAccessLogTest extends iTrustSeleniumTest {
 	  @Test
 	  public void testViewAccessLog3() throws Exception {
 		// clear operational profile
-		gen.transactionLog();
+		gen.transactionLog("transactionLog");
 		
 		//This logs us into iTrust and returns the HtmlUnitDriver for use in this case
 		HtmlUnitDriver driver = (HtmlUnitDriver)login("1", "pw");
@@ -115,7 +114,7 @@ public class ViewAccessLogTest extends iTrustSeleniumTest {
 	  
 	  @Test
 	  public void testViewAccessLogByDate() throws Exception {
-		gen.transactionLog2();
+		gen.transactionLog2("transactionLog2");
 		
 		//This logs us into iTrust and returns the HtmlUnitDriver for use in this case
 		HtmlUnitDriver driver = (HtmlUnitDriver)login("2", "pw");
@@ -137,7 +136,7 @@ public class ViewAccessLogTest extends iTrustSeleniumTest {
 	  
 	  @Test
 	  public void testViewAccessLogByRole() throws Exception {
-		gen.transactionLog3();
+		gen.transactionLog3("transactionLog3");
 		
 		//This logs us into iTrust and returns the HtmlUnitDriver for use in this case
 		HtmlUnitDriver driver = (HtmlUnitDriver)login("1", "pw");

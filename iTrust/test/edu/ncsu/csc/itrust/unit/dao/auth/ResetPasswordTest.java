@@ -19,7 +19,7 @@ public class ResetPasswordTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		gen.clearAllTables();
-		gen.patient2();
+		gen.patient2("patient2");
 	}
 
 	/**

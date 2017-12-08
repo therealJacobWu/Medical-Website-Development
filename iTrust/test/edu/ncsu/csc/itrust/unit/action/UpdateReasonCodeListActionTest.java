@@ -23,8 +23,8 @@ public class UpdateReasonCodeListActionTest extends TestCase {
 	protected void setUp() throws Exception {
 		action = new UpdateNDCodeListAction(factory, performingAdmin);
 		gen.clearAllTables();
-		gen.admin1();
-		gen.ndCodes();
+		gen.loadSQLFile("admin1");
+		gen.ndCodes("ndCodes");
 	}
 
 	private String getAddCodeSuccessString(MedicationBean proc) {

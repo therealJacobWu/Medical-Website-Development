@@ -21,8 +21,8 @@ public class UpdateHospitalListActionTest extends TestCase {
 	protected void setUp() throws Exception {
 		action = new UpdateHospitalListAction(factory, performingAdmin);
 		gen.clearAllTables();
-		gen.admin1();
-		gen.hospitals();
+		gen.loadSQLFile("admin1");
+		gen.hospitals("hospitals");
 	}
 
 	private String getAddHospitalSuccessString(HospitalBean proc) {

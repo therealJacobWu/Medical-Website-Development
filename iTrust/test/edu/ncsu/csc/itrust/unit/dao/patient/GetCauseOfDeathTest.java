@@ -22,8 +22,8 @@ public class GetCauseOfDeathTest extends TestCase{
     @Override
     protected void setUp() throws Exception {
         gen.clearAllTables();
-        gen.icd9cmCodes();
-        gen.patientDeath();
+        gen.icd9cmCodes("icd9cmCodes");
+        gen.patientDeath("patientDeath");
         gen.patient1000s();
     }
 

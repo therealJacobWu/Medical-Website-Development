@@ -46,9 +46,9 @@ public class GetVisitRemindersTest extends TestCase {
 
 	public void testGetFluShotDelinquents() throws DBException, IOException, FileNotFoundException,
 			SQLException {
-		gen.patient1();
-		gen.patient2();
-		gen.patient3();
+		gen.patient1("patient1");
+		gen.patient2("patient2");
+		gen.patient3("patient3");
 		List<VisitReminderReturnForm> visRems = visRemDAO.getFluShotDelinquents(LHCP);
 
 		assertEquals(2, visRems.size());
@@ -78,9 +78,9 @@ public class GetVisitRemindersTest extends TestCase {
 
 	public void testGetDiagnosedVisitNeeders() throws DBException, IOException, FileNotFoundException,
 			SQLException {
-		gen.patient1();
-		gen.patient2();
-		gen.patient3();
+		gen.patient1("patient1");
+		gen.patient2("patient2");
+		gen.patient3("patient3");
 		List<VisitReminderReturnForm> visRems = visRemDAO.getDiagnosedVisitNeeders(LHCP);
 		VisitReminderReturnForm reminder = visRems.get(0);
 		assertEquals(reminder.getLastName(), "Person");
@@ -93,9 +93,9 @@ public class GetVisitRemindersTest extends TestCase {
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		gen.patient1();
-		gen.patient2();
-		gen.patient3();
+		gen.patient1("patient1");
+		gen.patient2("patient2");
+		gen.patient3("patient3");
 		boolean thisYear = DateUtil.currentlyInMonthRange(9, 12);
 
 		java.sql.Date september = new java.sql.Date(0l), december = new java.sql.Date(0l);

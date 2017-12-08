@@ -1,15 +1,9 @@
 package edu.ncsu.csc.itrust.selenium;
 
-import static org.junit.Assert.*;
-
-import java.net.URL;
-
 import org.junit.After;
 import org.junit.Before;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.*;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 /**
@@ -35,9 +29,9 @@ public class GetPatientIDTest extends iTrustSeleniumTest {
 	 */
 	public void testSelectPatientButton() throws Exception {
 		
-		gen.hcp4();
-		gen.hcp5();
-		gen.referral_sort_testdata();
+		gen.hcp4("hcp4");
+		gen.hcp5("hcp5");
+		gen.referral_sort_testdata("referral_sort_testdata");
 		
 		WebElement element;
 		

@@ -17,12 +17,12 @@ public class GetUserNameActionTest extends TestCase {
 	}
 	
 	public void testCorrectFormat() throws Exception {
-		gen.hcp0();
+		gen.hcp0("hcp0");
 		assertEquals("Kelly Doctor", new GetUserNameAction(factory).getUserName("9000000000"));
 	}
 
 	public void testWrongFormat() throws Exception {
-		gen.hcp0();
+		gen.hcp0("hcp0");
 		try {
 			new GetUserNameAction(factory).getUserName("90000000aaa01");
 			fail("Exception should have been thrown");

@@ -19,7 +19,7 @@ public class EditPatientActionTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		gen.clearAllTables();
-		gen.patient2();
+		gen.patient2("patient2");
 		action = new EditPatientAction(factory, 9000000000L, "2");
 	}
 
@@ -54,7 +54,7 @@ public class EditPatientActionTest extends TestCase {
 	}
 
 	public void testEditCOD() throws Exception {
-		gen.patient1();
+		gen.patient1("patient1");
 		action = new EditPatientAction(factory, 1L, "1");
 		PatientDAO po = TestDAOFactory.getTestInstance().getPatientDAO();
 		PatientBean pb = po.getPatient(1l);
@@ -72,7 +72,7 @@ public class EditPatientActionTest extends TestCase {
 	}
 	
 	public void testInvalidDates() throws Exception {
-		gen.patient3();
+		gen.patient3("patient3");
 		action = new EditPatientAction(factory, 3L, "3");
 		PatientDAO po = TestDAOFactory.getTestInstance().getPatientDAO();
 		PatientBean pb = po.getPatient(3l);
@@ -120,7 +120,7 @@ public class EditPatientActionTest extends TestCase {
 	}
 	
 	public void testDeactivateActivate() throws Exception {
-		gen.patient1();
+		gen.patient1("patient1");
 		action = new EditPatientAction(factory, 1L, "1");
 		PatientDAO po = TestDAOFactory.getTestInstance().getPatientDAO();
 		action.deactivate();
@@ -145,8 +145,8 @@ public class EditPatientActionTest extends TestCase {
 	
 	public void testSetDependent() throws Exception {
 		//2 represents 1, but not 4
-		gen.patient1();
-		gen.patient4();
+		gen.patient1("patient1");
+		gen.patient4("patient4");
 		//Add patient 4 to be represented by patient 2
 		PatientDAO patientDAO = new PatientDAO(factory);
 		patientDAO.addRepresentative(2L, 4L);
@@ -172,7 +172,7 @@ public class EditPatientActionTest extends TestCase {
 	}
 
 	public void testEditMessageFilter()throws Exception{
-        gen.patient1();
+        gen.patient1("patient1");
         PatientDAO po = TestDAOFactory.getTestInstance().getPatientDAO();
         action = new EditPatientAction(factory, 1L, "1");
         action.editMessageFilter("Kelly Doctor");

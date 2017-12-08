@@ -19,9 +19,9 @@ public class DeclareHCPTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.hcp3(); // 3 is declared, 0 is not
-		gen.patient2();
-		gen.hcp0();
+		gen.hcp3("hcp3"); // 3 is declared, 0 is not
+		gen.patient2("patient2");
+		gen.hcp0("hcp0");
 	}
 
 	public void testGetDeclaredHCPs() throws Exception {

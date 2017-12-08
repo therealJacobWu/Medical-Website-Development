@@ -16,10 +16,10 @@ public class ReportAdversePrescriptionTest extends iTrustSeleniumTest {
 	public void setUp() throws Exception {
 		super.setUp();
 		gen.clearAllTables();
-		gen.hcp0();
-		gen.ovMed();
-		gen.patient2();
-		gen.patient1();
+		gen.hcp0("hcp0");
+		gen.ovMed("ovMed");
+		gen.patient2("patient2");
+		gen.patient1("patient1");
 		driver = new HtmlUnitDriver();
 		baseUrl = "http://localhost:8080/";
 		driver.get(baseUrl);

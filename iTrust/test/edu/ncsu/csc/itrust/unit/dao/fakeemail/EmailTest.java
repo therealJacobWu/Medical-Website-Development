@@ -16,8 +16,8 @@ public class EmailTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		TestDataGenerator gen = new TestDataGenerator();
-		gen.clearFakeEmail();
-		gen.fakeEmail();
+		gen.clearFakeEmail("clearFakeEmail");
+		gen.fakeEmail("fakeEmail");
 	}
 
 	public void testListAllEmails() throws Exception {

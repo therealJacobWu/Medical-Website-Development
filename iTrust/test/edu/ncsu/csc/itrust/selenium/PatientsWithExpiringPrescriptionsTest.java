@@ -25,18 +25,18 @@ public class PatientsWithExpiringPrescriptionsTest extends iTrustSeleniumTest {
 	public void setUp() throws Exception {
 		super.setUp();
 		gen.clearAllTables();
-		gen.icd9cmCodes();
-		gen.ndCodes();
-		gen.hospitals();
-		gen.hcp1();
-		gen.hcp2();
-		gen.hcp3();
-		gen.patient9();
-		gen.patient10();
-		gen.patient11();
-		gen.patient12();
-		gen.patient13();
-		gen.patient14();
+		gen.icd9cmCodes("icd9cmCodes");
+		gen.ndCodes("ndCodes");
+		gen.hospitals("hospitals");
+		gen.hcp1("hcp1");
+		gen.hcp2("hcp2");
+		gen.hcp3("hcp3");
+		gen.patient9("patient9");
+		gen.patient10("patient10");
+		gen.patient11("patient11");
+		gen.patient12("patient12");
+		gen.patient13("patient13");
+		gen.patient14("patient14");
 		
 		driver = new HtmlUnitDriver();
 		baseUrl = "http://localhost:8080/iTrust/auth/forwardUser.jsp";
@@ -219,7 +219,7 @@ public class PatientsWithExpiringPrescriptionsTest extends iTrustSeleniumTest {
 	 * (Designated Tester Gandalf Stormcrow)
 	 */
 	public void testAcceptance() throws Exception {
-		gen.UC32Acceptance();
+		gen.UC32Acceptance("UC32Acceptance");
 
 		driver.get(baseUrl + "/iTrust/auth/forwardUser.jsp");
 		driver.findElement(By.id("j_username")).clear();

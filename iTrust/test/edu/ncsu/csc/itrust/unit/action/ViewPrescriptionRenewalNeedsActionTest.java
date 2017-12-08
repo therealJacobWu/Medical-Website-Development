@@ -21,19 +21,19 @@ public class ViewPrescriptionRenewalNeedsActionTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.hospitals();
-		gen.hcp2();
-		gen.hcp1();
-		gen.hcp3();
-		gen.hcp0();
-		gen.ndCodes();
-		gen.icd9cmCodes();
-		gen.patient9();
-		gen.patient11();
-		gen.patient14();
+		gen.hospitals("hospitals");
+		gen.hcp2("hcp2");
+		gen.hcp1("hcp1");
+		gen.hcp3("hcp3");
+		gen.hcp0("hcp0");
+		gen.ndCodes("ndCodes");
+		gen.icd9cmCodes("icd9cmCodes");
+		gen.patient9("patient9");
+		gen.patient11("patient11");
+		gen.patient14("patient14");
 		
 		
-		gen.UC32Acceptance();
+		gen.UC32Acceptance("UC32Acceptance");
 	}
 
 	public void testTwoPatients() throws Exception {

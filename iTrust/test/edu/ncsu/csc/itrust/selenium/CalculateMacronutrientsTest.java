@@ -11,10 +11,10 @@ public class CalculateMacronutrientsTest extends iTrustSeleniumTest {
 	protected void setUp() throws Exception {
 		super.setUp();
 		gen.clearAllTables();
-		gen.patient1();
+		gen.patient1("patient1");
 		gen.uc68();
 		gen.uc71();
-		gen.hcp0();
+		gen.hcp0("hcp0");
 	}
 	
 	public void testViewMacronutrientGraphs() throws Exception {

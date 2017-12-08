@@ -28,12 +28,12 @@ public class EditOfficeVisitActionTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		gen.clearAllTables();
-		gen.hospitals();
-		gen.hcp0();
-		gen.patient1();
-		gen.admin1();
-		gen.officeVisit1();
-		gen.ndCodes();
+		gen.hospitals("hospitals");
+		gen.hcp0("hcp0");
+		gen.patient1("patient1");
+		gen.loadSQLFile("admin1");
+		gen.officeVisit1("ov1");
+		gen.ndCodes("ndCodes");
 		gen.uc60();
 		
 		action = new EditOfficeVisitAction(factory, 9000000001L, "1", "1");
@@ -213,8 +213,8 @@ public class EditOfficeVisitActionTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testMakeEmailApp() throws Exception {
-		gen.patient2();
-		gen.hcp0();
+		gen.patient2("patient2");
+		gen.hcp0("hcp0");
 		Email testEmail = action.makeEmailApp(9000000000L, "2", "You are allergic.");
 		assertEquals("no-reply@itrust.com", testEmail.getFrom());
 		assertEquals("andy.programmer@gmail.com", testEmail.getToListStr());	

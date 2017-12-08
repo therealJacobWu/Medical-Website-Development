@@ -24,9 +24,9 @@ public class LabProcUAPActionTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.patient2();
-		gen.uap1();
-		gen.labProcedures();
+		gen.patient2("patient2");
+		gen.uap1("uap1");
+		gen.labProcedures("labProcedures");
 		action = new LabProcUAPAction(factory, 8000000009L);
 	}
 	

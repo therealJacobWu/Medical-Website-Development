@@ -14,8 +14,8 @@ public class EditMonitoringListActionTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.hcp0();
-		gen.patient1();
+		gen.hcp0("hcp0");
+		gen.patient1("patient1");
 		action = new EditMonitoringListAction(TestDAOFactory.getTestInstance(), 9000000000L);
 	}
 

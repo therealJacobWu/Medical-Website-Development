@@ -19,9 +19,9 @@ public class DeclareHCPActionTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		gen.clearAllTables();
-		gen.patient2();
-		gen.hcp0();
-		gen.hcp3();
+		gen.patient2("patient2");
+		gen.hcp0("hcp0");
+		gen.hcp3("hcp3");
 		action = new DeclareHCPAction(factory, 2L);
 	}
 
@@ -72,7 +72,7 @@ public class DeclareHCPActionTest extends TestCase {
 	
 
 	public void testDeclareAdmin() throws Exception {
-		gen.admin1();
+		gen.loadSQLFile("admin1");
 		try {
 			action.declareHCP("9000000001");
 			fail("exception should have been thrown");

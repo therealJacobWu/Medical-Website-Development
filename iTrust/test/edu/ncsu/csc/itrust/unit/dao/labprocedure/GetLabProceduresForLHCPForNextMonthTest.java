@@ -18,7 +18,7 @@ public class GetLabProceduresForLHCPForNextMonthTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
-		gen.labProcedures();
+		gen.labProcedures("labProcedures");
 		// first procedure
 		l1 = new LabProcedureBean();
 		l1.setPid(3L);

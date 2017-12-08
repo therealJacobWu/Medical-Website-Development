@@ -20,8 +20,8 @@ public class AssignHospitalDAOTest extends TestCase {
 	protected void setUp() throws Exception {
 		TestDataGenerator gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.hospitals();
-		gen.hcp0();
+		gen.hospitals("hospitals");
+		gen.hcp0("hcp0");
 	}
 
 	public void testPersonnelHospitals() throws Exception {

@@ -78,9 +78,9 @@ Calendar.getInstance().get(Calendar.YEAR));
 	public void testGetConflicts() throws Exception {
 		TestDataGenerator gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.hcp0();
-		gen.patient2();
-		gen.appointmentType();
+		gen.hcp0("hcp0");
+		gen.patient2("patient2");
+		gen.appointmentType("appointmentType");
 
 		Calendar startDate = Calendar.getInstance();
 		startDate.set(Calendar.HOUR, 0);

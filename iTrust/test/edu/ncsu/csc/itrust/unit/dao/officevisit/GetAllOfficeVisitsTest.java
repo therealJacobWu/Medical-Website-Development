@@ -21,8 +21,8 @@ public class GetAllOfficeVisitsTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.patient1();
-		gen.patient2();
+		gen.patient1("patient1");
+		gen.patient2("patient2");
 	}
 
 	public void testVisitsFor2() throws Exception {

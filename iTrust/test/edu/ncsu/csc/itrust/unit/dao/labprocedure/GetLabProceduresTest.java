@@ -3,7 +3,6 @@ package edu.ncsu.csc.itrust.unit.dao.labprocedure;
 import edu.ncsu.csc.itrust.beans.LabProcedureBean;
 import edu.ncsu.csc.itrust.dao.mysql.LabProcedureDAO;
 import edu.ncsu.csc.itrust.exception.DBException;
-import edu.ncsu.csc.itrust.unit.bean.LabProcedureBeanTest;
 import edu.ncsu.csc.itrust.unit.datagenerators.TestDataGenerator;
 import edu.ncsu.csc.itrust.unit.testutils.TestDAOFactory;
 import junit.framework.TestCase;
@@ -18,8 +17,8 @@ public class GetLabProceduresTest extends TestCase {
     protected void setUp() throws Exception {
         gen = new TestDataGenerator();
         gen.clearAllTables();
-        gen.labProcedures();
-        gen.patient1();
+        gen.labProcedures("labProcedures");
+        gen.patient1("patient1");
     }
 
     public void testGetLabProcedures() throws Exception {

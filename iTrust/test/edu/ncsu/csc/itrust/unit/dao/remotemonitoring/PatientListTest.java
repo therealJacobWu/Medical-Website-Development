@@ -14,8 +14,8 @@ public class PatientListTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.patient2();
-		gen.hcp0();
+		gen.patient2("patient2");
+		gen.hcp0("hcp0");
 	}
 
 	public void testAddRemoveFromList() throws Exception {

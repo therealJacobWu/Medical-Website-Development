@@ -31,10 +31,10 @@ public class InsuranceNotificationTest extends iTrustSeleniumTest {
 	protected void setUp() throws Exception {
 		super.setUp();
 		gen.clearAllTables();
-		gen.hospitals();
-		gen.hospitals1();
-		gen.hcp0();
-		gen.uc51();
+		gen.hospitals("hospitals");
+		gen.hospitals1("hospitals1");
+		gen.hcp0("hcp0");
+		gen.uc51("uc51");
 		gen.uc60();
 		// turn off htmlunit warnings
 	    java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.OFF);

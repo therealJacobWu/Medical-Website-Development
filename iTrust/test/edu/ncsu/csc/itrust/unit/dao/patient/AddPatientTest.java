@@ -31,7 +31,7 @@ public class AddPatientTest extends TestCase {
 	}
 
 	public void testInsertDeath() throws Exception {
-		gen.patient1();
+		gen.patient1("patient1");
 		PatientBean p = patientDAO.getPatient(1l);
 		assertEquals("Random", p.getFirstName());
 		assertEquals("", p.getCauseOfDeath());

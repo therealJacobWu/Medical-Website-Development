@@ -14,7 +14,7 @@ public class RecordLoginFailureTest extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		gen.clearLoginFailures();
+		gen.clearLoginFailures("clearLoginFailures");
 	}
 
 	public void testGetLoginFailuresNoEntry() throws Exception {

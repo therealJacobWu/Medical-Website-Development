@@ -19,7 +19,7 @@ public class ViewApptRequestsActionTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen.clearAllTables();
 		gen.standardData();
-		gen.apptRequestConflicts();
+		gen.apptRequestConflicts("apptRequestConflicts");
 		action = new ViewApptRequestsAction(9000000000L, TestDAOFactory.getTestInstance());
 		mDAO = TestDAOFactory.getTestInstance().getMessageDAO();
 	}

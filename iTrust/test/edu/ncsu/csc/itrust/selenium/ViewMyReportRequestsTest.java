@@ -16,8 +16,8 @@ public class ViewMyReportRequestsTest extends iTrustSeleniumTest {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		gen.hcp0();
-		gen.patient2();
+		gen.hcp0("hcp0");
+		gen.patient2("patient2");
 	}
 	
 	public void testViewMyReportRequests() throws Exception{

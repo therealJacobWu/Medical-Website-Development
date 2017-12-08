@@ -21,11 +21,11 @@ public class OphthalmologyScheduleOVTest  extends iTrustSeleniumTest{
 	protected void setUp() throws Exception{
 		super.setUp();
 		gen.clearAllTables();
-		gen.hcp0();
-		gen.hcp11();
-		gen.hcp12();
-		gen.patient27();
-		gen.patient29();
+		gen.hcp0("hcp0");
+		gen.hcp11("hcp11");
+		gen.hcp12("hcp12");
+		gen.patient27("patient27");
+		gen.patient29("patient29");
 	}
 	
 	/**
@@ -97,7 +97,7 @@ public class OphthalmologyScheduleOVTest  extends iTrustSeleniumTest{
 	 */
 	public void testApproveOphthalmologyOfficeVisitRequest() throws Exception{
 		//Set up the outcome of Scenario 1
-		gen.ophthalmologyScenario4();
+		gen.ophthalmologyScenario4("ophthalmologyScenario4");
 		
 		//Login as Brooke Tran
 		HtmlUnitDriver driver = (HtmlUnitDriver)login("9000000085", "pw");
@@ -171,7 +171,7 @@ public class OphthalmologyScheduleOVTest  extends iTrustSeleniumTest{
 	 */
 	public void testRejectOphthalmologyOfficeVisitRequest() throws Exception{
 		//Set up the outcome of Scenario 1
-		gen.ophthalmologyScenario4();
+		gen.ophthalmologyScenario4("ophthalmologyScenario4");
 		
 		//Login as Brooke Tran
 		HtmlUnitDriver driver = (HtmlUnitDriver)login("9000000085", "pw");

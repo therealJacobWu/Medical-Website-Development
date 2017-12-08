@@ -28,8 +28,8 @@ public class OVDiagnosesTest extends TestCase {
 		gen.clearAllTables();
 		
 		gen.standardData();
-		gen.patient_hcp_vists();
-		gen.hcp_diagnosis_data();
+		gen.patient_hcp_vists("patient_hcp_vists");
+		gen.hcp_diagnosis_data("hcp_diagnosis_data");
 	}
 
 	/**
@@ -121,7 +121,7 @@ public class OVDiagnosesTest extends TestCase {
 	public void testMalaria() throws Exception {
 		DAOFactory factory = TestDAOFactory.getTestInstance();
 		TestDataGenerator gen = new TestDataGenerator();
-		gen.malaria_epidemic();
+		gen.malariaEpidemic("malariaEpidemic");
 		
 		ViewDiagnosisStatisticsAction a = new ViewDiagnosisStatisticsAction(factory);
 		

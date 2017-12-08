@@ -22,8 +22,8 @@ public class Type1DiabetesTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.patient1();
-		gen.patient2();
+		gen.patient1("patient1");
+		gen.patient2("patient2");
 	}
 
 	// Note: patient 2 does NOT qualify for the disease, see the next test

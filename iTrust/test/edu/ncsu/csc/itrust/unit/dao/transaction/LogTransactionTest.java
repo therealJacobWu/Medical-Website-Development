@@ -17,7 +17,7 @@ public class LogTransactionTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.transactionLog();
+		gen.transactionLog("transactionLog");
 	}
 
 	public void testGetAllTransactions() throws Exception {

@@ -25,8 +25,8 @@ public class OVMedicationsTest extends TestCase {
 	protected void setUp() throws Exception {
 		TestDataGenerator gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.ndCodes();
-		gen.officeVisit1();
+		gen.ndCodes("ndCodes");
+		gen.officeVisit1("ov1");
 		pres = new PrescriptionBean();
 		MedicationBean medication = new MedicationBean();
 		medication.setDescription("Tetracycline");

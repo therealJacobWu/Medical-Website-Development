@@ -96,7 +96,7 @@ public class MessagingUseCaseTest extends iTrustSeleniumTest {
 	}
 	
 	public void testPatientSendMessageMultiRecipients() throws Exception {
-		gen.messagingCcs();
+		gen.messagingCcs("messagingCcs'");
 		driver = login("1", "pw");
 		assertLogged(TransactionType.HOME_VIEW, 1L, 0L, "");
 		driver.findElement(By.linkText("Compose a Message")).click();
@@ -156,8 +156,8 @@ public class MessagingUseCaseTest extends iTrustSeleniumTest {
 	}
 	
 	public void testHCPSendReplySingleCCRecipient() throws Exception {
-		gen.clearMessages();
-		gen.messages6();
+		gen.clearMessages("clearMessages");
+		gen.messages6("messages6");
 		driver = login("9000000000", "pw");
 		assertLogged(TransactionType.HOME_VIEW, 9000000000L, 0L, "");
 		driver.findElement(By.linkText("Message Inbox")).click();

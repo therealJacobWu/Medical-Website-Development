@@ -20,10 +20,10 @@ public class EmergencyReportActionTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		gen.clearAllTables();
-		gen.patient2();
-		gen.hcp0();
-		gen.ndCodes();
-		gen.icd9cmCodes();
+		gen.patient2("patient2");
+		gen.hcp0("hcp0");
+		gen.ndCodes("ndCodes");
+		gen.icd9cmCodes("icd9cmCodes");
 		action = new EmergencyReportAction(factory, 9000000000L, "2");
 	}
 

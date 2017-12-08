@@ -19,10 +19,10 @@ public class FamilyMembersTest extends TestCase implements Comparator<FamilyMemb
 	protected void setUp() throws Exception {
 		TestDataGenerator gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.hospitals();
-		gen.hcp0();
-		gen.icd9cmCodes();
-		gen.family();
+		gen.hospitals("hospitals");
+		gen.hcp0("hcp0");
+		gen.icd9cmCodes("icd9cmCodes");
+		gen.family("family");
 	}
 
 	public void testGetNoParents() throws Exception {

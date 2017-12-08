@@ -18,8 +18,8 @@ public class ViewPersonnelActionTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.patient4();
-		gen.hcp3();
+		gen.patient4("patient4");
+		gen.hcp3("hcp3");
 	}
 
 	public void testViewPersonnel() throws Exception {

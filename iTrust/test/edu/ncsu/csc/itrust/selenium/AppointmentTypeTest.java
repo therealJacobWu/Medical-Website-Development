@@ -122,8 +122,8 @@ public class AppointmentTypeTest extends iTrustSeleniumTest{
 	}
 	
 	public void testPatientViewUpcomingAppointments() throws Exception {
-		gen.clearAppointments();
-		gen.appointmentCase1();
+		gen.clearAppointments("clearAppointments");
+		gen.appointmentCase1("appointmentCase1");
 		
 		// Patient 2 logs in.
 		driver = (HtmlUnitDriver)login("2", "pw");
@@ -176,8 +176,8 @@ public class AppointmentTypeTest extends iTrustSeleniumTest{
 	
 	public void testHcpViewUpcomingAppointments() throws Exception {
 		// Create DB for this test case
-		gen.clearAppointments();
-		gen.appointmentCase2();
+		gen.clearAppointments("clearAppointments");
+		gen.appointmentCase2("appointmentCase2");
 		
 		// HCP 9000000000 logs in.
 		driver = (HtmlUnitDriver)login("9000000000", "pw");

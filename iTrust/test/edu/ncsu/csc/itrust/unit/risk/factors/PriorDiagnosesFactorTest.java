@@ -24,9 +24,9 @@ public class PriorDiagnosesFactorTest extends TestCase {
 		factor = new PriorDiagnosisFactor(factory, 2L, 250.3, 487);
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.hospitals();
-		gen.hcp0();
-		gen.patient2();
+		gen.hospitals("hospitals");
+		gen.hcp0("hcp0");
+		gen.patient2("patient2");
 	}
 
 	public void testNoInfections() throws Exception {

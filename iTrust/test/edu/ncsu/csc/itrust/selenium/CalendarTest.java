@@ -9,7 +9,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import edu.ncsu.csc.itrust.enums.TransactionType;
-import edu.ncsu.csc.itrust.selenium.iTrustSeleniumTest;
 
 public class CalendarTest extends iTrustSeleniumTest {
 	
@@ -23,7 +22,7 @@ public class CalendarTest extends iTrustSeleniumTest {
 		gen.clearAllTables();
 		gen.standardData();
 		//gen.officeVisit5();
-		gen.officeVisits();
+		gen.officeVisits("officeVisits");
 	}
 
 	@Override

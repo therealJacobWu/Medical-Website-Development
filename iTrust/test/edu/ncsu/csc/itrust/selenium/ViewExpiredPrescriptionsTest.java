@@ -12,18 +12,18 @@ public class ViewExpiredPrescriptionsTest extends iTrustSeleniumTest {
 	public void setUp() throws Exception {
 		super.setUp();
 		gen.clearAllTables();
-		gen.icd9cmCodes();
-		gen.ndCodes();
-		gen.uap1();
-		gen.patient2();
-		gen.patient1();
-		gen.patient4();
-		gen.patient9();
-		gen.hcp0();
-		gen.hcp1();
-		gen.hcp2();
-		gen.clearLoginFailures();
-		gen.hcp3();
+		gen.icd9cmCodes("icd9cmCodes");
+		gen.ndCodes("ndCodes");
+		gen.uap1("uap1");
+		gen.patient2("patient2");
+		gen.patient1("patient1");
+		gen.patient4("patient4");
+		gen.patient9("patient9");
+		gen.hcp0("hcp0");
+		gen.hcp1("hcp1");
+		gen.hcp2("hcp2");
+		gen.clearLoginFailures("clearLoginFailures");
+		gen.hcp3("hcp3");
 	}
 
 	@Test

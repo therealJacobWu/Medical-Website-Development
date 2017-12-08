@@ -16,8 +16,8 @@ public class GetProceduresTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.cptCodes();
-		gen.patient2();
+		gen.cptCodes("cptCodes");
+		gen.patient2("patient2");
 	}
 	
 	public void testGetProcedures() throws Exception {

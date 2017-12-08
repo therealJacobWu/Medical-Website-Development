@@ -51,7 +51,7 @@ public class EditLabProceduresActionTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testGetLabProcedure() throws Exception {
-		gen.officeVisit5();
+		gen.officeVisit5("ov5");
 		action = new EditLabProceduresAction(factory, 9000000003L, "5", "380");
 		LabProcedureBean bean = action.getLabProcedure(1380);
 		assertEquals("13495-7", bean.getLoinc());
