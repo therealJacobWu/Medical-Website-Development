@@ -17,7 +17,7 @@ public class EmailTest extends TestCase {
 	protected void setUp() throws Exception {
 		TestDataGenerator gen = new TestDataGenerator();
 		gen.loadSQLFile("clearFakeemail");
-		gen.loadSQLFile("fakeEmail");
+		gen.loadSQLFile("fakeemail");
 	}
 
 	public void testListAllEmails() throws Exception {

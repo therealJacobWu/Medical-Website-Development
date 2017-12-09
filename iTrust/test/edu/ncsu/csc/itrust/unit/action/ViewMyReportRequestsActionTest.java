@@ -25,7 +25,7 @@ public class ViewMyReportRequestsActionTest extends TestCase {
 		gen.loadSQLFile("patient2");
 		gen.loadSQLFile("hcp0");
 		gen.loadSQLFile("admin1");
-		gen.loadSQLFile("fakeEmail");
+		gen.loadSQLFile("fakeemail");
 		gen.loadSQLFile("reportRequests");
 	}
 

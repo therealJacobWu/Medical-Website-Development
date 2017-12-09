@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 import edu.ncsu.csc.itrust.DBUtil;
@@ -212,6 +213,66 @@ public class PatientDAO {
 				ps.close();
 				return null;
 			}
+		} catch (SQLException e) {
+			throw new DBException(e);
+		} finally {
+			DBUtil.closeConnection(conn, ps);
+		}
+	}
+
+	public List<PatientBean> getPrePatient() throws DBException {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = factory.getConnection();
+			ps = conn.prepareStatement("SELECT * FROM Patients, Users WHERE Patients.MID = Users.MID AND Users.Role = 'pre_patient'");
+			ResultSet rs = ps.executeQuery();
+			List<PatientBean> loadlist = patientLoader.loadList(rs);
+			rs.close();
+			ps.close();
+			return loadlist;
+		} catch (SQLException e) {
+			throw new DBException(e);
+		} finally {
+			DBUtil.closeConnection(conn, ps);
+		}
+	}
+
+	public void activatePrePatient(long mid) throws DBException {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = factory.getConnection();
+			ps = conn.prepareStatement("UPDATE Users SET Role = 'patient' WHERE MID = ?");
+			ps.setLong(1, mid);
+			ps.executeUpdate();
+			ps.close();
+		} catch (SQLException e) {
+			throw new DBException(e);
+		} finally {
+			DBUtil.closeConnection(conn, ps);
+		}
+	}
+
+	public void deactivatePrePatient(long mid) throws DBException {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = factory.getConnection();
+			ps = conn.prepareStatement("DELETE FROM Users WHERE MID = ?");
+			ps.setLong(1, mid);
+			ps.executeUpdate();
+			ps.close();
+
+			ps = conn.prepareStatement("DELETE FROM Patients WHERE MID = ?");
+			ps.setLong(1, mid);
+			ps.executeUpdate();
+			ps.close();
+
+			ps = conn.prepareStatement("DELETE FROM Personalhealthinformation WHERE PatientID = ?");
+			ps.setLong(1, mid);
+			ps.executeUpdate();
+			ps.close();
 		} catch (SQLException e) {
 			throw new DBException(e);
 		} finally {
