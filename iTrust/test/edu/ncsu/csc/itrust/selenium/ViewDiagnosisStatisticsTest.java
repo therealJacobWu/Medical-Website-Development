@@ -24,8 +24,8 @@ public class ViewDiagnosisStatisticsTest extends iTrustSeleniumTest {
 		super.setUp();
 		gen.clearAllTables();
 		gen.standardData();
-		gen.patient_hcp_vists();
-		gen.hcp_diagnosis_data();
+		gen.loadSQLFile("patient_hcp_visits");
+		gen.loadSQLFile("hcp_diagnosis_data");
 	}
 
 	/*
@@ -508,7 +508,7 @@ public class ViewDiagnosisStatisticsTest extends iTrustSeleniumTest {
 	 * @throws Exception
 	 */
 	public void testViewDiagnosisEpidemics_YesEpidemic() throws Exception {
-		gen.influenza_epidemic();
+		gen.loadSQLFile("influenzaEpidemic");
 		
 		driver = (HtmlUnitDriver)login("9000000007", "pw");
 
@@ -537,7 +537,7 @@ public class ViewDiagnosisStatisticsTest extends iTrustSeleniumTest {
 	 * @throws Exception
 	 */
 	public void testViewDiagnosisEpidemics_NoEpidemic() throws Exception {
-		gen.influenza_epidemic();
+		gen.loadSQLFile("influenzaEpidemic");
 		driver = (HtmlUnitDriver)login("9000000007", "pw");
 
 		// Click Diagnosis Trends

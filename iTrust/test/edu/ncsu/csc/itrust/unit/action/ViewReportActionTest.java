@@ -24,12 +24,12 @@ public class ViewReportActionTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.hcp0();
-		gen.patient2();
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("patient2");
 	}
 
 	public void testGetDiagnoses() throws Exception {
-		gen.icd9cmCodes();
+		gen.loadSQLFile("icd9cmCodes");
 		List<DiagnosisBean> list = action.getDiagnoses(2L);
 		assertEquals(6, list.size());
 		DiagnosisBean bean = list.get(0);
@@ -38,7 +38,7 @@ public class ViewReportActionTest extends TestCase {
 	}
 
 	public void testGetProcedures() throws Exception {
-		gen.cptCodes();
+		gen.loadSQLFile("cptCodes");
 		List<ProcedureBean> list = action.getProcedures(2L);
 		assertEquals(1, list.size());
 		ProcedureBean bean = list.get(0);
@@ -47,7 +47,7 @@ public class ViewReportActionTest extends TestCase {
 	}
 
 	public void testGetPrescriptions() throws Exception {
-		gen.ndCodes();
+		gen.loadSQLFile("ndCodes");
 		List<PrescriptionBean> list = action.getPrescriptions(2L);
 		assertEquals(1, list.size());
 		PrescriptionBean bean = list.get(0);
@@ -59,7 +59,7 @@ public class ViewReportActionTest extends TestCase {
 	}
 
 	public void testGetDeclaredHCPs() throws Exception {
-		gen.hcp3();
+		gen.loadSQLFile("hcp3");
 		List<PersonnelBean> list = action.getDeclaredHCPs(2L);
 		assertEquals(1, list.size());
 	}

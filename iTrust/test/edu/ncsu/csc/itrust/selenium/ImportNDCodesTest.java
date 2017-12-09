@@ -1,7 +1,5 @@
 package edu.ncsu.csc.itrust.selenium;
 
-import static org.junit.Assert.*;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -29,7 +27,7 @@ public class ImportNDCodesTest extends iTrustSeleniumTest {
 	public void setUp() throws Exception {
 		super.setUp();
 		gen.clearAllTables();
-		gen.admin1();
+		gen.loadSQLFile("admin1");
 		driver = new HtmlUnitDriver();
 		driver.get("http://localhost:8080/iTrust/");
 	}

@@ -16,8 +16,8 @@ public class GetDiagnosesTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.icd9cmCodes();
-		gen.patient2();
+		gen.loadSQLFile("icd9cmCodes");
+		gen.loadSQLFile("patient2");
 	}
 
 	public void testGetPatient2() throws Exception {

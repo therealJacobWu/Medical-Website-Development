@@ -30,11 +30,11 @@ public class EditApptActionTest extends TestCase {
 	protected void setUp() throws Exception {
 		TestDataGenerator gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.hcp0();
-		gen.patient42();
-		gen.appointment();
-		gen.appointmentType();
-		gen.uc22();
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("patient42");
+		gen.loadSQLFile("appointment");
+		gen.loadSQLFile("appointmentType");
+		gen.loadSQLFile("UC22");
 		
 		this.factory = TestDAOFactory.getTestInstance();
 		this.evilFactory = EvilDAOFactory.getEvilInstance();

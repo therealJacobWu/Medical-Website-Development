@@ -9,7 +9,6 @@ import edu.ncsu.csc.itrust.exception.DBException;
 import edu.ncsu.csc.itrust.unit.datagenerators.TestDataGenerator;
 import edu.ncsu.csc.itrust.unit.testutils.EvilDAOFactory;
 import edu.ncsu.csc.itrust.unit.testutils.TestDAOFactory;
-import edu.ncsu.csc.itrust.exception.DBException;
 
 @SuppressWarnings("unused")
 public class CDCHeightStatsDAOTest  extends TestCase{
@@ -29,7 +28,7 @@ public class CDCHeightStatsDAOTest  extends TestCase{
 		protected void setUp() throws Exception {
 			TestDataGenerator gen = new TestDataGenerator();
 			gen.clearAllTables();
-			gen.cdcStatistics();
+			gen.cdcStatistics("cdcStatistics");
 			
 		}
 		

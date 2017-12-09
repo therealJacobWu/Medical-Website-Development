@@ -24,7 +24,7 @@ public class AddUAPActionTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.hcp0();
+		gen.loadSQLFile("hcp0");
 		action = new AddUAPAction(factory, 9000000000L);
 	}
 

@@ -21,19 +21,19 @@ public class ViewPrescriptionRenewalNeedsActionTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.hospitals();
-		gen.hcp2();
-		gen.hcp1();
-		gen.hcp3();
-		gen.hcp0();
-		gen.ndCodes();
-		gen.icd9cmCodes();
-		gen.patient9();
-		gen.patient11();
-		gen.patient14();
+		gen.loadSQLFile("hospitals0");
+		gen.loadSQLFile("hcp2");
+		gen.loadSQLFile("hcp1");
+		gen.loadSQLFile("hcp3");
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("ndCodes");
+		gen.loadSQLFile("icd9cmCodes");
+		gen.loadSQLFile("patient9");
+		gen.loadSQLFile("patient11");
+		gen.loadSQLFile("patient14");
 		
 		
-		gen.UC32Acceptance();
+		gen.loadSQLFile("UC32Acceptance");
 	}
 
 	public void testTwoPatients() throws Exception {

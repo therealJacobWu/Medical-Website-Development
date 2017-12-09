@@ -30,7 +30,7 @@ public class PateintSearchServletTest {
 	public void setUp() throws Exception {
 		gen.clearAllTables();
 		gen.standardData();
-		gen.patientDeactivate();
+		gen.loadSQLFile("patientDeactivate");
 		subject = new LittleDelegatorServlet();
 		request = mock(HttpServletRequest.class);
 		response = mock(HttpServletResponse.class);

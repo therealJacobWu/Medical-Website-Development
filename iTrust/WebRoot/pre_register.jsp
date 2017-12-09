@@ -5,6 +5,7 @@
 <%@ page import="edu.ncsu.csc.itrust.beans.PatientBean" %>
 <%@ page import="java.util.Date" %>
 <%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="edu.ncsu.csc.itrust.beans.OfficeVisitBean" %>
 
 <%@include file="/global.jsp" %>
 
@@ -74,7 +75,16 @@
         hr.setSmoker(9);
     }
 
+    OfficeVisitBean ov = new OfficeVisitBean();
+    ov.setPatientID(userMID);
+    ov.setAppointmentType("Preregister Patient");
+
+    long ovId = prodDAO.getOfficeVisitDAO().add(ov);
+
     hr.setPatientID(userMID);
+    hr.setOfficeVisitID(ovId);
+    hr.setPersonnelID(9000000009L); // System Reminder set appointment
+
     prodDAO.getHealthRecordsDAO().add(hr);
 
     // Log transaction

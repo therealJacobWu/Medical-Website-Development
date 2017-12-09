@@ -30,7 +30,7 @@ public class PatientInstructionsDAOTest extends TestCase {
 		assertEquals(0, list.size());
 		
 		// load one patient instructions record
-		gen.uc44_acceptance_scenario_2();
+		gen.loadSQLFile("uc44_acceptance_scenario_2");
 		list = dao.getList(44100);
 		assertEquals(1, list.size());
 		// should still return none when there are no records with the given id 
@@ -73,7 +73,7 @@ public class PatientInstructionsDAOTest extends TestCase {
 		assertEquals(0, dao.getList(1).size());
 		
 		// load one patient instructions record
-		gen.uc44_acceptance_scenario_2();
+		gen.loadSQLFile("uc44_acceptance_scenario_2");
 		bean = dao.getList(44100).get(0);
 		assertEquals("http://www.webmd.com/cold-and-flu/flu-guide/what-to-eat-when-you-have-the-flu", bean.getUrl());
 		bean.setUrl("http://www.google.com/");

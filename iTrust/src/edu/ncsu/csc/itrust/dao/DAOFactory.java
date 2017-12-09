@@ -451,4 +451,12 @@ public class DAOFactory {
 	public OphthalmologyDiagnosisDAO getOPDiagnosisDAO() {
 		return new OphthalmologyDiagnosisDAO(this);
 	}
+
+	/**
+	 * Get a new DAO for Patient Metric Visualization
+	 * @return this DAO factory's PatientMetricVisualizationDao
+	 */
+	public PatientMetricVisualizationDAO getPatientMetricVisualizationDAO() {
+		return new PatientMetricVisualizationDAO(this);
+	}
 }

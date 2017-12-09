@@ -18,16 +18,16 @@ public class ViewEmergencyReportTest extends iTrustSeleniumTest {
 	public void setUp() throws Exception {
 		super.setUp();
 		gen.clearAllTables();
-		gen.icd9cmCodes();
-		gen.ndCodes();
-		gen.hospitals();
-		gen.hcp1();
-		gen.hcp2();
-		gen.hcp3();
+		gen.loadSQLFile("icd9cmCodes");
+		gen.loadSQLFile("ndCodes");
+		gen.loadSQLFile("hospitals0");
+		gen.loadSQLFile("hcp1");
+		gen.loadSQLFile("hcp2");
+		gen.loadSQLFile("hcp3");
 		gen.er4();
-		gen.patient9();
-		gen.UC32Acceptance();
-		gen.clearLoginFailures();
+		gen.loadSQLFile("patient9");
+		gen.loadSQLFile("UC32Acceptance");
+		gen.loadSQLFile("loginFailures");
 		driver = new HtmlUnitDriver();
 		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 	}

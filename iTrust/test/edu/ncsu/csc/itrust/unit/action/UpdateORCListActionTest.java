@@ -24,7 +24,7 @@ public class UpdateORCListActionTest extends TestCase {
 	protected void setUp() throws Exception {
 		action = new UpdateReasonCodeListAction(factory, performingAdmin);
 		gen.clearAllTables();
-		gen.admin1();
+		gen.loadSQLFile("admin1");
 	}
 
 	@SuppressWarnings("unused")

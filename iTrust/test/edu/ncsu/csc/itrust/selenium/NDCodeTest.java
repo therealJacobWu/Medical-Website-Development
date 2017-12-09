@@ -18,12 +18,12 @@ public class NDCodeTest extends iTrustSeleniumTest {
 	protected void setUp() throws Exception {
 		super.setUp();
 		gen.clearAllTables();
-		gen.admin1();
-		gen.ndCodes();
-		gen.ndCodes1();
-		gen.ndCodes2();
-		gen.ndCodes3();
-		gen.ndCodes4();
+		gen.loadSQLFile("admin1");
+		gen.loadSQLFile("ndCodes");
+		gen.loadSQLFile("ndCodes1");
+		gen.loadSQLFile("ndCodes2");
+		gen.loadSQLFile("ndCodes3");
+		gen.loadSQLFile("ndCodes4");
 		// turn off htmlunit warnings
 	    java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.OFF);
 	    java.util.logging.Logger.getLogger("org.apache.http").setLevel(java.util.logging.Level.OFF);

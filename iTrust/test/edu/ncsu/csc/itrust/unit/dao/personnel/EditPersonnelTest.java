@@ -15,8 +15,8 @@ public class EditPersonnelTest extends TestCase {
 	protected void setUp() throws Exception {
 		TestDataGenerator gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.uap1();
-		gen.hcp0();
+		gen.loadSQLFile("uap1");
+		gen.loadSQLFile("hcp0");
 	}
 	
 	/**

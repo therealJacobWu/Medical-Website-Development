@@ -31,7 +31,7 @@ public class SetSecurityQuestionTest extends TestCase {
 	}
 
 	public void testBadConnection() throws Exception {
-		gen.patient2();
+		gen.loadSQLFile("patient2");
 		try {
 			action = new SetSecurityQuestionAction(evil, 2L);
 			fail("exception should have been thrown");
@@ -41,7 +41,7 @@ public class SetSecurityQuestionTest extends TestCase {
 	}
 
 	public void testRetriveInformation() throws Exception {
-		gen.patient2();
+		gen.loadSQLFile("patient2");
 		action = new SetSecurityQuestionAction(factory, 2L);
 		SecurityQA qa = action.retrieveInformation();
 		assertEquals("how you doin?", qa.getQuestion());
@@ -49,7 +49,7 @@ public class SetSecurityQuestionTest extends TestCase {
 	}
 
 	public void testUpdateInformationCorrectly() throws Exception {
-		gen.patient2();
+		gen.loadSQLFile("patient2");
 		action = new SetSecurityQuestionAction(factory, 2L);
 		SecurityQA qa = action.retrieveInformation();
 		qa.setAnswer("12345678");

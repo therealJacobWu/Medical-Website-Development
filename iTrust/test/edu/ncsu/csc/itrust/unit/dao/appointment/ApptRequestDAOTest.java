@@ -26,7 +26,7 @@ public class ApptRequestDAOTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen.clearAllTables();
 		gen.standardData();
-		gen.apptRequestConflicts();
+		gen.loadSQLFile("apptRequestConflicts");
 		arDAO = TestDAOFactory.getTestInstance().getApptRequestDAO();
 		EvilRequestDAO = new ApptRequestDAO(evilFactory);
 		evilDAO = new ApptTypeDAO(evilFactory);

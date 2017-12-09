@@ -14,7 +14,7 @@ public class UserExistsTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		gen.clearAllTables();
-		gen.patient1();
+		gen.loadSQLFile("patient1");
 	}
 
 	public void testUserExists() throws Exception {
