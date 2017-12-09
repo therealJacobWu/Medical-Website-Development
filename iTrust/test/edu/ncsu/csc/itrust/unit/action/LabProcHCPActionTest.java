@@ -52,7 +52,7 @@ public class LabProcHCPActionTest extends TestCase {
 		lp.setProcedureID(id);
 		lp.statusComplete();
 		lp.setResults("No abnormal results");
-		gen.loadSQLFile("fakeEmail");
+		gen.loadSQLFile("fakeemail");
 		action.updateProcedure(lp);
 		LabProcedureBean procedures = lpDAO.getLabProcedure(id);
 		assertEquals(LabProcedureBean.Completed, procedures.getStatus());

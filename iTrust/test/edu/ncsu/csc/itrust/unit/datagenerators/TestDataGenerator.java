@@ -169,7 +169,7 @@ public class TestDataGenerator {
 		loadSQLFile("referrals");
 		loadSQLFile("message");
 		loadSQLFile("tester");
-		loadSQLFile("fakeEmail");
+		loadSQLFile("fakeemail");
 		loadSQLFile("reportRequests");
 		loadSQLFile("loincs");
 		loadSQLFile("labprocedures");
