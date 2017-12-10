@@ -17,9 +17,9 @@ public class CreateUAPTest extends iTrustSeleniumTest {
 	public void setUp() throws Exception {
 		super.setUp();
 		gen.clearAllTables();
-		gen.admin1();
-		gen.hcp0();
-		gen.cptCodes();
+		gen.loadSQLFile("admin1");
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("cptCodes");
 	}
 	
 	/**

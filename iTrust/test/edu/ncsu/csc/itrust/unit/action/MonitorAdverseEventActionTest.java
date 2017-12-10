@@ -16,12 +16,12 @@ public class MonitorAdverseEventActionTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.hcp0();
-		gen.pha0();
-		gen.patient1();
-		gen.adverseEventPres();
-		gen.ndCodes();
-		gen.cptCodes();
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("pha0");
+		gen.loadSQLFile("patient1");
+		gen.loadSQLFile("AdverseEventPres");
+		gen.loadSQLFile("ndCodes");
+		gen.loadSQLFile("cptCodes");
 		action = new MonitorAdverseEventAction(TestDAOFactory.getTestInstance(), 9999999990L);
 	}
 	

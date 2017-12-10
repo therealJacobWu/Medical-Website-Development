@@ -13,8 +13,8 @@ public class SurveyUseCaseTest extends iTrustSeleniumTest {
 	protected void setUp() throws Exception{
 		super.setUp();
 		gen.clearAllTables();
-		gen.hcp0();
-		gen.patient2();		
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("patient2");
 	}
 
 	/*

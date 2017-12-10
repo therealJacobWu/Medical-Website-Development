@@ -18,7 +18,7 @@ public class UpdateCPTCodeListActionTest extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		new TestDataGenerator().admin1();
+		new TestDataGenerator().loadSQLFile("admin1");
 		action = new UpdateCPTCodeListAction(factory, performingAdmin);
 	}
 

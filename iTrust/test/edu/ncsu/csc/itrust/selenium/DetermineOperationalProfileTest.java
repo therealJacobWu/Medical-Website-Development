@@ -13,8 +13,8 @@ public class DetermineOperationalProfileTest extends iTrustSeleniumTest {
 	protected void setUp() throws Exception {
 		super.setUp();
 		gen.clearAllTables();
-		gen.uap1();
-		gen.tester();
+		gen.loadSQLFile("uap1");
+		gen.loadSQLFile("tester");
 	}
 
 

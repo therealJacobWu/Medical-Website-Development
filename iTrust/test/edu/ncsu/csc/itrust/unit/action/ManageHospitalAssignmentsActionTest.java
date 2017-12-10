@@ -32,11 +32,11 @@ public class ManageHospitalAssignmentsActionTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		gen.clearAllTables();
-		gen.hcp0();
-		gen.admin1();
-		gen.hospitals();
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("admin1");
+		gen.loadSQLFile("hospitals0");
 		gen.clearHospitalAssignments();
-		gen.ltData0();
+		gen.loadSQLFile("lt0");
 		action = new ManageHospitalAssignmentsAction(factory, performingAdmin);
 		ltAction = new ManageHospitalAssignmentsAction(factory, lt0);
 	}

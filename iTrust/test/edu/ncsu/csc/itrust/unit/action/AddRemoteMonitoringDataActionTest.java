@@ -19,9 +19,9 @@ public class AddRemoteMonitoringDataActionTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.hcp0();
-		gen.patient1();
-		gen.patient2();
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("patient1");
+		gen.loadSQLFile("patient2");
 		action = new AddRemoteMonitoringDataAction(TestDAOFactory.getTestInstance(), 1, 1);
 	}
 
@@ -46,8 +46,8 @@ public class AddRemoteMonitoringDataActionTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testAddRemoteMonitoringDataUAP() throws Exception {
-		gen.uap1();
-		gen.remoteMonitoringUAP();
+		gen.loadSQLFile("uap1");
+		gen.loadSQLFile("remoteMonitoringUAP");
 		AddRemoteMonitoringDataAction actionUAP = new AddRemoteMonitoringDataAction(TestDAOFactory.getTestInstance(), Long.parseLong("8000000009"), 2);
 		try {
 			RemoteMonitoringDataBean b = new RemoteMonitoringDataBean();
@@ -79,8 +79,8 @@ public class AddRemoteMonitoringDataActionTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testAddRemoteMonitoringDataGlucoseOnlyUAP() throws Exception {
-		gen.uap1();
-		gen.remoteMonitoringUAP();
+		gen.loadSQLFile("uap1");
+		gen.loadSQLFile("remoteMonitoringUAP");
 		AddRemoteMonitoringDataAction actionUAP = new AddRemoteMonitoringDataAction(TestDAOFactory.getTestInstance(), Long.parseLong("8000000009"), 2);
 		try {
 			RemoteMonitoringDataBean b = new RemoteMonitoringDataBean();
@@ -111,8 +111,8 @@ public class AddRemoteMonitoringDataActionTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testAddRemoteMonitoringDataBloodPressureOnlyUAP() throws Exception {
-		gen.uap1();
-		gen.remoteMonitoringUAP();
+		gen.loadSQLFile("uap1");
+		gen.loadSQLFile("remoteMonitoringUAP");
 		AddRemoteMonitoringDataAction actionUAP = new AddRemoteMonitoringDataAction(TestDAOFactory.getTestInstance(), Long.parseLong("8000000009"), 2);
 		try {
 			RemoteMonitoringDataBean b = new RemoteMonitoringDataBean();

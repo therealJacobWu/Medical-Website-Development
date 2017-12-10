@@ -24,9 +24,9 @@ public class EditHealthHistoryActionTest extends TestCase {
 	protected void setUp() throws Exception {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.patient1();
-		gen.patient2();
-		gen.uc51();
+		gen.loadSQLFile("patient1");
+		gen.loadSQLFile("patient2");
+		gen.loadSQLFile("uc51");
 		action = new EditHealthHistoryAction(factory, 9000000000L, "2");
 	}
 		

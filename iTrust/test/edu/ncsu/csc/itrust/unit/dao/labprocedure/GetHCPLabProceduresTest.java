@@ -14,9 +14,9 @@ public class GetHCPLabProceduresTest extends TestCase {
     protected void setUp() throws Exception {
         gen = new TestDataGenerator();
         gen.clearAllTables();
-        gen.labProcedures();
-        gen.officeVisit5();
-        gen.labProcedures2();
+        gen.loadSQLFile("labprocedures");
+        gen.loadSQLFile("ov5");
+        gen.loadSQLFile("labprocedures2");
     }
 
     public void testGetHCPLabProcedures() throws Exception {

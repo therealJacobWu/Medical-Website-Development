@@ -31,8 +31,8 @@ public class UpdateLabProcListActionTest extends TestCase {
 		dao = factory.getLOINCDAO();
 		action = new UpdateLOINCListAction(factory);
 		gen.clearAllTables();
-		gen.admin1();
-		gen.loincs();
+		gen.loadSQLFile("admin1");
+		gen.loadSQLFile("loincs");
 
 	}
 

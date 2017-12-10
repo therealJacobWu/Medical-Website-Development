@@ -1,7 +1,5 @@
 package edu.ncsu.csc.itrust.selenium;
 
-import static org.junit.Assert.*;
-
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -11,12 +9,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.*;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import edu.ncsu.csc.itrust.DateUtil;
-import edu.ncsu.csc.itrust.enums.TransactionType;
-import edu.ncsu.csc.itrust.unit.DBBuilder;
-import edu.ncsu.csc.itrust.unit.testutils.TestDAOFactory;
 
 /**
  * Use Case 17, Selenium test conversion for HttpUnit GetVisitRemindersTest 
@@ -29,7 +23,7 @@ public class GetVisitRemindersTest extends iTrustSeleniumTest {
 	@Before
 	protected void setUp() throws Exception  {
 		super.setUp();
-		gen.hcp0();
+		gen.loadSQLFile("hcp0");
 		gen.standardData();
 		driver = new Driver();
 		// Implicitly wait at most 2 seconds for each element to load

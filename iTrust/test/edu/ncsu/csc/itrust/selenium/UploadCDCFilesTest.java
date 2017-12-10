@@ -15,7 +15,7 @@ public class UploadCDCFilesTest extends iTrustSeleniumTest {
 	protected void setUp() throws Exception{
 		super.setUp();
 		gen.clearAllTables();
-		gen.admin1();
+		gen.loadSQLFile("admin1");
 	}
 	
 	public void testCDCImport_Head() throws Exception {

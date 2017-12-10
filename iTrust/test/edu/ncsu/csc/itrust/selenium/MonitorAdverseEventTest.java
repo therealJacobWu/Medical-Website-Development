@@ -18,15 +18,15 @@ public class MonitorAdverseEventTest extends iTrustSeleniumTest {
 	protected void setUp() throws Exception {
 		super.setUp();
 		gen.clearAllTables();
-		gen.patient2();
-		gen.hcp0();
-		gen.pha1();
-		gen.patient1();
+		gen.loadSQLFile("patient2");
+		gen.loadSQLFile("hcp0");
+		gen.loadSQLFile("pha1");
+		gen.loadSQLFile("patient1");
 		//gen.patient2();
-		gen.patient3();
-		gen.patient4();
-		gen.patient10();
-		gen.patient13();
+		gen.loadSQLFile("patient3");
+		gen.loadSQLFile("patient4");
+		gen.loadSQLFile("patient10");
+		gen.loadSQLFile("patient13");
 		// turn off htmlunit warnings
 	    java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.OFF);
 	    java.util.logging.Logger.getLogger("org.apache.http").setLevel(java.util.logging.Level.OFF);
@@ -38,7 +38,7 @@ public class MonitorAdverseEventTest extends iTrustSeleniumTest {
 	}
 	
 	public void testViewDrugAdverseEvents () throws Exception {
-		gen.adverseEvent1();
+		gen.loadSQLFile("adverseEvent1");
 		driver = login("7000000001", "pw");
 		assertEquals(driver.getTitle(), "iTrust - PHA Home");
 		assertLogged(TransactionType.HOME_VIEW, 7000000001L, 0L, "");
@@ -64,7 +64,7 @@ public class MonitorAdverseEventTest extends iTrustSeleniumTest {
 	}
 	
 	public void testRemoveImmunizationAdverseEventReport() throws Exception {
-		gen.adverseEvent2();
+		gen.loadSQLFile("adverseEvent2");
 		driver = login("7000000001", "pw");
 		assertEquals(driver.getTitle(), "iTrust - PHA Home");
 		assertLogged(TransactionType.HOME_VIEW, 7000000001L, 0L, "");
@@ -89,7 +89,7 @@ public class MonitorAdverseEventTest extends iTrustSeleniumTest {
 	}
 	
 	public void testGetBarChart() throws Exception {
-		gen.adverseEvent3();
+		gen.loadSQLFile("adverseEvent3");
 		driver = login("7000000001", "pw");
 		assertEquals(driver.getTitle(), "iTrust - PHA Home");
 		assertLogged(TransactionType.HOME_VIEW, 7000000001L, 0L, "");

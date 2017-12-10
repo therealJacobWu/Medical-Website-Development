@@ -23,7 +23,7 @@ public class ViewAdverseEventActionTest extends TestCase {
 		gen = new TestDataGenerator();
 		gen.clearAllTables();
 		gen.standardData();	
-		gen.adverseEvent1();
+		gen.loadSQLFile("adverseEvent1");
 	}
 	
 	/**

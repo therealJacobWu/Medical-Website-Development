@@ -20,7 +20,7 @@ public class ChronicDiseaseMediatorTest extends TestCase {
 	}
 
 	public void testPatient2() throws Exception {
-		gen.patient2();
+		gen.loadSQLFile("patient2");
 		List<RiskChecker> list = new ChronicDiseaseMediator(factory, 2L).getDiseaseAtRisk();
 		assertEquals(2, list.size());
 		assertEquals("Heart Disease", list.get(0).getName());

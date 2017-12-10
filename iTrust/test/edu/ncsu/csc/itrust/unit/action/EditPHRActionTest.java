@@ -56,7 +56,7 @@ public class EditPHRActionTest extends TestCase {
 		assertEquals(9, action.getFamily().size());
 		assertEquals(2, action.getAllHealthRecords().size());
 		assertEquals(12, action.getAllOfficeVisits().size());
-		gen.clearTransactionLog();
+		gen.loadSQLFile("clearTransactionLog");
 		assertEquals(2, action.getDiseasesAtRisk().size());
 		
 		assertTrue(action.doesFamilyMemberHaveHighBP(fmBean));

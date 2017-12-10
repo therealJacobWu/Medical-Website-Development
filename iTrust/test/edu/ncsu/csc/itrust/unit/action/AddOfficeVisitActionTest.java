@@ -17,7 +17,7 @@ public class AddOfficeVisitActionTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		gen.clearAllTables();
-		gen.patient1();
+		gen.loadSQLFile("patient1");
 		action = new AddOfficeVisitAction(factory, "1");
 	}
 

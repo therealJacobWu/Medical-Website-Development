@@ -19,10 +19,10 @@ public class GetPHRTest extends TestCase {
 	protected void setUp() throws Exception {
 		TestDataGenerator gen = new TestDataGenerator();
 		gen.clearAllTables();
-		gen.patient1();
-		gen.patient2();
-		gen.uc51();
-		gen.uc52();
+		gen.loadSQLFile("patient1");
+		gen.loadSQLFile("patient2");
+		gen.loadSQLFile("uc51");
+		gen.loadSQLFile("uc52");
 	}
 
 	public void testGetPHRForNonExistent() throws Exception {
