@@ -103,7 +103,7 @@ public class DiagnosesDAO {
 		
 	}
 
-	public int getDiagnosisStatisticsForArea(PreparedStatement ps, String icdCode, String zipCodeExpression,java.util.Date lower,java.util.Date upper) throws SQLException{
+	private int getDiagnosisStatisticsForArea(PreparedStatement ps, String icdCode, String zipCodeExpression,java.util.Date lower,java.util.Date upper) throws SQLException{
         ps.setString(1, icdCode);
         ps.setString(2, zipCodeExpression);
         ps.setTimestamp(3, new Timestamp(lower.getTime()));

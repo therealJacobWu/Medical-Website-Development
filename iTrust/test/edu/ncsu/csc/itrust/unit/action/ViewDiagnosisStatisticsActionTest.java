@@ -44,7 +44,11 @@ public class ViewDiagnosisStatisticsActionTest extends TestCase {
 	}
 	
 	public void testGetDiagnosisStatisticsInRangeValidNull() throws Exception {
-		DiagnosisStatisticsBean dsBean = action.getDiagnosisStatisticsInRange(null, null, "487.00", "27606");
+		DiagnosisStatisticsBean dsBean = action.getDiagnosisStatisticsInRange(null, "09/28/2011", "487.00", "27606");
+		assertEquals(null, dsBean);
+		dsBean = action.getDiagnosisStatisticsInRange("06/28/2011", null, "487.00", "27606");
+		assertEquals(null, dsBean);
+		dsBean = action.getDiagnosisStatisticsInRange("06/28/2011", "09/28/2011", null, "27606");
 		assertEquals(null, dsBean);
 	}
 	
@@ -95,7 +99,24 @@ public class ViewDiagnosisStatisticsActionTest extends TestCase {
 		assertEquals(new SimpleDateFormat("MM/dd/yyyy").parse("08/03/2011"), d.get(0).getStartDate());
         assertEquals(new SimpleDateFormat("MM/dd/yyyy").parse("09/21/2011"), d.get(d.size()-1).getStartDate());
     }
-	
+
+	public void testGetDiagnosisStatisticsByWeekValidNull() throws Exception {
+		List<DiagnosisStatisticsBean> dsBeans = action.getDiagnosisStatisticsByWeek(null, "487.00", "27606");
+		assertNull(dsBeans);
+		dsBeans = action.getDiagnosisStatisticsByWeek("09/28/2011", null, "27606");
+		assertNull(dsBeans);
+	}
+
+	public void testGetDiagnosisStatisticsByWeekInvalidDate() throws Exception {
+		try {
+			action.getDiagnosisStatisticsByWeek("09-28/2011", "487.00", "27606");
+			fail("Should have failed but didn't");
+		} catch (FormValidationException e) {
+			assertEquals(1, e.getErrorList().size());
+			assertEquals("Enter dates in MM/dd/yyyy", e.getErrorList().get(0));
+		}
+	}
+
 	public void testIsMalariaEpidemic() throws Exception {
 		gen.loadSQLFile("malariaEpidemic");
 		assertTrue(action.isMalariaEpidemic("11/02/" + thisYear, "27606", "110"));

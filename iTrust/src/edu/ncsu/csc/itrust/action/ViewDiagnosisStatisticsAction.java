@@ -100,7 +100,7 @@ public class ViewDiagnosisStatisticsAction {
 				return null;
 			Date end = new SimpleDateFormat("MM/dd/yyyy").parse(endDate);
             validateZipAndICD(icdCode, zip);
-            Date start = getDateEightWeeksAgo(end);
+            Date start = getDateSevenWeeksAgo(end);
 			dsBeans = diagnosesDAO.getWeeklyCounts(icdCode, zip, start, end);
 		} catch (ParseException e) {
 			throw new FormValidationException("Enter dates in MM/dd/yyyy");
@@ -121,7 +121,7 @@ public class ViewDiagnosisStatisticsAction {
         }
     }
 
-    private Date getDateEightWeeksAgo(Date end) {
+    private Date getDateSevenWeeksAgo(Date end) {
         Calendar startDateCal = Calendar.getInstance();
         startDateCal.setTime(end);
         startDateCal.add(Calendar.DATE, -7*8);

@@ -45,19 +45,20 @@ public class DiagnosisStatisticsBean {
 		this.zipCode = zipCode;
 		this.zipStats = zipStats;
 		this.regionStats = regionStats;
-
-		
 	}
-	
-	/**
-	 * Constructor for the bean. Accepts stats and zip code
-	 * @param zipCode The zip code analyzed
-	 * @param zipStats The count of diagnoses for the zip code
-	 * @param regionStats The count of diagnoses for the region
-	 * @param startDate The beginning of the data's time period
-	 * @param endDate The end of the data's time period
-	 */
-	public DiagnosisStatisticsBean(String zipCode, long zipStats, long regionStats, long stateStats, long globalStats, Date startDate, Date endDate) {
+
+    /**
+     * Constructor for the bean. Accepts stats and zip code
+     *
+     * @param zipCode     The zip code analyzed
+     * @param zipStats    The count of diagnoses for the zip code
+     * @param regionStats The count of diagnoses for the region
+     * @param stateStats  The count of diagnoses for the state
+     * @param globalStats The count of all diagnoses in the database
+     * @param startDate   The beginning of the data's time period
+     * @param endDate     The end of the data's time period
+     */
+    public DiagnosisStatisticsBean(String zipCode, long zipStats, long regionStats, long stateStats, long globalStats, Date startDate, Date endDate) {
 		this.zipCode = zipCode;
 		this.zipStats = zipStats;
 		this.regionStats = regionStats;
