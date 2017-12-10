@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 import edu.ncsu.csc.itrust.DBUtil;
@@ -217,6 +218,69 @@ public class PatientDAO {
 		} finally {
 			DBUtil.closeConnection(conn, ps);
 		}
+	}
+
+	/**
+	 * Get list of pre-registered patients
+	 * @return list of PatientBean
+	 * @throws DBException
+	 * @throws SQLException
+	 */
+	public List<PatientBean> getPrePatient() throws DBException, SQLException {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		conn = factory.getConnection();
+		ps = conn.prepareStatement("SELECT * FROM Patients, Users WHERE Patients.MID = Users.MID AND Users.Role = 'pre_patient'");
+		ResultSet rs = ps.executeQuery();
+		List<PatientBean> loadlist = patientLoader.loadList(rs);
+		rs.close();
+		ps.close();
+		DBUtil.closeConnection(conn, ps);
+		return loadlist;
+	}
+
+	/**
+	 * Activate a pre-registered patient, this will change the user attribute of this patient
+	 * @param mid pre-registered patient to be activated
+	 * @throws DBException
+	 * @throws SQLException
+	 */
+	public void activatePrePatient(long mid) throws DBException, SQLException {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		conn = factory.getConnection();
+		ps = conn.prepareStatement("UPDATE Users SET Role = 'patient' WHERE MID = ?");
+		ps.setLong(1, mid);
+		ps.executeUpdate();
+		ps.close();
+		DBUtil.closeConnection(conn, ps);
+	}
+
+	/**
+	 * Deactivate a pre-registered patient, this will remove all rows in `Patient`, `OfficeVisits` and `PersonalHealthInformation` related to this patient
+	 * @param mid pre-registered patient to be deactivated
+	 * @throws DBException
+	 * @throws SQLException
+	 */
+	public void deactivatePrePatient(long mid) throws DBException, SQLException {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		conn = factory.getConnection();
+		ps = conn.prepareStatement("DELETE FROM Users WHERE MID = ?");
+		ps.setLong(1, mid);
+		ps.executeUpdate();
+		ps.close();
+
+		ps = conn.prepareStatement("DELETE FROM Patients WHERE MID = ?");
+		ps.setLong(1, mid);
+		ps.executeUpdate();
+		ps.close();
+
+		ps = conn.prepareStatement("DELETE FROM Personalhealthinformation WHERE PatientID = ?");
+		ps.setLong(1, mid);
+		ps.executeUpdate();
+		ps.close();
+		DBUtil.closeConnection(conn, ps);
 	}
 
 	/**
@@ -516,28 +580,24 @@ public class PatientDAO {
 	 * @param end end datet to query to (in "yyyy-MM-dd" format)
 	 * @return List of Strings that represent cause of death
 	 * @throws DBException
+	 * @throws SQLException
 	 */
-	public List<String> getCauseOfDeath(Gender gender, Long hcpid, String start, String end) throws DBException{
-		Connection conn = null;
-		PreparedStatement ps = null;
-		try {
+	public List<String> getCauseOfDeath(Gender gender, Long hcpid, String start, String end) throws DBException, SQLException{
+		if (gender == Male || gender == Female) {
+			Connection conn = null;
+			PreparedStatement ps = null;
 			conn = factory.getConnection();
-			if (gender == Male || gender == Female) {
-				ps = conn.prepareStatement(getCauseOfDeathSQLForGender(gender));
-				ps.setString(1, gender.toString());
-				ps.setLong(2, hcpid);
-				ps.setString(3, start);
-				ps.setString(4, end);
-				ResultSet rs = ps.executeQuery();
-				List<String> loadlist = loadCauseOfDeathList(rs);
-				rs.close();
-				ps.close();
-				return loadlist;
-			}
-		} catch (SQLException e) {
-			throw new DBException(e);
-		} finally {
+			ps = conn.prepareStatement(getCauseOfDeathSQLForGender(gender));
+			ps.setString(1, gender.toString());
+			ps.setLong(2, hcpid);
+			ps.setString(3, start);
+			ps.setString(4, end);
+			ResultSet rs = ps.executeQuery();
+			List<String> loadlist = loadCauseOfDeathList(rs);
+			rs.close();
+			ps.close();
 			DBUtil.closeConnection(conn, ps);
+			return loadlist;
 		}
 		return new ArrayList<>();
 	}
@@ -550,26 +610,22 @@ public class PatientDAO {
 	 * @param end end datet to query to (in "yyyy-MM-dd" format)
 	 * @return List of Strings that represent cause of death
 	 * @throws DBException
+	 * @throws SQLException
 	 */
-	public List<String> getCauseOfDeath(Long hcpid, String start, String end) throws DBException{
+	public List<String> getCauseOfDeath(Long hcpid, String start, String end) throws DBException, SQLException{
 		Connection conn = null;
 		PreparedStatement ps = null;
-		try {
-			conn = factory.getConnection();
-			ps = conn.prepareStatement(getCauseOfDeathSQLForGender(null));
-			ps.setLong(1, hcpid);
-			ps.setString(2, start);
-			ps.setString(3, end);
-			ResultSet rs = ps.executeQuery();
-			List<String> loadlist = loadCauseOfDeathList(rs);
-			rs.close();
-			ps.close();
-			return loadlist;
-		} catch (SQLException e) {
-			throw new DBException(e);
-		} finally {
-			DBUtil.closeConnection(conn, ps);
-		}
+		conn = factory.getConnection();
+		ps = conn.prepareStatement(getCauseOfDeathSQLForGender(null));
+		ps.setLong(1, hcpid);
+		ps.setString(2, start);
+		ps.setString(3, end);
+		ResultSet rs = ps.executeQuery();
+		List<String> loadlist = loadCauseOfDeathList(rs);
+		rs.close();
+		ps.close();
+		DBUtil.closeConnection(conn, ps);
+		return loadlist;
 	}
 
 	/**
@@ -1333,22 +1389,17 @@ public class PatientDAO {
 		}
 	}
 
-	public void editMessageFilter(long pid, String filter) throws DBException{
+	public void editMessageFilter(long pid, String filter) throws DBException, SQLException {
 		//validateMessageFilterColumn();
-		Connection conn = null;
-		PreparedStatement ps = null;
+		Connection conn;
+		PreparedStatement ps;
 
-		try {
-			conn = factory.getConnection();
-			ps = conn.prepareStatement("UPDATE patients SET messagefilter=? WHERE MID=?");
-			ps.setString(1, filter);
-			ps.setLong(2, pid);
-			ps.executeUpdate();
-			ps.close();
-		} catch (SQLException e) {
-			throw new DBException(e);
-		} finally {
-			DBUtil.closeConnection(conn, ps);
-		}
+		conn = factory.getConnection();
+		ps = conn.prepareStatement("UPDATE patients SET messagefilter=? WHERE MID=?");
+		ps.setString(1, filter);
+		ps.setLong(2, pid);
+		ps.executeUpdate();
+		ps.close();
+		DBUtil.closeConnection(conn, ps);
 	}
 }

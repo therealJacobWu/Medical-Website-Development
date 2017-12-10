@@ -14,6 +14,7 @@ import edu.ncsu.csc.itrust.exception.FormValidationException;
 import edu.ncsu.csc.itrust.exception.ITrustException;
 import edu.ncsu.csc.itrust.validate.PatientValidator;
 
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -163,7 +164,7 @@ public class EditPatientAction extends PatientBaseAction {
 		return true;
 	}
 
-	public void editMessageFilter(String filter) throws DBException{
+	public void editMessageFilter(String filter) throws DBException, SQLException {
 		patientDAO.editMessageFilter(getPid(),filter);
 	}
 }

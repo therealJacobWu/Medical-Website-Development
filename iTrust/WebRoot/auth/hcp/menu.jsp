@@ -25,6 +25,7 @@
 			<li><a href="/iTrust/auth/hcp-fitness/viewExerciseDiaries.jsp">Patient Exercise Diaries</a>
 			<li><a href="/iTrust/auth/hcp/viewSleepDiaries.jsp">Patient Sleep Diaries</a>
 			<li><a href="/iTrust/auth/hcp/viewCauseOfDeath.jsp">Cause Of Death</a>
+			<li><a href="/iTrust/auth/hcp-uap/viewPrePatient.jsp">All Pre-registered Patients</a>
 		</ul>
 	</div>
 </div>

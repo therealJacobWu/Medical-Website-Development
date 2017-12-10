@@ -40,6 +40,7 @@ public class TestDataGenerator {
 		gen.standardData();
 		// Put it here so that actual iTrust runs can see cause of death data of patients
 		gen.patient1000s();
+		gen.prepatient2000s();
 	}
 
 	private String DIR = "sql/data";
@@ -65,6 +66,21 @@ public class TestDataGenerator {
 		new DBBuilder(factory).executeSQLFile(DIR + "/" + a + ".sql");
 	}
 
+	public void patient1000s() throws FileNotFoundException, SQLException, IOException {
+		new DBBuilder(factory).executeSQLFile(DIR + "/patient1001.sql");
+		new DBBuilder(factory).executeSQLFile(DIR + "/patient1002.sql");
+		new DBBuilder(factory).executeSQLFile(DIR + "/patient1003.sql");
+		new DBBuilder(factory).executeSQLFile(DIR + "/patient1004.sql");
+		new DBBuilder(factory).executeSQLFile(DIR + "/patient1005.sql");
+	}
+
+	public void prepatient2000s() throws FileNotFoundException, SQLException, IOException {
+		new DBBuilder(factory).executeSQLFile(DIR + "/pre_patient_2001.sql");
+		new DBBuilder(factory).executeSQLFile(DIR + "/pre_patient_2002.sql");
+		new DBBuilder(factory).executeSQLFile(DIR + "/pre_patient_2003.sql");
+	}
+
+
 	public void clearAllTables() throws SQLException, FileNotFoundException,
 			IOException {
 		new DBBuilder(factory).executeSQLFile(DIR + "/deleteFromAllTables.sql");
@@ -78,14 +94,6 @@ public class TestDataGenerator {
 
 	public void er4() throws SQLException, FileNotFoundException, IOException {
 		new DBBuilder(factory).executeSQLFile(DIR + "/er6.sql");
-	}
-
-	public void patient1000s() throws FileNotFoundException, SQLException, IOException {
-		new DBBuilder(factory).executeSQLFile(DIR + "/patient1001.sql");
-		new DBBuilder(factory).executeSQLFile(DIR + "/patient1002.sql");
-		new DBBuilder(factory).executeSQLFile(DIR + "/patient1003.sql");
-		new DBBuilder(factory).executeSQLFile(DIR + "/patient1004.sql");
-		new DBBuilder(factory).executeSQLFile(DIR + "/patient1005.sql");
 	}
 
 	public void viewAccessLogTestData() throws SQLException,
