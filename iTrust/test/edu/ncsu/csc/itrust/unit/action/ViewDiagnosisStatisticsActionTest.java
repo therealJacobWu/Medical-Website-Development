@@ -1,5 +1,6 @@
 package edu.ncsu.csc.itrust.unit.action;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -91,6 +92,8 @@ public class ViewDiagnosisStatisticsActionTest extends TestCase {
 	public void testGetDiagnosisStatisticsByWeek() throws Exception{
 	    ArrayList<DiagnosisStatisticsBean> d = action.getDiagnosisStatisticsByWeek("09/28/2011", "487.00", "27606");;
 	    assertEquals(8,d.size());
+		assertEquals(new SimpleDateFormat("MM/dd/yyyy").parse("08/03/2011"), d.get(0).getStartDate());
+        assertEquals(new SimpleDateFormat("MM/dd/yyyy").parse("09/21/2011"), d.get(d.size()-1).getStartDate());
     }
 	
 	public void testIsMalariaEpidemic() throws Exception {
