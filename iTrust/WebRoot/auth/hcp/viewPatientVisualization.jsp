@@ -65,7 +65,7 @@
                 <%
             }
         %>
-        <input type="submit" id="view_visualize">View visualization</input>
+        <input type="submit" id="view_visualize" value="View visualization"></input>
     </form>
 
 
