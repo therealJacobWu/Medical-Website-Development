@@ -13,6 +13,9 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 
+/**
+ * DAO for the appointments table
+ */
 @SuppressWarnings({})
 public class ApptDAO {
 	private transient final DAOFactory factory;

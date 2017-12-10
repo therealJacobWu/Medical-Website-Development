@@ -41,7 +41,7 @@ public class AddPatientAction {
 	 * specified dependency
 	 * 
 	 * @param p patient to be created
-	 * @param isDependent true if the patient is to be a dependent, false otherwise
+	 * @param repId ID of the dependent's representative
 	 * @return the new MID of the patient
 	 * @throws FormValidationException if the patient is not successfully validated
 	 * @throws ITrustException 
@@ -53,7 +53,16 @@ public class AddPatientAction {
 		authDAO.setDependent(newMID, true);
 		return newMID;
 	}
-	
+
+	/**
+     * Add a patient
+	 *
+	 * This involves adding to the patients and users table
+	 * @param p bean with data for the new patient
+	 * @return the new MID of the patient
+	 * @throws FormValidationException
+	 * @throws ITrustException
+	 */
 	public long addPatient(PatientBean p) throws FormValidationException, ITrustException {
 		new AddPatientValidator().validate(p);
 		long newMID = patientDAO.addEmptyPatient();
