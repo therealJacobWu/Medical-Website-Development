@@ -130,7 +130,6 @@ public class DiagnosesDAO {
 	public ArrayList<DiagnosisStatisticsBean> getWeeklyCounts(String icdCode, String zipCode, java.util.Date lower, java.util.Date upper) throws DBException {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(lower);
-	//	cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 		Date lowerDate = cal.getTime();
 		cal.add(Calendar.HOUR, 24*6);
 		Date upperDate = cal.getTime();
