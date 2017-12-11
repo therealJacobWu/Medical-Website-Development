@@ -17,7 +17,7 @@
     List<Long> globalData = new ArrayList<>();
 
     for (int weekNumb = dsBeans.size()-1; weekNumb >= 0 ; weekNumb--) {
-        xAxisLabels.add("week - "+ (weekNumb + 1));
+        xAxisLabels.add("week -"+ (weekNumb + 1));
         regionData.add(dsBeans.get(7-weekNumb).getRegionStats());
         stateData.add(dsBeans.get(7-weekNumb).getStateStats());
         globalData.add(dsBeans.get(7-weekNumb).getGlobalStats());
@@ -29,7 +29,7 @@
 </div>
 <script type="text/javascript">
     $('#container1').highcharts({
-        chart: { type: 'bar' },
+        chart: { type: 'column' },
         title: { text: "Diagnoses Summary for previous 8 weeks" },
         xAxis: { categories: <%= new JSONArray(xAxisLabels.toString().toString())%> },
         yAxis: {
