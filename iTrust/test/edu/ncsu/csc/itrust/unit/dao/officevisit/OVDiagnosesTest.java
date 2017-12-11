@@ -102,7 +102,7 @@ public class OVDiagnosesTest extends TestCase {
 		Date lower = new SimpleDateFormat("MM/dd/yyyy").parse("06/28/2011");
 		Date upper = new SimpleDateFormat("MM/dd/yyyy").parse("09/28/2011");
 		List<DiagnosisStatisticsBean> db = diagDAO.getWeeklyCounts("487.00", "27607", lower, upper);
-		
+
 		assertEquals(new SimpleDateFormat("MM/dd/yyyy").parse("06/28/2011"), db.get(0).getStartDate());
 		assertEquals(new SimpleDateFormat("MM/dd/yyyy").parse("07/04/2011"), db.get(0).getEndDate());
 		assertEquals(new SimpleDateFormat("MM/dd/yyyy").parse("09/27/2011"), db.get(db.size()-1).getStartDate());

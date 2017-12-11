@@ -75,8 +75,8 @@ public class DiagnosesDAO {
 	 * 
 	 * @param icdCode The diagnosis code
 	 * @param zipCode The zip code to evaluate
-	 * @param lower The starting date
-	 * @param upper The ending date
+	 * @param lower The starting date. We count diagnoses that occur on or after this date.
+	 * @param upper The ending date. We count diagnoses that occur before, on, or strictly less than one day after this date.
 	 * @return A bean containing the local and regional counts
 	 * @throws DBException
 	 */
@@ -87,7 +87,7 @@ public class DiagnosesDAO {
 
 		try {
 			conn = factory.getConnection();
-			ps = conn.prepareStatement("SELECT * FROM ovdiagnosis INNER JOIN officevisits ON ovdiagnosis.VisitID=officevisits.ID INNER JOIN patients ON officevisits.PatientID=patients.MID WHERE ICDCode=? AND zip LIKE ? AND visitDate >= ? AND visitDate <= ? ");
+			ps = conn.prepareStatement("SELECT * FROM ovdiagnosis INNER JOIN officevisits ON ovdiagnosis.VisitID=officevisits.ID INNER JOIN patients ON officevisits.PatientID=patients.MID WHERE ICDCode=? AND zip LIKE ? AND visitDate >= ? AND visitDate < ? ");
 			int local = getDiagnosisStatisticsForArea(ps, icdCode, zipCode, lower, upper);
 			int region = getDiagnosisStatisticsForArea(ps, icdCode,zipCode.substring(0,3) + "%", lower, upper);
 			int state = getDiagnosisStatisticsForArea(ps, icdCode,zipCode.substring(0,2) + "%", lower, upper);
