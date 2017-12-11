@@ -3,48 +3,52 @@
 <%@page import="edu.ncsu.csc.itrust.beans.DiagnosisStatisticsBean"%>
 <%@page import="edu.ncsu.csc.itrust.action.ViewDiagnosisStatisticsAction"%>
 <%@page import="edu.ncsu.csc.itrust.charts.DiagnosisTrendData" %>
+<%@ page import="org.json.JSONArray" %>
+
+
+<script src="/iTrust/js/jquery-1.7.2.js" type="text/javascript"></script>
+<script src="/iTrust/js/highcharts.js" type="text/javascript"></script>
+<script src="/iTrust/js/highcharts-more.js" type="text/javascript"></script>
 
 <%
+    List<String> xAxisLabels = new ArrayList<>();
+    List<Long> regionData = new ArrayList<>();
+    List<Long> stateData = new ArrayList<>();
+    List<Long> globalData = new ArrayList<>();
 
-DiagnosisStatisticsBean avgBean = null;
-
-
+    for (int weekNumb = dsBeans.size()-1; weekNumb >= 0 ; weekNumb--) {
+        xAxisLabels.add("week -"+ (weekNumb + 1));
+        regionData.add(dsBeans.get(7-weekNumb).getRegionStats());
+        stateData.add(dsBeans.get(7-weekNumb).getStateStats());
+        globalData.add(dsBeans.get(7-weekNumb).getGlobalStats());
+    }
 %>
 
-<!-- Use this tag to specify the location of the dataset for the chart -->
-<jsp:useBean id="DSchart" class="edu.ncsu.csc.itrust.charts.DiagnosisTrendData"/>
 
-<%
-
-// This calls the class from the useBean tag and initializes the Adverse Event list and pres/immu name
-
-
-
-if ( view.equalsIgnoreCase("trends") ) {
-	
-	DSchart.initializeDiagnosisStatistics(dsBean, view);
-	
-} else  {
-	
-	return;
-	
-}
-
-String chartTitle = "Diagnosis Cases Chart";
-
-%>
-
-<!-- The cewolf:chart tag defines attributes related to the chart you wish to generate -->
-<cewolf:chart
-     id="graph"
-     title="<%= StringEscapeUtils.escapeHtml(chartTitle ) %>"
-     type="verticalbar"
-     xaxislabel="Cases By Zipcode and Region">
-	<cewolf:data>
-	       <cewolf:producer id="DSchart"/>
-	</cewolf:data>
-</cewolf:chart>
-
-<!-- The cewolf:img tag defines the actual chart in your JSP -->
-<cewolf:img chartid="graph" renderer="/charts/" width="600" height="400" style="margin-left:auto; margin-right:auto;" border="2"/>
+<div id="container1">
+</div>
+<script type="text/javascript">
+    $('#container1').highcharts({
+        chart: { type: 'column' },
+        title: { text: "Diagnoses Summary for previous 8 weeks" },
+        xAxis: { categories: <%= new JSONArray(xAxisLabels.toString().toString())%> },
+        yAxis: {
+            title: { text: "Number of Diagnoses" }
+        },
+        series: [
+            {
+                name: "Diagnoses in region",
+                data: <%=regionData.toString()%>
+            },
+            {
+                name: "Diagnoses in state",
+                data: <%=stateData.toString()%>
+            },
+            {
+                name: "All Diagnoses",
+                data: <%=globalData.toString()%>
+            }
+        ]
+    });
+</script>
 

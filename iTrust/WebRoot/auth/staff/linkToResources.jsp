@@ -11,7 +11,6 @@
 <%@page import="edu.ncsu.csc.itrust.beans.DiagnosisBean"%>
 <%@page import="edu.ncsu.csc.itrust.beans.DiagnosisStatisticsBean"%>
 <%@page import="edu.ncsu.csc.itrust.dao.mysql.DiagnosesDAO"%>
-<%@page import="edu.ncsu.csc.itrust.exception.FormValidationException"%>
 <%@page import="edu.ncsu.csc.itrust.dao.mysql.ICDCodesDAO"%>
 
 <%@include file="/global.jsp" %>
@@ -49,7 +48,7 @@ pageTitle = "iTrust - Maintain Diagnoses Links";
 	
 	//try to get the statistics. If there's an error, print it. If null is returned, it's the first page load
 	try{
-		dsBean = diagnoses.getDiagnosisStatistics(startDate, endDate, icdCode, zipCode);
+		dsBean = diagnoses.getDiagnosisStatisticsInRange(startDate, endDate, icdCode, zipCode);
 	} catch(FormValidationException e){
 		e.printHTML(pageContext.getOut());
 	}

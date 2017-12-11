@@ -75,51 +75,47 @@ public class DiagnosesDAO {
 	 * 
 	 * @param icdCode The diagnosis code
 	 * @param zipCode The zip code to evaluate
-	 * @param lower The starting date
-	 * @param upper The ending date
+	 * @param lower The starting date. We count diagnoses that occur on or after this date.
+	 * @param upper The ending date. We count diagnoses that occur before, on, or strictly less than one day after this date.
 	 * @return A bean containing the local and regional counts
 	 * @throws DBException
 	 */
 	public DiagnosisStatisticsBean getDiagnosisCounts(String icdCode, String zipCode, java.util.Date lower, java.util.Date upper) throws DBException {
 		Connection conn = null;
-		PreparedStatement ps = null;
+        PreparedStatement ps = null;
 		DiagnosisStatisticsBean dsBean = null;
+
 		try {
 			conn = factory.getConnection();
-			ps = conn.prepareStatement("SELECT * FROM ovdiagnosis INNER JOIN officevisits ON ovdiagnosis.VisitID=officevisits.ID INNER JOIN patients ON officevisits.PatientID=patients.MID WHERE ICDCode=? AND zip=? AND visitDate >= ? AND visitDate <= ? ");
-			ps.setString(1, icdCode);
-			ps.setString(2, zipCode);
-			ps.setTimestamp(3, new Timestamp(lower.getTime()));
-			// add 1 day's worth to include the upper
-			ps.setTimestamp(4, new Timestamp(upper.getTime() + 1000L * 60L * 60 * 24L));
-			
-			ResultSet rs = ps.executeQuery();
-			rs.last();
-			int local = rs.getRow();
+			ps = conn.prepareStatement("SELECT * FROM ovdiagnosis INNER JOIN officevisits ON ovdiagnosis.VisitID=officevisits.ID INNER JOIN patients ON officevisits.PatientID=patients.MID WHERE ICDCode=? AND zip LIKE ? AND visitDate >= ? AND visitDate < ? ");
+			int local = getDiagnosisStatisticsForArea(ps, icdCode, zipCode, lower, upper);
+			int region = getDiagnosisStatisticsForArea(ps, icdCode,zipCode.substring(0,3) + "%", lower, upper);
+			int state = getDiagnosisStatisticsForArea(ps, icdCode,zipCode.substring(0,2) + "%", lower, upper);
+            int global = getDiagnosisStatisticsForArea(ps, icdCode,"%", lower, upper);
 			ps.close();
-			ps = conn.prepareStatement("SELECT * FROM ovdiagnosis INNER JOIN officevisits ON ovdiagnosis.VisitID=officevisits.ID INNER JOIN patients ON officevisits.PatientID=patients.MID WHERE ICDCode=? AND zip LIKE ? AND visitDate >= ? AND visitDate <= ? ");
-			ps.setString(1, icdCode);
-			ps.setString(2, zipCode.substring(0, 3) + "%");
-			ps.setTimestamp(3, new Timestamp(lower.getTime()));
-			// add 1 day's worth to include the upper
-			ps.setTimestamp(4, new Timestamp(upper.getTime() + 1000L * 60L * 60 * 24L));
-			
-			rs = ps.executeQuery();
-			rs.last();
-			int region = rs.getRow();
-			
-			dsBean = new DiagnosisStatisticsBean(zipCode, local, region, lower, upper);
-			rs.close();
-			ps.close();
+			dsBean = new DiagnosisStatisticsBean(zipCode, local, region, state, global, lower, upper);
 			return dsBean;
 		} catch (SQLException e) {
-			
 			throw new DBException(e);
 		} finally {
 			DBUtil.closeConnection(conn, ps);
 		}
 		
 	}
+
+	private int getDiagnosisStatisticsForArea(PreparedStatement ps, String icdCode, String zipCodeExpression,java.util.Date lower,java.util.Date upper) throws SQLException{
+        ps.setString(1, icdCode);
+        ps.setString(2, zipCodeExpression);
+        ps.setTimestamp(3, new Timestamp(lower.getTime()));
+        // add 1 day's worth to include the upper
+        ps.setTimestamp(4, new Timestamp(upper.getTime() + 1000L * 60L * 60 * 24L));
+        ResultSet rs = ps.executeQuery();
+        rs.last();
+        int diagnoses = rs.getRow();
+        rs.close();
+        return diagnoses;
+    }
+
 	
 	/**
 	 * Gets a weekly local zip code count and regional count of a specified diagnosis code over a time period
@@ -134,7 +130,6 @@ public class DiagnosesDAO {
 	public ArrayList<DiagnosisStatisticsBean> getWeeklyCounts(String icdCode, String zipCode, java.util.Date lower, java.util.Date upper) throws DBException {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(lower);
-		cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 		Date lowerDate = cal.getTime();
 		cal.add(Calendar.HOUR, 24*6);
 		Date upperDate = cal.getTime();

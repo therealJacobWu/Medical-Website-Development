@@ -50,7 +50,7 @@ public class ViewDiagnosisStatisticsAction {
 	
 	/**
 	 * Gets the counts of local and regional diagnoses for the specified input
-	 * 
+	 *
 	 * @param lowerDate The beginning date for the time range
 	 * @param upperDate The ending date for the time range
 	 * @param icdCode The diagnosis code to examine
@@ -59,42 +59,76 @@ public class ViewDiagnosisStatisticsAction {
 	 * @throws FormValidationException
 	 * @throws ITrustException
 	 */
-	public DiagnosisStatisticsBean getDiagnosisStatistics(String lowerDate, String upperDate, String icdCode, String zip) throws FormValidationException, ITrustException {
+	public DiagnosisStatisticsBean getDiagnosisStatisticsInRange(String lowerDate, String upperDate, String icdCode, String zip) throws FormValidationException, ITrustException {
 		DiagnosisStatisticsBean dsBean;
 		try {
-			
 			if (lowerDate == null || upperDate == null || icdCode == null)
 				return null;
-			
+
 			Date lower = new SimpleDateFormat("MM/dd/yyyy").parse(lowerDate);
 			Date upper = new SimpleDateFormat("MM/dd/yyyy").parse(upperDate);
 
 			if (lower.after(upper))
 				throw new FormValidationException("Start date must be before end date!");
-			
-			if (!zip.matches("([0-9]{5})|([0-9]{5}-[0-9]{4})"))
-				throw new FormValidationException("Zip Code must be 5 digits!");
 
-			boolean validCode = false;
-			for(DiagnosisBean diag : getDiagnosisCodes()) {
-					if (diag.getICDCode().equals(icdCode))
-						validCode = true;
-			}
-			if (validCode == false) {
-				throw new FormValidationException("ICDCode must be valid diagnosis!");
-			}
+            validateZipAndICD(icdCode, zip);
 
 			dsBean = diagnosesDAO.getDiagnosisCounts(icdCode, zip, lower, upper);
-			
+
 		} catch (ParseException e) {
 			throw new FormValidationException("Enter dates in MM/dd/yyyy");
-		} 
-		
-		
+		}
+
+
 		return dsBean;
 	}
-	
 	/**
+	 * Gets the counts of local and regional diagnoses for the specified input
+	 * For 8 weeks before the upper date.
+	 *
+	 * @param endDate The ending date for the time range
+	 * @param icdCode The diagnosis code to examine
+	 * @param zip The zip code to examine
+	 * @return A list of beans containing the local and regional counts by week
+	 * @throws FormValidationException
+	 * @throws ITrustException
+	 */
+	public ArrayList<DiagnosisStatisticsBean > getDiagnosisStatisticsByWeek(String endDate, String icdCode, String zip) throws FormValidationException, ITrustException {
+        ArrayList<DiagnosisStatisticsBean > dsBeans;
+		try {
+			if (endDate == null || icdCode == null)
+				return null;
+			Date end = new SimpleDateFormat("MM/dd/yyyy").parse(endDate);
+            validateZipAndICD(icdCode, zip);
+            Date start = getDateSevenWeeksAgo(end);
+			dsBeans = diagnosesDAO.getWeeklyCounts(icdCode, zip, start, end);
+		} catch (ParseException e) {
+			throw new FormValidationException("Enter dates in MM/dd/yyyy");
+		}
+		return dsBeans;
+	}
+
+    private void validateZipAndICD(String icdCode, String zip) throws FormValidationException, ITrustException {
+        if (!zip.matches("([0-9]{5})|([0-9]{5}-[0-9]{4})"))
+            throw new FormValidationException("Zip Code must be 5 digits!");
+        boolean validCode = false;
+        for(DiagnosisBean diag : getDiagnosisCodes()) {
+            if (diag.getICDCode().equals(icdCode))
+                validCode = true;
+        }
+        if (validCode == false) {
+            throw new FormValidationException("ICDCode must be valid diagnosis!");
+        }
+    }
+
+    private Date getDateSevenWeeksAgo(Date end) {
+        Calendar startDateCal = Calendar.getInstance();
+        startDateCal.setTime(end);
+        startDateCal.add(Calendar.DATE, -7*8);
+        return startDateCal.getTime();
+    }
+
+    /**
 	 * Gets the local and regional counts for the specified week and calculates the prior average.
 	 * 
 	 * @param startDate a date in the week to analyze
@@ -130,7 +164,7 @@ public class ViewDiagnosisStatisticsAction {
 			throw new FormValidationException("Zip Code must be 5 digits!");
 		
 		DiagnosisStatisticsBean dbWeek = diagnosesDAO.getCountForWeekOf(icdCode, zip, lower);
-		DiagnosisStatisticsBean dbAvg = new DiagnosisStatisticsBean(zip, 0, 0, lower, lower);
+		DiagnosisStatisticsBean dbAvg = new DiagnosisStatisticsBean(zip, 0, 0, 0,0, lower, lower);
 		
 		Calendar cal = Calendar.getInstance();
 		

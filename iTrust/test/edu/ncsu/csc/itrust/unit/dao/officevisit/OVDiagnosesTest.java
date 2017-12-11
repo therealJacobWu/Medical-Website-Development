@@ -90,6 +90,8 @@ public class OVDiagnosesTest extends TestCase {
 		DiagnosisStatisticsBean dsBean = diagDAO.getDiagnosisCounts("487.00", "27607", lower, upper);
 		assertEquals(3, dsBean.getZipStats());
 		assertEquals(5, dsBean.getRegionStats());
+		assertEquals(6,dsBean.getStateStats());
+		assertEquals(7, dsBean.getGlobalStats());
 	}
 	
 	/**
@@ -100,17 +102,18 @@ public class OVDiagnosesTest extends TestCase {
 		Date lower = new SimpleDateFormat("MM/dd/yyyy").parse("06/28/2011");
 		Date upper = new SimpleDateFormat("MM/dd/yyyy").parse("09/28/2011");
 		List<DiagnosisStatisticsBean> db = diagDAO.getWeeklyCounts("487.00", "27607", lower, upper);
-		
-		assertEquals(new SimpleDateFormat("MM/dd/yyyy").parse("06/27/2011"), db.get(0).getStartDate());
-		assertEquals(new SimpleDateFormat("MM/dd/yyyy").parse("07/03/2011"), db.get(0).getEndDate());
-		assertEquals(new SimpleDateFormat("MM/dd/yyyy").parse("09/26/2011"), db.get(db.size()-1).getStartDate());
-		
+
+		assertEquals(new SimpleDateFormat("MM/dd/yyyy").parse("06/28/2011"), db.get(0).getStartDate());
+		assertEquals(new SimpleDateFormat("MM/dd/yyyy").parse("07/04/2011"), db.get(0).getEndDate());
+		assertEquals(new SimpleDateFormat("MM/dd/yyyy").parse("09/27/2011"), db.get(db.size()-1).getStartDate());
+
 		long totalRegion = 0;
 		for (DiagnosisStatisticsBean d : db) {
 			totalRegion += d.getRegionStats();
+			assertEquals(diagDAO.getDiagnosisCounts("487.00", "27607", d.getStartDate(), d.getEndDate()).getRegionStats(),d.getRegionStats() );
 		}
 		//If previous test fails, this test may fail
-		long totalRegionNonsplit = diagDAO.getDiagnosisCounts("487.00", "27607", lower, upper).getRegionStats();
+		long totalRegionNonsplit = diagDAO.getDiagnosisCounts("487.00", "27607", db.get(0).getStartDate(), db.get(db.size()-1).getEndDate()).getRegionStats();
 		assertEquals(totalRegionNonsplit, totalRegion);
 	}
 	
