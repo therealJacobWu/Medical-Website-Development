@@ -195,6 +195,12 @@ public class PatientDAO {
 		}
 	}
 
+	/**
+     * Retrieve a patient from the database
+	 * @param email the email of the patient to retrieve
+	 * @return the patient's information
+	 * @throws DBException
+	 */
 	public @Nullable PatientBean getPatient(String email) throws DBException {
 		Connection conn = null;
 		PreparedStatement ps = null;
@@ -287,6 +293,7 @@ public class PatientDAO {
 	 * Updates a patient's information for the given MID
 	 * 
 	 * @param p The patient bean representing the new information for the patient.
+	 * @param hcpid The id of the hcp; if this is not -1 then we add history
 	 * @throws DBException
 	 */
 	public void editPatient(PatientBean p, long hcpid) throws DBException {
@@ -577,7 +584,7 @@ public class PatientDAO {
 	 *               querying both mail and female patients)
 	 * @param hcpid hcpid of patients to be queried from
 	 * @param start start date to query from (in "yyyy-MM-dd" format)
-	 * @param end end datet to query to (in "yyyy-MM-dd" format)
+	 * @param end end date to query to (in "yyyy-MM-dd" format)
 	 * @return List of Strings that represent cause of death
 	 * @throws DBException
 	 * @throws SQLException
@@ -607,7 +614,7 @@ public class PatientDAO {
 	 *
 	 * @param hcpid hcpid of patients to be queried from
 	 * @param start start date to query from (in "yyyy-MM-dd" format)
-	 * @param end end datet to query to (in "yyyy-MM-dd" format)
+	 * @param end end date to query to (in "yyyy-MM-dd" format)
 	 * @return List of Strings that represent cause of death
 	 * @throws DBException
 	 * @throws SQLException
@@ -1389,8 +1396,15 @@ public class PatientDAO {
 		}
 	}
 
+	/**
+     * Change a patient's message filter
+     *
+	 * @param pid id of patient to change
+	 * @param filter new filter
+	 * @throws DBException
+	 * @throws SQLException
+	 */
 	public void editMessageFilter(long pid, String filter) throws DBException, SQLException {
-		//validateMessageFilterColumn();
 		Connection conn;
 		PreparedStatement ps;
 

@@ -11,20 +11,15 @@ import edu.ncsu.csc.itrust.exception.FormValidationException;
 import edu.ncsu.csc.itrust.validate.AddPatientValidator;
 
 /**
- * Used for Add Patient page (addPatient.jsp). This just adds an empty patient, creates a random password for
+ * Used for Add Prepatient (pre_register.jsp). This just adds an empty pre-patient, creates a random password for
  * that patient.
- *
- * Very similar to {@link AddOfficeVisitAction}
- *
- *
  */
 public class AddPrepatientAction {
     private PatientDAO patientDAO;
     private AuthDAO authDAO;
-    private long loggedInMID;
 
     /**
-     * Just the factory and logged in MID
+     * Just the factory
      *
      * @param factory
      */
@@ -36,8 +31,8 @@ public class AddPrepatientAction {
     /**
      * Creates a new pre-patient and returns the new MID.
      *
-     * @param p
-     * @return
+     * @param p data for the prepatient
+     * @return the new MID for the prepatient
      * @throws FormValidationException
      * @throws DBException
      */

@@ -97,7 +97,6 @@ public class ViewMyMessagesAction {
 	 * @throws SQLException
 	 */
 	public List<MessageBean> getAllMySentMessages() throws DBException, SQLException {
-		
 		return messageDAO.getMessagesFrom(loggedInMID);
 	}
 
@@ -105,10 +104,10 @@ public class ViewMyMessagesAction {
 	 * Gets all the sent messages for the logged in user
 	 *
 	 * @return a list of all the user's sent messages
+     * @throws DBException
 	 * @throws SQLException
 	 */
 	public List<MessageBean> getAllReminderMessages() throws DBException, SQLException {
-
 		return messageDAO.getAllReminderMessages();
 	}
 
@@ -319,7 +318,7 @@ public class ViewMyMessagesAction {
 	 * @throws SQLException
      * @throws ParseException
 	 */
-    public String validateAndCreateFilter(String filter) throws SQLException, ITrustException,ParseException {
+    public String validateAndCreateFilter(String filter) throws SQLException, ITrustException, ParseException {
         List<MessageBean> allMessages = this.getAllMyMessages();
         List<MessageBean> filtered = this.filterMessages(allMessages, filter);
         if(filtered.isEmpty())

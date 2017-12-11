@@ -19,6 +19,9 @@ public class PatientMetricVisualizationDAO {
     private DAOFactory factory;
     private PatientLoader patientLoader;
 
+    /**
+     * @param daoFactory factory to get DAOs
+     */
     public PatientMetricVisualizationDAO(DAOFactory daoFactory) {
         this.factory = daoFactory;
         this.patientLoader = new PatientLoader();

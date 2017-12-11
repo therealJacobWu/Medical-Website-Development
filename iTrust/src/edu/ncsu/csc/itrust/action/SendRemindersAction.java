@@ -33,7 +33,6 @@ public class SendRemindersAction {
     private PersonnelDAO personnelDAO;
     private MessageDAO messageDAO;
     private EMailValidator emailVal;
-    private MessageValidator messVal;
     private ApptDAO apptDAO;
     private final String REMINDER_MSG =
             "You have an appointment on %s with Dr. %s";
@@ -57,7 +56,6 @@ public class SendRemindersAction {
         this.emailer = new EmailUtil(factory);
         this.messageDAO = factory.getMessageDAO();
         this.emailVal = new EMailValidator();
-        this.messVal = new MessageValidator();
     }
 
     private Timestamp endDate(Timestamp start, int n) {
@@ -98,7 +96,7 @@ public class SendRemindersAction {
         List<ApptBean> appts = apptDAO.getAllAppointmentsWithinRange(start, end);
         long days;
         for (ApptBean appt : appts) {
-            // TODO: comment on this
+            // calculate the number of days until the appointment
             days = (appt.getDate().getTime () / (1000 * 3600 * 24)) -
                     (start.getTime () / (1000 * 3600 * 24));
             MessageBean mBean = initMessageBean(appt,days);

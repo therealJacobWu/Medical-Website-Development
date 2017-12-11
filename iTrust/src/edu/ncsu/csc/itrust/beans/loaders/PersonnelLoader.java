@@ -23,6 +23,12 @@ public class PersonnelLoader implements BeanLoader<PersonnelBean> {
 		return list;
 	}
 
+	/**
+	 * @param rs The java.sql.ResultSet to be loaded.
+	 * @return The PersonnelBean loaded from the result set.
+	 * @throws SQLException
+	 */
+	@Override
 	public PersonnelBean loadSingle(ResultSet rs) throws SQLException {
 		PersonnelBean p = new PersonnelBean();
 		p.setMID(rs.getLong("MID"));

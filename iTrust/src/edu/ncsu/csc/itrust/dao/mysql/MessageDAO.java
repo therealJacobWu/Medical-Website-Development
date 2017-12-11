@@ -83,7 +83,7 @@ public class MessageDAO {
      * @throws SQLException
      * @throws DBException
      */
-    public List<MessageBean> getMessages(long mid, boolean from, boolean asc) throws SQLException, DBException {
+    private List<MessageBean> getMessages(long mid, boolean from, boolean asc) throws SQLException, DBException {
         Connection conn = null;
         PreparedStatement ps = null;
         try {

@@ -590,8 +590,14 @@ public class PersonnelDAO {
 		}
 	}
 
-    public void editMessageFilter(long pid, String filter) throws DBException{
-        //validateMessageFilterColumn();
+	/**
+     * Change a personnel's message filter
+	 *
+	 * @param pid id of the personnel to change
+	 * @param filter new filter
+	 * @throws DBException
+	 */
+	public void editMessageFilter(long pid, String filter) throws DBException{
         Connection conn = null;
 		PreparedStatement ps = null;
 
